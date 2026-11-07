@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .warning{
+            color: blue;
+        }
+        .success{
+            color: green;
+        }
+        .error{
+            color:red
+        }
+    </style>
+</head>
+<body>
+    {% if messages %}
+    <dialog open id="message">
+        {% for message in messages %}
+        <p class="{{message.tags}}">{{message}}</p>
+        {% endfor %}
+        <button type="button" onclick="document.getElementById('message').close();">Close</button>
+    </dialog>
+    {% endif %}
+    <h2>New student registration</h2>
+    <hr>
+    <form method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button>Regsiter</button>
+    </form>
+</body>
+</html>
