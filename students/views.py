@@ -15,7 +15,7 @@ def register_student(request):
         if form.is_valid():
             student=form.save()
             try:
-                send_email_notification(request,student)
+                send_email_notification(student)
                 messages.success(request,f'Student {student.name} has been registered successfully...!')
             except Exception:
                 messages.warning(request,f'Student has been registered but email delivery failed')
