@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .email_notifications import *
+from .email_notifications import send_email_notification
 from django.contrib import messages
 from .forms import StudentRegitrationForm
 # Create your views here.

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-8s(rl8l9@g+c*p=hn2#vh=3x6wk)%94+p8a-r*$=7a=s5w(*wo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mavumba.pythonanywhere.com']
 
 
 # Application definition
@@ -140,4 +140,4 @@ EMAIL_USE_TLS=True
 EMAIL_HOST_USER='simonidaniel57@gmail.com'
 EMAIL_HOST_PASSWORD='gfjxlmadxgcnchxo'
 DEFAULT_FROM_EMAIL=EMAIL_HOST_USER
-ADMIN_EMAIL='admin@django.com'
+ADMIN_EMAIL='simonidaniel57@gmail.com'
