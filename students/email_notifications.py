@@ -2,21 +2,17 @@ from django.core.mail import send_mail
 
 from django.conf import settings
 
-def send_email_notification(request,student):
+def send_email_notification(student):
     send_mail(
         subject='REGISTRATION COMPLETED SUCCESSFUL',
-        message=f'''Dear {student.name}
+        message=f'''
+        Dear {student.name}
 
         Congratulation as you have been registered successfull with the following details:
 
         Name: {student.name}
         Gender: {student.gender}
         Email: {student.email}
-
-        These changes were made by:
-        {request.user.name}
-        {request.user.email}
-        {request.user.role}
 
         With Regards,
 
@@ -33,7 +29,8 @@ def send_email_notification(request,student):
     send_mail(
             subject='NEW STUDENT REGISTERED SUCCESSFUL',
 
-            message=f'''Dear School Administrator
+            message=f'''
+            Dear School Administrator
 
             You are hereby notified that a new student been registered successfull with the following details:
 
@@ -41,9 +38,7 @@ def send_email_notification(request,student):
             Gender: {student.gender}
             Email:{student.email}
 
-            These changes were made by:
-            {request.user.name}
-            {request.user.email}
+           
 
                 With Regards,
 
