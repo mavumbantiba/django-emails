@@ -1,6 +1,7 @@
-from django.core.mail import send_mail
-
+from django.core.mail import *
+from django.contrib.auth.models import User
 from django.conf import settings
+from django.utils import timezone
 
 def send_email_notification(student):
     send_mail(
@@ -50,3 +51,38 @@ def send_email_notification(student):
             from_email=settings.DEFAULT_FROM_EMAIL,
             fail_silently=False,
     )
+
+
+def send_notifications(notification):
+        emails=User.objects.filter(is_active=True).exclude(email='').values_list('email',flat=True)
+        send_mail(
+            subject=notification.subject,
+            message=f'''{notification.message}.
+            This message was sent {notification.created_at}
+            ''',
+            from_email=None,
+            recipient_list=list(emails),
+            fail_silently=False
+        )
+        notification.is_sent=True
+        notification.save()
+
+def send_delete_notifications_to_admin(notification):
+        deleted_at=timezone.now()
+        emails=User.objects.filter(is_superuser=True).exclude(email='').values_list('email',flat=True)
+        send_mail(
+                    subject='Notification deleted',
+                    message=f'''
+
+                    Dear administrator, someone deleted the notification with the following information:
+                    Title: {notification.subject}.
+                    Message deleted: {notification.message}.
+                    Time the message was deleted: {deleted_at}
+                     
+                    ''',
+                    from_email=settings.ADMIN_EMAIL,
+                    recipient_list=list(emails),
+                    fail_silently=False
+                )
+        
+        

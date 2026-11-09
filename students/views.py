@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from .email_notifications import send_email_notification
+from .email_notifications import send_email_notification,send_notifications
 from django.contrib import messages
 from .forms import StudentRegitrationForm
+from .models import *
 # Create your views here.
 
 
@@ -25,3 +26,21 @@ def register_student(request):
             messages.error(request,'Something went wrong...')
 
     return render(request,'templates/register.html',{'form':form})
+
+
+def send_notification(request):
+    if request.method=='POST':
+            try:
+                notification=Notification.objects.create(subject=request.POST['subject'], message=request.POST['message'])
+                send_notifications(notification)
+                count=send_notifications(notification)
+                messages.success(request,f' Notification sent successfully to users')
+                return redirect('send-notification')
+            except Exception:
+                count=send_notifications(notification)
+                notification=Notification.objects.create(subject=request.POST['subject'], message=request.POST['message'])
+                send_notifications(notification)
+                messages.warning(request,f'Notification sent but email delivering was failed')
+            return redirect('send-notification')
+    return render(request,'templates/notifications.html')
+

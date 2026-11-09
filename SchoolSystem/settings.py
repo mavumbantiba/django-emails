@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8s(rl8l9@g+c*p=hn2#vh=3x6wk)%94+p8a-r*$=7a=s5w(*wo'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['mavumba.pythonanywhere.com']
+ALLOWED_HOSTS = ['mavumba.pythonanywhere.com','127.0.0.1']
 
 
 # Application definition
@@ -137,6 +137,7 @@ STATIC_URL = 'static/'
 EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST='smtp.gmail.com'
 EMAIL_USE_TLS=True
+EMAIL_PORT =587
 EMAIL_HOST_USER='simonidaniel57@gmail.com'
 EMAIL_HOST_PASSWORD='gfjxlmadxgcnchxo'
 DEFAULT_FROM_EMAIL=EMAIL_HOST_USER
