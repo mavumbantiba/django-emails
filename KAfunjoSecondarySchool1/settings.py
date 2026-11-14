@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-*rqnp=3clzo)j@(hy+rav3*@v%ycjwu*dk&s5_l01twf6jx102
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = 'ContributionSystem.User'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
