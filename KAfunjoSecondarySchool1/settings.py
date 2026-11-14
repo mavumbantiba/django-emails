@@ -61,8 +61,7 @@ INSTALLED_APPS = [
     'allauth.mfa',
 ]
 
-# AUTH_USER_MODEL = 'ContributionSystem.User'
-# DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+AUTH_USER_MODEL = 'ContributionSystem.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
