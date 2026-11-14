@@ -84,6 +84,9 @@ SITE_ID = 1
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+ACCOUNT_SIGNUP_REDIRECT_URL = 'profile'
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+LOGIN_REDIRECT_URL = 'profile'
 
 # Email verification codes are sent during signup; login codes enable
 # passwordless email sign-in in addition to the configured email/password login.
