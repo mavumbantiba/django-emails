@@ -10,6 +10,7 @@
         <h1>Account created successfully</h1>
         <p>You are signed in as {{ request.user.email|default:request.user.username }}.</p>
         <p><a href="{% url 'home' %}">Continue to the home page</a></p>
+        <p><a href="{% url 'accounts:2fa' %}">Set up two-factor authentication</a></p>
     </main>
 </body>
 </html>
