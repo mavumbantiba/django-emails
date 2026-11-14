@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     'allauth.mfa',
 ]
 
-AUTH_USER_MODEL = 'ContributionSystem.User'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
