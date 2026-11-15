@@ -446,6 +446,81 @@ msgstr "Kumbukumbu zote za vifaa"
 msgid "Your account"
 msgstr "Akaunti yako"
 
+msgid "Account"
+msgstr "Akaunti"
+
+msgid "My profile"
+msgstr "Wasifu wangu"
+
+msgid "View your account details and manage your sign-in security."
+msgstr "Tazama taarifa za akaunti yako na simamia usalama wa kuingia."
+
+msgid "Signed-in user"
+msgstr "Mtumiaji aliyeingia"
+
+msgid "No email address is set."
+msgstr "Hakuna anwani ya barua pepe iliyowekwa."
+
+msgid "Account type"
+msgstr "Aina ya akaunti"
+
+msgid "Administrator"
+msgstr "Msimamizi"
+
+msgid "Staff account"
+msgstr "Akaunti ya mfanyakazi"
+
+msgid "Standard account"
+msgstr "Akaunti ya kawaida"
+
+msgid "Your information"
+msgstr "Taarifa zako"
+
+msgid "Account details"
+msgstr "Taarifa za akaunti"
+
+msgid "Username"
+msgstr "Jina la mtumiaji"
+
+msgid "Date joined"
+msgstr "Tarehe ya kujiunga"
+
+msgid "Last login"
+msgstr "Kuingia mara ya mwisho"
+
+msgid "Keep your account secure"
+msgstr "Linda usalama wa akaunti yako"
+
+msgid "Sign-in and security"
+msgstr "Kuingia na usalama"
+
+msgid "Email address"
+msgstr "Anwani ya barua pepe"
+
+msgid "Manage the email address linked to your account."
+msgstr "Simamia anwani ya barua pepe iliyounganishwa na akaunti yako."
+
+msgid "Manage email"
+msgstr "Simamia barua pepe"
+
+msgid "Password"
+msgstr "Nenosiri"
+
+msgid "Update your account password."
+msgstr "Sasisha nenosiri la akaunti yako."
+
+msgid "Change password"
+msgstr "Badili nenosiri"
+
+msgid "An authenticator app is connected to your account."
+msgstr "Programu ya uthibitishaji imeunganishwa na akaunti yako."
+
+msgid "Connect an authenticator app to protect your account."
+msgstr "Unganisha programu ya uthibitishaji ili kulinda akaunti yako."
+
+msgid "Manage security methods"
+msgstr "Simamia njia za usalama"
+
 msgid "Account created successfully"
 msgstr "Akaunti imeundwa kikamilifu"
 

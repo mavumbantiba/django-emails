@@ -1,26 +1,89 @@
+{% extends "contributions/base.html" %}
 {% load i18n %}
-{% get_current_language as current_language %}
-<!doctype html>
-<html lang="{{ current_language }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% trans "Your account" %}</title>
-</head>
-<body>
-    <main>
-        <form action="{% url 'set_language' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="next" value="{{ request.get_full_path }}">
-            <input type="hidden" name="language" value="{% if current_language == 'sw' %}en-us{% else %}sw{% endif %}">
-            <button type="submit" aria-label="{% trans 'Switch language' %}">
-                {% if current_language == 'sw' %}English{% else %}Kiswahili{% endif %}
-            </button>
-        </form>
-        <h1>{% trans "Account created successfully" %}</h1>
-        <p>{% trans "You are signed in as" %} {{ request.user.email|default:request.user.username }}.</p>
-        <p><a href="{% url 'home' %}">{% trans "Continue to the home page" %}</a></p>
-        <p><a href="{% url 'accounts:2fa' %}">{% trans "Set up two-factor authentication" %}</a></p>
-    </main>
-</body>
-</html>
+
+{% block title %}{% trans "My account" %}{% endblock %}
+
+{% block content %}
+    <p class="eyebrow">{% trans "Account" %}</p>
+    <h1 class="page-heading">{% trans "My profile" %}</h1>
+    <p class="page-description">{% trans "View your account details and manage your sign-in security." %}</p>
+
+    <section class="welcome-panel card" aria-labelledby="profile-summary-title">
+        <div class="welcome-copy">
+            <p class="eyebrow">{% trans "Signed-in user" %}</p>
+            <h2 id="profile-summary-title">{{ display_name }}</h2>
+            <p>
+                {% if profile_user.email %}
+                    {{ profile_user.email }}
+                {% else %}
+                    {% trans "No email address is set." %}
+                {% endif %}
+            </p>
+        </div>
+        <aside class="welcome-aside">
+            <p class="eyebrow">{% trans "Account type" %}</p>
+            <strong>
+                {% if profile_user.is_superuser %}
+                    {% trans "Administrator" %}
+                {% elif profile_user.is_staff %}
+                    {% trans "Staff account" %}
+                {% else %}
+                    {% trans "Standard account" %}
+                {% endif %}
+            </strong>
+        </aside>
+    </section>
+
+    <section aria-labelledby="account-details-title">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">{% trans "Your information" %}</p>
+                <h2 id="account-details-title">{% trans "Account details" %}</h2>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <tbody>
+                    <tr><th scope="row">{% trans "Username" %}</th><td>{{ profile_user.get_username }}</td></tr>
+                    <tr><th scope="row">{% trans "First name" %}</th><td>{{ profile_user.first_name|default:"—" }}</td></tr>
+                    <tr><th scope="row">{% trans "Last name" %}</th><td>{{ profile_user.last_name|default:"—" }}</td></tr>
+                    <tr><th scope="row">{% trans "Email" %}</th><td>{{ profile_user.email|default:"—" }}</td></tr>
+                    <tr><th scope="row">{% trans "Date joined" %}</th><td>{{ profile_user.date_joined|date:"DATE_FORMAT" }}</td></tr>
+                    <tr><th scope="row">{% trans "Last login" %}</th><td>{{ profile_user.last_login|date:"DATETIME_FORMAT"|default:"—" }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section aria-labelledby="security-title">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">{% trans "Keep your account secure" %}</p>
+                <h2 id="security-title">{% trans "Sign-in and security" %}</h2>
+            </div>
+        </div>
+        <div class="quick-actions">
+            <article class="quick-card card">
+                <h3>{% trans "Email address" %}</h3>
+                <p>{% trans "Manage the email address linked to your account." %}</p>
+                <a href="{% url 'account_email' %}">{% trans "Manage email" %}</a>
+            </article>
+            <article class="quick-card card">
+                <h3>{% trans "Password" %}</h3>
+                <p>{% trans "Update your account password." %}</p>
+                <a href="{% url 'account_change_password' %}">{% trans "Change password" %}</a>
+            </article>
+            <article class="quick-card card">
+                <h3>{% trans "Two-factor authentication" %}</h3>
+                <p>
+                    {% if has_totp %}
+                        {% trans "An authenticator app is connected to your account." %}
+                    {% else %}
+                        {% trans "Connect an authenticator app to protect your account." %}
+                    {% endif %}
+                </p>
+                <a href="{% url 'mfa_index' %}">{% trans "Manage security methods" %}</a>
+            </article>
+        </div>
+    </section>
+{% endblock %}

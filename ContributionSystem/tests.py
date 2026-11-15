@@ -967,6 +967,8 @@ class LanguageSwitchTests(TestCase):
         student_form = self.client.get(reverse("student-create"))
         self.assertContains(student_form, "Jina la kwanza")
         self.assertContains(student_form, "Mwanamke")
+        profile = self.client.get(reverse("profile"))
+        self.assertContains(profile, "Wasifu wangu")
 
         response = self.client.post(
             reverse("set_language"),
@@ -981,3 +983,34 @@ class LanguageSwitchTests(TestCase):
     def test_model_choices_use_the_selected_language(self):
         with translation.override("sw"):
             self.assertEqual(str(Student.Gender.choices[0][1]), "Mwanamke")
+
+
+class UserProfileTests(TestCase):
+    def test_profile_shows_logged_in_users_details_and_security_status(self):
+        user = get_user_model().objects.create_user(
+            username="profile-user",
+            email="profile@example.test",
+            first_name="Amina",
+            last_name="Mwinyi",
+            password="test-password",
+        )
+        login_with_totp(self.client, user)
+
+        response = self.client.get(reverse("profile"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Amina Mwinyi")
+        self.assertContains(response, "profile@example.test")
+        self.assertContains(response, "profile-user")
+        self.assertContains(response, "An authenticator app is connected")
+        self.assertContains(response, reverse("account_email"))
+        self.assertContains(response, reverse("account_change_password"))
+        self.assertContains(response, reverse("mfa_index"))
+
+    def test_profile_requires_login(self):
+        response = self.client.get(reverse("profile"))
+
+        self.assertRedirects(
+            response,
+            f"{reverse('account_login')}?next={reverse('profile')}",
+        )

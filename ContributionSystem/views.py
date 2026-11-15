@@ -1,4 +1,5 @@
 from allauth.account.decorators import reauthentication_required
+from allauth.mfa.models import Authenticator
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models.deletion import ProtectedError
@@ -31,7 +32,20 @@ from .notifications import record_snapshot, send_record_notification
 
 @login_required
 def profile(request):
-    return render(request, 'accounts/profile.html')
+    return render(
+        request,
+        "accounts/profile.html",
+        {
+            "profile_user": request.user,
+            "display_name": (
+                request.user.get_full_name() or request.user.get_username()
+            ),
+            "has_totp": Authenticator.objects.filter(
+                user=request.user,
+                type=Authenticator.Type.TOTP,
+            ).exists(),
+        },
+    )
 
 
 def home(request):
