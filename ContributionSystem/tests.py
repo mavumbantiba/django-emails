@@ -993,6 +993,13 @@ class LanguageSwitchTests(TestCase):
 
 
 class UserProfileTests(TestCase):
+    def test_accounts_namespace_alias_resolves_existing_routes(self):
+        self.assertEqual(reverse("accounts:profile"), reverse("profile"))
+        self.assertEqual(
+            reverse("accounts:account_login"),
+            reverse("account_login"),
+        )
+
     def test_authenticated_homepage_links_to_the_user_profile(self):
         user = get_user_model().objects.create_user(
             username="homepage-profile-user",
