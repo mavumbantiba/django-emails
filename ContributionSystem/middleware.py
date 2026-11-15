@@ -4,6 +4,16 @@ from django.shortcuts import redirect
 from allauth.mfa.models import Authenticator
 
 
+class ResponseSecurityHeadersMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        response.setdefault("Cross-Origin-Resource-Policy", "same-origin")
+        return response
+
+
 class RequireTOTPEnrollmentMiddleware:
     allowed_url_names = {
         "account_confirm_email",
