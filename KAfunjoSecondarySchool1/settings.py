@@ -170,6 +170,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.i18n',
                 'django.contrib.messages.context_processors.messages',
+                'ContributionSystem.context_processors.school_access',
             ],
         },
     },
