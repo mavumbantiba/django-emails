@@ -1,6 +1,7 @@
 from allauth.account.decorators import reauthentication_required
 from allauth.mfa.models import Authenticator
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.db import transaction
 from django.db.models.deletion import ProtectedError
 from django.db.models import Q, Sum
@@ -19,6 +20,7 @@ from .forms import (
     StoreSupplyItemForm,
     StudentForm,
     StoreSupplyReceiptForm,
+    UserProfileForm,
 )
 from .models import (
     Parent,
@@ -46,6 +48,17 @@ def profile(request):
             ).exists(),
         },
     )
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def profile_edit(request):
+    form = UserProfileForm(request.POST or None, instance=request.user)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, _("Your profile has been updated."))
+        return redirect("profile")
+    return render(request, "accounts/profile_edit.html", {"form": form})
 
 
 def home(request):

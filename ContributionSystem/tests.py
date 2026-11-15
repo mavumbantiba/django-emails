@@ -1035,3 +1035,52 @@ class UserProfileTests(TestCase):
             response,
             f"{reverse('account_login')}?next={reverse('profile')}",
         )
+
+    def test_profile_can_update_username_and_names(self):
+        user = get_user_model().objects.create_user(
+            username="profile-edit-user",
+            password="test-password",
+        )
+        login_with_totp(self.client, user)
+
+        response = self.client.post(
+            reverse("profile-edit"),
+            {
+                "username": "updated-profile-user",
+                "first_name": "Amina",
+                "last_name": "Mwinyi",
+            },
+        )
+
+        user.refresh_from_db()
+        self.assertRedirects(response, reverse("profile"))
+        self.assertEqual(user.username, "updated-profile-user")
+        self.assertEqual(user.first_name, "Amina")
+        self.assertEqual(user.last_name, "Mwinyi")
+
+    def test_profile_has_allauth_logout_post_button(self):
+        user = get_user_model().objects.create_user(
+            username="profile-logout-user",
+            password="test-password",
+        )
+        login_with_totp(self.client, user)
+
+        response = self.client.get(reverse("profile"))
+
+        self.assertContains(
+            response,
+            f'action="{reverse("account_logout")}"',
+        )
+        self.assertContains(response, 'name="csrfmiddlewaretoken"')
+
+    def test_allauth_logout_button_signs_the_user_out(self):
+        user = get_user_model().objects.create_user(
+            username="profile-logout-post-user",
+            password="test-password",
+        )
+        login_with_totp(self.client, user)
+
+        response = self.client.post(reverse("account_logout"))
+
+        self.assertIn(response.status_code, (302, 303))
+        self.assertFalse(response.wsgi_request.user.is_authenticated)

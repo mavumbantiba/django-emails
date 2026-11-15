@@ -455,6 +455,27 @@ msgstr "Wasifu wangu"
 msgid "View my profile"
 msgstr "Tazama wasifu wangu"
 
+msgid "Edit profile"
+msgstr "Hariri wasifu"
+
+msgid "Update your username and name. Change your email address through the email settings so it can be verified."
+msgstr "Sasisha jina la mtumiaji na majina yako. Badili anwani ya barua pepe kupitia mipangilio ya barua pepe ili iweze kuthibitishwa."
+
+msgid "Profile information"
+msgstr "Taarifa za wasifu"
+
+msgid "Your email address is managed separately to protect account verification."
+msgstr "Anwani ya barua pepe inasimamiwa kivyake ili kulinda uthibitishaji wa akaunti."
+
+msgid "Save changes"
+msgstr "Hifadhi mabadiliko"
+
+msgid "Your profile has been updated."
+msgstr "Wasifu wako umesasishwa."
+
+msgid "Sign out"
+msgstr "Toka"
+
 msgid "View your account details and manage your sign-in security."
 msgstr "Tazama taarifa za akaunti yako na simamia usalama wa kuingia."
 

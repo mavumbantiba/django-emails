@@ -7,6 +7,13 @@
     <p class="eyebrow">{% trans "Account" %}</p>
     <h1 class="page-heading">{% trans "My profile" %}</h1>
     <p class="page-description">{% trans "View your account details and manage your sign-in security." %}</p>
+    <div class="form-actions">
+        <a class="button button-edit" href="{% url 'profile-edit' %}">{% trans "Edit profile" %}</a>
+        <form method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            <button class="button button-danger" type="submit">{% trans "Sign out" %}</button>
+        </form>
+    </div>
 
     <section class="welcome-panel card" aria-labelledby="profile-summary-title">
         <div class="welcome-copy">
