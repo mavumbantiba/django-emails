@@ -830,7 +830,16 @@ class RecordNotificationTests(TestCase):
             street="Main Road",
         )
 
-    def test_parent_creation_emails_creator_snapshot_with_json_attachment(self):
+    def assert_pdf_attachment(self, notification):
+        filename, attachment, content_type = notification.attachments[0]
+        self.assertTrue(filename.endswith(".pdf"))
+        self.assertEqual(content_type, "application/pdf")
+        self.assertIsInstance(attachment, bytes)
+        self.assertTrue(attachment.startswith(b"%PDF-"))
+        self.assertIn(b"%%EOF", attachment[-32:])
+        return attachment
+
+    def test_parent_creation_emails_creator_snapshot_as_pdf(self):
         response = self.client.post(
             reverse("parent-create"),
             {
@@ -845,10 +854,8 @@ class RecordNotificationTests(TestCase):
         notification = mail.outbox[0]
         self.assertEqual(notification.to, ["creator@example.test"])
         self.assertIn("Parent", notification.body)
-        filename, attachment, content_type = notification.attachments[0]
-        self.assertTrue(filename.endswith(".json"))
-        self.assertEqual(content_type, "application/json")
-        self.assertIn("Baraka Juma", attachment)
+        attachment = self.assert_pdf_attachment(notification)
+        self.assertIn(b"Baraka Juma", attachment)
 
     def test_supply_update_notifies_original_creator_with_before_and_after(self):
         actor = get_user_model().objects.create_user(
@@ -920,7 +927,7 @@ class RecordNotificationTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, ["creator@example.test"])
         self.assertIn("deleted", mail.outbox[0].subject)
-        self.assertIn("25000", mail.outbox[0].attachments[0][1])
+        self.assert_pdf_attachment(mail.outbox[0])
 
     def test_student_deletion_email_includes_cascaded_record_data(self):
         StudentCollection.objects.create(
@@ -940,9 +947,9 @@ class RecordNotificationTests(TestCase):
 
         self.assertRedirects(response, reverse("student-list"))
         self.assertEqual(len(mail.outbox), 1)
-        attachment = mail.outbox[0].attachments[0][1]
-        self.assertIn("School shirt", attachment)
-        self.assertIn("25000", attachment)
+        attachment = self.assert_pdf_attachment(mail.outbox[0])
+        self.assertIn(b"School shirt", attachment)
+        self.assertIn(b"25000", attachment)
 
 
 class LanguageSwitchTests(TestCase):
