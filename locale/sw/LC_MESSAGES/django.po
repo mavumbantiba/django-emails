@@ -1,0 +1,690 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: sw\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Welcome"
+msgstr "Karibu"
+
+msgid "School management portal"
+msgstr "Tovuti ya usimamizi wa shule"
+
+msgid "Welcome to Kafunjo Secondary School"
+msgstr "Karibu Shule ya Sekondari ya Kafunjo"
+
+msgid "Good to see you, %(user_name)s. What would you like to manage today?"
+msgstr "Tunafurahi kukuona, %(user_name)s. Ungependa kusimamia nini leo?"
+
+msgid "Register a student"
+msgstr "Sajili mwanafunzi"
+
+msgid "View student records"
+msgstr "Tazama kumbukumbu za wanafunzi"
+
+msgid "One place to manage student registration, family details, and school contributions."
+msgstr "Sehemu moja ya kusimamia usajili wa wanafunzi, taarifa za familia na michango ya shule."
+
+msgid "Sign in to continue"
+msgstr "Ingia ili kuendelea"
+
+msgid "Kagera · Karagwe"
+msgstr "Kagera · Karagwe"
+
+msgid "Supporting every student"
+msgstr "Kumsaidia kila mwanafunzi"
+
+msgid "Keep student, parent, and contribution records organized in one place."
+msgstr "Hifadhi kumbukumbu za wanafunzi, wazazi na michango kwa mpangilio katika sehemu moja."
+
+msgid "Get started"
+msgstr "Anza hapa"
+
+msgid "Quick actions"
+msgstr "Vitendo vya haraka"
+
+msgid "Student registration"
+msgstr "Usajili wa mwanafunzi"
+
+msgid "Register students and connect each one to a parent."
+msgstr "Sajili wanafunzi na muunganishe kila mmoja na mzazi."
+
+msgid "Open student records"
+msgstr "Fungua kumbukumbu za wanafunzi"
+
+msgid "Parent records"
+msgstr "Kumbukumbu za wazazi"
+
+msgid "Add parent contact details and find linked students."
+msgstr "Ongeza mawasiliano ya mzazi na utafute wanafunzi waliounganishwa naye."
+
+msgid "Open parent records"
+msgstr "Fungua kumbukumbu za wazazi"
+
+msgid "School contributions"
+msgstr "Michango ya shule"
+
+msgid "Record fees collected and supplies issued to students."
+msgstr "Rekodi ada zilizokusanywa na vifaa vilivyotolewa kwa wanafunzi."
+
+msgid "Open collections"
+msgstr "Fungua michango"
+
+msgid "Store supplies"
+msgstr "Vifaa vya stoo"
+
+msgid "Record tools and other supplies received by the school store."
+msgstr "Rekodi zana na vifaa vingine vilivyopokelewa na stoo ya shule."
+
+msgid "Open store records"
+msgstr "Fungua kumbukumbu za stoo"
+
+msgid "Main navigation"
+msgstr "Menyu kuu"
+
+msgid "School management"
+msgstr "Usimamizi wa shule"
+
+msgid "Overview"
+msgstr "Muhtasari"
+
+msgid "Students"
+msgstr "Wanafunzi"
+
+msgid "Parents"
+msgstr "Wazazi"
+
+msgid "Collections"
+msgstr "Michango"
+
+msgid "Switch language"
+msgstr "Badili lugha"
+
+msgid "Dark mode"
+msgstr "Hali ya giza"
+
+msgid "Light mode"
+msgstr "Hali ya mwanga"
+
+msgid "+ Register student"
+msgstr "+ Sajili mwanafunzi"
+
+msgid "My account"
+msgstr "Akaunti yangu"
+
+msgid "Sign in"
+msgstr "Ingia"
+
+msgid "Search student registration and family details."
+msgstr "Tafuta taarifa za usajili wa mwanafunzi na familia."
+
+msgid "Search students"
+msgstr "Tafuta wanafunzi"
+
+msgid "Search name, admission number, parent, or location"
+msgstr "Tafuta jina, namba ya udahili, mzazi au eneo"
+
+msgid "Search"
+msgstr "Tafuta"
+
+msgid "Searching…"
+msgstr "Inatafuta…"
+
+msgid "Register student"
+msgstr "Sajili mwanafunzi"
+
+msgid "Search parent contact records or add a new parent."
+msgstr "Tafuta taarifa za mawasiliano ya wazazi au ongeza mzazi mpya."
+
+msgid "Search parents"
+msgstr "Tafuta wazazi"
+
+msgid "Search name, phone, or email"
+msgstr "Tafuta jina, simu au barua pepe"
+
+msgid "Add parent"
+msgstr "Ongeza mzazi"
+
+msgid "Student collections"
+msgstr "Michango ya wanafunzi"
+
+msgid "Search fees collected and supplies issued."
+msgstr "Tafuta ada zilizokusanywa na vifaa vilivyotolewa."
+
+msgid "Search collections"
+msgstr "Tafuta michango"
+
+msgid "Search student, parent, or item"
+msgstr "Tafuta mwanafunzi, mzazi au bidhaa"
+
+msgid "Record collection"
+msgstr "Rekodi mchango"
+
+msgid "Track tools and supplies received by the school store."
+msgstr "Fuatilia zana na vifaa vilivyopokelewa na stoo ya shule."
+
+msgid "Search store receipts"
+msgstr "Tafuta risiti za stoo"
+
+msgid "Search student, supply, source, or notes"
+msgstr "Tafuta mwanafunzi, kifaa, chanzo au maelezo"
+
+msgid "Record supplies"
+msgstr "Rekodi vifaa"
+
+msgid "Admission number"
+msgstr "Namba ya udahili"
+
+msgid "Student"
+msgstr "Mwanafunzi"
+
+msgid "Class"
+msgstr "Darasa"
+
+msgid "Parent"
+msgstr "Mzazi"
+
+msgid "Phone"
+msgstr "Simu"
+
+msgid "Location"
+msgstr "Eneo"
+
+msgid "Clothing checks"
+msgstr "Ukaguzi wa mavazi"
+
+msgid "Supply history"
+msgstr "Historia ya vifaa"
+
+msgid "Verify clothes"
+msgstr "Thibitisha mavazi"
+
+msgid "View supplies"
+msgstr "Tazama vifaa"
+
+msgid "Delete"
+msgstr "Futa"
+
+msgid "No students match \"%(query)s\"."
+msgstr "Hakuna mwanafunzi anayelingana na \"%(query)s\"."
+
+msgid "No students have been registered."
+msgstr "Hakuna mwanafunzi aliyesajiliwa."
+
+msgid "Name"
+msgstr "Jina"
+
+msgid "Email"
+msgstr "Barua pepe"
+
+msgid "No parents match \"%(query)s\"."
+msgstr "Hakuna mzazi anayelingana na \"%(query)s\"."
+
+msgid "No parents have been added."
+msgstr "Hakuna mzazi aliyeongezwa."
+
+msgid "Date"
+msgstr "Tarehe"
+
+msgid "Category"
+msgstr "Aina"
+
+msgid "Amount collected"
+msgstr "Kiasi kilichokusanywa"
+
+msgid "Quantity issued"
+msgstr "Idadi iliyotolewa"
+
+msgid "Recorded by"
+msgstr "Imerekodiwa na"
+
+msgid "No collections match \"%(query)s\"."
+msgstr "Hakuna mchango unaolingana na \"%(query)s\"."
+
+msgid "No collections have been recorded."
+msgstr "Hakuna michango iliyorekodiwa."
+
+msgid "Date received"
+msgstr "Tarehe iliyopokelewa"
+
+msgid "Item"
+msgstr "Bidhaa"
+
+msgid "Quantity"
+msgstr "Idadi"
+
+msgid "Source"
+msgstr "Chanzo"
+
+msgid "Notes"
+msgstr "Maelezo"
+
+msgid "Actions"
+msgstr "Vitendo"
+
+msgid "Unassigned"
+msgstr "Haijaunganishwa"
+
+msgid "No supply receipts match \"%(query)s\"."
+msgstr "Hakuna risiti ya vifaa inayolingana na \"%(query)s\"."
+
+msgid "No store supplies have been recorded."
+msgstr "Hakuna vifaa vya stoo vilivyorekodiwa."
+
+msgid "Items and quantities"
+msgstr "Bidhaa na idadi"
+
+msgid "Add one row for each item the student brought."
+msgstr "Ongeza mstari mmoja kwa kila bidhaa aliyoleta mwanafunzi."
+
+msgid "Add another item"
+msgstr "Ongeza bidhaa nyingine"
+
+msgid "Remove item"
+msgstr "Ondoa bidhaa"
+
+msgid "Cancel"
+msgstr "Ghairi"
+
+msgid "Second master · Student records"
+msgstr "Makamu wa pili wa mkuu wa shule · Kumbukumbu za wanafunzi"
+
+msgid "Enter the student’s details, parent contact, and home address."
+msgstr "Weka taarifa za mwanafunzi, mawasiliano ya mzazi na anwani ya nyumbani."
+
+msgid "Student details"
+msgstr "Taarifa za mwanafunzi"
+
+msgid "Basic information used for the student’s school record."
+msgstr "Taarifa za msingi za kumbukumbu za mwanafunzi shuleni."
+
+msgid "Parent or guardian"
+msgstr "Mzazi au mlezi"
+
+msgid "Every student must be linked to a parent record."
+msgstr "Kila mwanafunzi lazima aunganishwe na kumbukumbu ya mzazi."
+
+msgid "Add a parent before registering this student"
+msgstr "Ongeza mzazi kabla ya kumsajili mwanafunzi huyu"
+
+msgid "A parent record is required to complete student registration."
+msgstr "Kumbukumbu ya mzazi inahitajika ili kukamilisha usajili wa mwanafunzi."
+
+msgid "Physical address"
+msgstr "Anwani ya makazi"
+
+msgid "Region and district default to Kagera and Karagwe. Update them if needed."
+msgstr "Mkoa na wilaya zimewekwa Kagera na Karagwe kwa chaguo-msingi. Zisahihishe ikihitajika."
+
+msgid "Save student registration"
+msgstr "Hifadhi usajili wa mwanafunzi"
+
+msgid "Clothing verification"
+msgstr "Uthibitishaji wa mavazi"
+
+msgid "Student registration · Clothing check"
+msgstr "Usajili wa mwanafunzi · Ukaguzi wa mavazi"
+
+msgid "Update clothing check"
+msgstr "Sasisha ukaguzi wa mavazi"
+
+msgid "Add clothing to verify"
+msgstr "Ongeza vazi la kuthibitisha"
+
+msgid "Enter each uniform or other allowed clothing item separately."
+msgstr "Weka kila sare au vazi jingine linaloruhusiwa kando."
+
+msgid "Update check"
+msgstr "Sasisha ukaguzi"
+
+msgid "Save clothing check"
+msgstr "Hifadhi ukaguzi wa mavazi"
+
+msgid "Cancel edit"
+msgstr "Ghairi uhariri"
+
+msgid "Finish for now"
+msgstr "Maliza kwa sasa"
+
+msgid "Registration checklist"
+msgstr "Orodha ya ukaguzi wa usajili"
+
+msgid "Clothing records"
+msgstr "Kumbukumbu za mavazi"
+
+msgid "Type"
+msgstr "Aina"
+
+msgid "Status"
+msgstr "Hali"
+
+msgid "Verified by"
+msgstr "Imethibitishwa na"
+
+msgid "Verified"
+msgstr "Imethibitishwa"
+
+msgid "Not verified"
+msgstr "Haijathibitishwa"
+
+msgid "Edit"
+msgstr "Hariri"
+
+msgid "No clothing items have been checked yet. You can finish now and add them later."
+msgstr "Bado hakuna mavazi yaliyokaguliwa. Unaweza kumaliza sasa na kuyaongeza baadaye."
+
+msgid "Confirm record deletion"
+msgstr "Thibitisha kufuta kumbukumbu"
+
+msgid "Record management · Delete confirmation"
+msgstr "Usimamizi wa kumbukumbu · Uthibitisho wa kufuta"
+
+msgid "Confirm deletion"
+msgstr "Thibitisha kufuta"
+
+msgid "Selected record"
+msgstr "Kumbukumbu iliyochaguliwa"
+
+msgid "Deletion is blocked"
+msgstr "Ufutaji umezuiwa"
+
+msgid "Review linked records"
+msgstr "Kagua kumbukumbu zilizounganishwa"
+
+msgid "Go back"
+msgstr "Rudi nyuma"
+
+msgid "This action cannot be undone."
+msgstr "Kitendo hiki hakiwezi kutenduliwa."
+
+msgid "Deleting this record permanently removes it from the school records."
+msgstr "Kufuta kumbukumbu hii kutaitoa kabisa kwenye kumbukumbu za shule."
+
+msgid "Delete permanently"
+msgstr "Futa kabisa"
+
+msgid "Student supply history"
+msgstr "Historia ya vifaa vya mwanafunzi"
+
+msgid "Storekeeper · Individual student record"
+msgstr "Mtunza stoo · Kumbukumbu ya mwanafunzi mmoja"
+
+msgid "Each delivery stays as its own dated record. Totals include all recorded deliveries."
+msgstr "Kila makabidhiano huhifadhiwa kama kumbukumbu yake yenye tarehe. Jumla inajumuisha makabidhiano yote yaliyorekodiwa."
+
+msgid "Record more items"
+msgstr "Rekodi bidhaa zaidi"
+
+msgid "Cumulative record"
+msgstr "Kumbukumbu ya jumla"
+
+msgid "Total received by item"
+msgstr "Jumla iliyopokelewa kwa kila bidhaa"
+
+msgid "Total quantity received"
+msgstr "Jumla ya idadi iliyopokelewa"
+
+msgid "No supply items have been recorded for this student yet."
+msgstr "Bado hakuna vifaa vilivyorekodiwa kwa mwanafunzi huyu."
+
+msgid "Individual deliveries"
+msgstr "Makabidhiano ya kila mara"
+
+msgid "Delivery history"
+msgstr "Historia ya makabidhiano"
+
+msgid "Every new delivery for this student will appear here separately."
+msgstr "Kila makabidhiano mapya ya mwanafunzi huyu yataonekana hapa kivyake."
+
+msgid "Back to students"
+msgstr "Rudi kwa wanafunzi"
+
+msgid "All supply records"
+msgstr "Kumbukumbu zote za vifaa"
+
+msgid "Your account"
+msgstr "Akaunti yako"
+
+msgid "Account created successfully"
+msgstr "Akaunti imeundwa kikamilifu"
+
+msgid "You are signed in as"
+msgstr "Umeingia kama"
+
+msgid "Continue to the home page"
+msgstr "Endelea kwenye ukurasa wa mwanzo"
+
+msgid "Set up two-factor authentication"
+msgstr "Sanidi uthibitishaji wa hatua mbili"
+
+msgid "Change Email"
+msgstr "Badili barua pepe"
+
+msgid "Change Password"
+msgstr "Badili nenosiri"
+
+msgid "Account Connections"
+msgstr "Miunganisho ya akaunti"
+
+msgid "Two-Factor Authentication"
+msgstr "Uthibitishaji wa hatua mbili"
+
+msgid "Sessions"
+msgstr "Vipindi vya kuingia"
+
+msgid "Sign Out"
+msgstr "Toka"
+
+msgid "Account settings"
+msgstr "Mipangilio ya akaunti"
+
+msgid "The record change was completed, but no email was sent because the original creator has no available email address."
+msgstr "Mabadiliko ya kumbukumbu yamekamilika, lakini barua pepe haikutumwa kwa sababu mtengenezaji wa awali hana anwani ya barua pepe inayopatikana."
+
+msgid "The record change was completed, but its email notification could not be sent. Check the email server settings and try again."
+msgstr "Mabadiliko ya kumbukumbu yamekamilika, lakini taarifa kwa barua pepe haikuweza kutumwa. Kagua mipangilio ya seva ya barua pepe na ujaribu tena."
+
+msgid "The record change was completed, but its email notification was not accepted by the email server."
+msgstr "Mabadiliko ya kumbukumbu yamekamilika, lakini seva ya barua pepe haikukubali taarifa hiyo."
+
+msgid "This parent is linked to %(count)s student record(s). Remove or reassign those students before deleting this parent."
+msgstr "Mzazi huyu ameunganishwa na kumbukumbu %(count)s za wanafunzi. Ondoa au unganisha upya wanafunzi hao kabla ya kumfuta mzazi huyu."
+
+msgid "This record is now linked to other records and cannot be deleted. Review or remove the linked records first."
+msgstr "Kumbukumbu hii sasa imeunganishwa na kumbukumbu nyingine na haiwezi kufutwa. Kagua au ondoa kumbukumbu zilizounganishwa kwanza."
+
+msgid "School records · Parent information"
+msgstr "Kumbukumbu za shule · Taarifa za mzazi"
+
+msgid "Add a parent"
+msgstr "Ongeza mzazi"
+
+msgid "Save a parent or guardian’s contact details for student registration."
+msgstr "Hifadhi mawasiliano ya mzazi au mlezi kwa ajili ya usajili wa mwanafunzi."
+
+msgid "Parent contact details"
+msgstr "Mawasiliano ya mzazi"
+
+msgid "Enter a name and a phone number. Email is optional."
+msgstr "Weka jina na namba ya simu. Barua pepe si lazima."
+
+msgid "Save parent"
+msgstr "Hifadhi mzazi"
+
+msgid "Deleting this student will also permanently delete %(collections)s collection record(s) and %(clothing)s clothing check(s)."
+msgstr "Kumfuta mwanafunzi huyu kutafuta kabisa kumbukumbu %(collections)s za michango na ukaguzi %(clothing)s wa mavazi."
+
+msgid "This student has %(count)s linked supply record(s). Delete those supply records first to preserve the relationship history."
+msgstr "Mwanafunzi huyu ana kumbukumbu %(count)s za vifaa zilizounganishwa. Futa kumbukumbu hizo za vifaa kwanza ili kuhifadhi historia ya uhusiano."
+
+msgid "School records · Student contributions"
+msgstr "Kumbukumbu za shule · Michango ya mwanafunzi"
+
+msgid "Record a collection"
+msgstr "Rekodi mchango"
+
+msgid "Record a student payment, an item issued, or both."
+msgstr "Rekodi malipo ya mwanafunzi, bidhaa iliyotolewa au vyote viwili."
+
+msgid "Collection details"
+msgstr "Taarifa za mchango"
+
+msgid "Select a student and enter the amount collected or quantity issued."
+msgstr "Chagua mwanafunzi na uweke kiasi kilichokusanywa au idadi iliyotolewa."
+
+msgid "Save collection"
+msgstr "Hifadhi mchango"
+
+msgid "Register a student first"
+msgstr "Sajili mwanafunzi kwanza"
+
+msgid "A collection must be linked to a student record."
+msgstr "Mchango lazima uunganishwe na kumbukumbu ya mwanafunzi."
+
+msgid "%(item)s (quantity %(quantity)s) for %(student)s"
+msgstr "%(item)s (idadi %(quantity)s) kwa %(student)s"
+
+msgid "%(category)s: %(item)s for %(student)s"
+msgstr "%(category)s: %(item)s kwa %(student)s"
+
+msgid "Storekeeper · Supplies"
+msgstr "Mtunza stoo · Vifaa"
+
+msgid "Edit supply receipt"
+msgstr "Hariri risiti ya vifaa"
+
+msgid "Record supplies collected"
+msgstr "Rekodi vifaa vilivyopokelewa"
+
+msgid "Update the student and details for this receipt."
+msgstr "Sasisha mwanafunzi na taarifa za risiti hii."
+
+msgid "Record tools and other supplies received for a student."
+msgstr "Rekodi zana na vifaa vingine vilivyopokelewa kwa ajili ya mwanafunzi."
+
+msgid "Supply receipt"
+msgstr "Risiti ya vifaa"
+
+msgid "Select the student, then enter each item and its quantity."
+msgstr "Chagua mwanafunzi, kisha weka kila bidhaa na idadi yake."
+
+msgid "Update supply receipt"
+msgstr "Sasisha risiti ya vifaa"
+
+msgid "Save supply items"
+msgstr "Hifadhi vifaa"
+
+msgid "Every supply receipt must be linked to a student."
+msgstr "Kila risiti ya vifaa lazima iunganishwe na mwanafunzi."
+
+msgid "Female"
+msgstr "Mwanamke"
+
+msgid "Male"
+msgstr "Mwanaume"
+
+msgid "Other"
+msgstr "Nyingine"
+
+msgid "Academic fee"
+msgstr "Ada ya kitaaluma"
+
+msgid "A4 ream"
+msgstr "Ream ya karatasi za A4"
+
+msgid "T-shirt"
+msgstr "Fulana"
+
+msgid "School guard fee"
+msgstr "Ada ya mlinzi wa shule"
+
+msgid "Necktie"
+msgstr "Tai"
+
+msgid "Logo"
+msgstr "Nembo"
+
+msgid "Table"
+msgstr "Meza"
+
+msgid "Chair"
+msgstr "Kiti"
+
+msgid "Hoe"
+msgstr "Jembe"
+
+msgid "Machete"
+msgstr "Panga"
+
+msgid "Toilet paper"
+msgstr "Karatasi ya chooni"
+
+msgid "Broom"
+msgstr "Ufagio"
+
+msgid "Jerrycan"
+msgstr "Dumu"
+
+msgid "Sickle"
+msgstr "Mundu"
+
+msgid "Mattock"
+msgstr "Jembe la meno"
+
+msgid "Forked hoe"
+msgstr "Jembe la uma"
+
+msgid "School uniform"
+msgstr "Sare ya shule"
+
+msgid "Other allowed clothing"
+msgstr "Vazi jingine linaloruhusiwa"
+
+msgid "Full name"
+msgstr "Jina kamili"
+
+msgid "Phone number"
+msgstr "Namba ya simu"
+
+msgid "First name"
+msgstr "Jina la kwanza"
+
+msgid "Middle name"
+msgstr "Jina la kati"
+
+msgid "Last name"
+msgstr "Jina la mwisho"
+
+msgid "Gender"
+msgstr "Jinsia"
+
+msgid "Date of birth"
+msgstr "Tarehe ya kuzaliwa"
+
+msgid "Class level"
+msgstr "Kidato"
+
+msgid "Region"
+msgstr "Mkoa"
+
+msgid "District"
+msgstr "Wilaya"
+
+msgid "Ward"
+msgstr "Kata"
+
+msgid "Village"
+msgstr "Kijiji"
+
+msgid "Street"
+msgstr "Mtaa"
+
+msgid "Quantity collected"
+msgstr "Idadi iliyopokelewa"
+
+msgid "Clothing item"
+msgstr "Vazi"
+
+msgid "Is verified"
+msgstr "Imethibitishwa"

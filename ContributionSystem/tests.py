@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.utils import translation
 
 from .models import (
     Parent,
@@ -942,3 +943,41 @@ class RecordNotificationTests(TestCase):
         attachment = mail.outbox[0].attachments[0][1]
         self.assertIn("School shirt", attachment)
         self.assertIn("25000", attachment)
+
+
+class LanguageSwitchTests(TestCase):
+    def setUp(self):
+        user = get_user_model().objects.create_user(
+            username="bilingual-staff",
+            password="test-password",
+        )
+        login_with_totp(self.client, user)
+
+    def test_language_switch_translates_home_and_can_switch_back(self):
+        response = self.client.post(
+            reverse("set_language"),
+            {"language": "sw", "next": reverse("home")},
+        )
+
+        self.assertRedirects(response, reverse("home"))
+        swahili_home = self.client.get(reverse("home"))
+        self.assertContains(swahili_home, 'lang="sw"')
+        self.assertContains(swahili_home, "Karibu Shule ya Sekondari ya Kafunjo")
+        self.assertContains(swahili_home, "Wanafunzi")
+        student_form = self.client.get(reverse("student-create"))
+        self.assertContains(student_form, "Jina la kwanza")
+        self.assertContains(student_form, "Mwanamke")
+
+        response = self.client.post(
+            reverse("set_language"),
+            {"language": "en-us", "next": reverse("home")},
+        )
+
+        self.assertRedirects(response, reverse("home"))
+        english_home = self.client.get(reverse("home"))
+        self.assertContains(english_home, 'lang="en-us"')
+        self.assertContains(english_home, "Welcome to Kafunjo Secondary School")
+
+    def test_model_choices_use_the_selected_language(self):
+        with translation.override("sw"):
+            self.assertEqual(str(Student.Gender.choices[0][1]), "Mwanamke")

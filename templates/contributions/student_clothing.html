@@ -1,10 +1,11 @@
 {% extends "contributions/base.html" %}
+{% load i18n %}
 
-{% block title %}Clothing verification{% endblock %}
+{% block title %}{% trans "Clothing verification" %}{% endblock %}
 
 {% block content %}
-    <p class="eyebrow">Student registration · Clothing check</p>
-    <h1 class="page-heading">Clothing verification</h1>
+    <p class="eyebrow">{% trans "Student registration · Clothing check" %}</p>
+    <h1 class="page-heading">{% trans "Clothing verification" %}</h1>
     <p class="page-description">
         {{ student.admission_number }} · {{ student.first_name }} {{ student.last_name }}
     </p>
@@ -14,9 +15,9 @@
             <span class="form-section-number" aria-hidden="true">01</span>
             <div>
                 <h2 id="clothing-check-title">
-                    {% if verification %}Update clothing check{% else %}Add clothing to verify{% endif %}
+                    {% if verification %}{% trans "Update clothing check" %}{% else %}{% trans "Add clothing to verify" %}{% endif %}
                 </h2>
-                <p>Enter each uniform or other allowed clothing item separately.</p>
+                <p>{% trans "Enter each uniform or other allowed clothing item separately." %}</p>
             </div>
         </div>
         <form class="registration-form" method="post">
@@ -32,12 +33,12 @@
             </div>
             <div class="form-actions">
                 <button type="submit">
-                    {% if verification %}Update check{% else %}Save clothing check{% endif %}
+                    {% if verification %}{% trans "Update check" %}{% else %}{% trans "Save clothing check" %}{% endif %}
                 </button>
                 {% if verification %}
-                    <a class="button button-cancel" href="{% url 'student-clothing' student.pk %}">Cancel edit</a>
+                    <a class="button button-cancel" href="{% url 'student-clothing' student.pk %}">{% trans "Cancel edit" %}</a>
                 {% else %}
-                    <a class="button" href="{% url 'student-list' %}">Finish for now</a>
+                    <a class="button" href="{% url 'student-list' %}">{% trans "Finish for now" %}</a>
                 {% endif %}
             </div>
         </form>
@@ -46,28 +47,28 @@
     <section aria-labelledby="existing-checks-title">
         <div class="section-heading">
             <div>
-                <p class="eyebrow">Registration checklist</p>
-                <h2 id="existing-checks-title">Clothing records</h2>
+                <p class="eyebrow">{% trans "Registration checklist" %}</p>
+                <h2 id="existing-checks-title">{% trans "Clothing records" %}</h2>
             </div>
         </div>
         {% if verifications %}
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr><th>Type</th><th>Item</th><th>Status</th><th>Verified by</th><th>Notes</th><th></th></tr>
+                        <tr><th>{% trans "Type" %}</th><th>{% trans "Item" %}</th><th>{% trans "Status" %}</th><th>{% trans "Verified by" %}</th><th>{% trans "Notes" %}</th><th></th></tr>
                     </thead>
                     <tbody>
                         {% for check in verifications %}
                             <tr>
                                 <td>{{ check.get_category_display }}</td>
                                 <td>{{ check.clothing_item }}</td>
-                                <td>{% if check.is_verified %}Verified{% else %}Not verified{% endif %}</td>
+                                <td>{% if check.is_verified %}{% trans "Verified" %}{% else %}{% trans "Not verified" %}{% endif %}</td>
                                 <td>{{ check.verified_by|default:"—" }}</td>
                                 <td>{{ check.notes|default:"—" }}</td>
                                 <td>
-                                    <a href="{% url 'student-clothing-edit' student.pk check.pk %}">Edit</a>
+                                    <a href="{% url 'student-clothing-edit' student.pk check.pk %}">{% trans "Edit" %}</a>
                                     <a class="button button-danger button-small"
-                                       href="{% url 'clothing-verification-delete' student.pk check.pk %}">Delete</a>
+                                       href="{% url 'clothing-verification-delete' student.pk check.pk %}">{% trans "Delete" %}</a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -75,7 +76,7 @@
                 </table>
             </div>
         {% else %}
-            <p>No clothing items have been checked yet. You can finish now and add them later.</p>
+            <p>{% trans "No clothing items have been checked yet. You can finish now and add them later." %}</p>
         {% endif %}
     </section>
 {% endblock %}

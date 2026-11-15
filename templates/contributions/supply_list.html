@@ -1,10 +1,11 @@
 {% extends "contributions/base.html" %}
+{% load i18n %}
 
-{% block title %}Store supplies{% endblock %}
+{% block title %}{% trans "Store supplies" %}{% endblock %}
 
 {% block content %}
-    <h1 class="page-heading">Store supplies</h1>
-    <p class="page-description">Track tools and supplies received by the school store.</p>
+    <h1 class="page-heading">{% trans "Store supplies" %}</h1>
+    <p class="page-description">{% trans "Track tools and supplies received by the school store." %}</p>
     <div class="data-toolbar">
         <form class="search-form" method="get" action="{% url 'supply-list' %}"
               hx-get="{% url 'supply-list' %}"
@@ -13,12 +14,12 @@
               hx-swap="innerHTML"
               hx-indicator="#supply-search-status"
               hx-sync="this:replace">
-            <label class="visually-hidden" for="supply-search">Search store receipts</label>
-            <input id="supply-search" type="search" name="q" value="{{ query }}" placeholder="Search student, supply, source, or notes">
-            <button type="submit">Search</button>
-            <span id="supply-search-status" class="search-status htmx-indicator" role="status">Searching…</span>
+            <label class="visually-hidden" for="supply-search">{% trans "Search store receipts" %}</label>
+            <input id="supply-search" type="search" name="q" value="{{ query }}" placeholder="{% trans 'Search student, supply, source, or notes' %}">
+            <button type="submit">{% trans "Search" %}</button>
+            <span id="supply-search-status" class="search-status htmx-indicator" role="status">{% trans "Searching…" %}</span>
         </form>
-        <a class="button" href="{% url 'supply-create' %}">Record supplies</a>
+        <a class="button" href="{% url 'supply-create' %}">{% trans "Record supplies" %}</a>
     </div>
     <div id="supply-results" aria-live="polite">
         {% include "contributions/partials/supply_results.html" %}

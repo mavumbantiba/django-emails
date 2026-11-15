@@ -1,6 +1,7 @@
 {% extends "contributions/base.html" %}
+{% load i18n %}
 
-{% block title %}Confirm record deletion{% endblock %}
+{% block title %}{% trans "Confirm record deletion" %}{% endblock %}
 
 {% block content %}
     <div class="delete-page">
@@ -8,40 +9,40 @@
             <div class="delete-card-heading">
                 <span class="delete-icon" aria-hidden="true">!</span>
                 <div>
-                    <p class="eyebrow">Record management · Delete confirmation</p>
-                    <h1 id="delete-title" class="page-heading">Confirm deletion</h1>
+                    <p class="eyebrow">{% trans "Record management · Delete confirmation" %}</p>
+                    <h1 id="delete-title" class="page-heading">{% trans "Confirm deletion" %}</h1>
                 </div>
             </div>
 
             <div class="delete-record-summary">
-                <span>Selected record</span>
+                <span>{% trans "Selected record" %}</span>
                 <strong>{{ record_title }}</strong>
             </div>
 
             {% if blocked_message %}
                 <div class="delete-warning delete-blocked" role="alert">
-                    <strong>Deletion is blocked</strong>
+                    <strong>{% trans "Deletion is blocked" %}</strong>
                     <p>{{ blocked_message }}</p>
                     {% if blocked_link %}
-                        <a class="button" href="{{ blocked_link }}">Review linked records</a>
+                        <a class="button" href="{{ blocked_link }}">{% trans "Review linked records" %}</a>
                     {% endif %}
                 </div>
                 <div class="delete-card-actions">
-                    <a class="button button-cancel" href="{{ return_url }}">Go back</a>
+                    <a class="button button-cancel" href="{{ return_url }}">{% trans "Go back" %}</a>
                 </div>
             {% else %}
                 <div class="delete-warning" role="alert">
-                    <strong>This action cannot be undone.</strong>
-                    <p>Deleting this record permanently removes it from the school records.</p>
+                    <strong>{% trans "This action cannot be undone." %}</strong>
+                    <p>{% trans "Deleting this record permanently removes it from the school records." %}</p>
                     {% if cascade_warning %}<p>{{ cascade_warning }}</p>{% endif %}
                 </div>
                 <form class="delete-confirmation-form" method="post">
                     {% csrf_token %}
                     <div class="delete-card-actions">
                         <button class="button button-delete-confirm" type="submit">
-                            Delete permanently
+                            {% trans "Delete permanently" %}
                         </button>
-                        <a class="button button-cancel" href="{{ return_url }}">Cancel</a>
+                        <a class="button button-cancel" href="{{ return_url }}">{% trans "Cancel" %}</a>
                     </div>
                 </form>
             {% endif %}

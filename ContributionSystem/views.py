@@ -7,6 +7,7 @@ from django.forms import formset_factory
 from django.shortcuts import get_object_or_404, redirect, render, resolve_url
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views.decorators.vary import vary_on_headers
 from django.views.decorators.http import require_http_methods
 
@@ -68,8 +69,10 @@ def _confirm_record_deletion(
                 record.delete()
         except ProtectedError:
             context["blocked_message"] = (
-                "This record is now linked to other records and cannot be deleted. "
-                "Review or remove the linked records first."
+                _(
+                    "This record is now linked to other records and cannot be deleted. "
+                    "Review or remove the linked records first."
+                )
             )
             context["blocked_link"] = blocked_link
             return render(
@@ -110,8 +113,9 @@ def parent_delete(request, parent_id):
     parent = get_object_or_404(Parent, pk=parent_id)
     student_count = parent.students.count()
     blocked_message = (
-        f"This parent is linked to {student_count} student record(s). "
-        "Remove or reassign those students before deleting this parent."
+        _("This parent is linked to %(count)s student record(s). "
+          "Remove or reassign those students before deleting this parent.")
+        % {"count": student_count}
         if student_count
         else ""
     )
@@ -153,12 +157,12 @@ def parent_create(request):
         "contributions/form.html",
         {
             "form": form,
-            "eyebrow": "School records · Parent information",
-            "title": "Add a parent",
-            "description": "Save a parent or guardian’s contact details for student registration.",
-            "section_title": "Parent contact details",
-            "section_description": "Enter a name and a phone number. Email is optional.",
-            "button_text": "Save parent",
+            "eyebrow": _("School records · Parent information"),
+            "title": _("Add a parent"),
+            "description": _("Save a parent or guardian’s contact details for student registration."),
+            "section_title": _("Parent contact details"),
+            "section_description": _("Enter a name and a phone number. Email is optional."),
+            "button_text": _("Save parent"),
             "cancel_url": "parent-list",
             "can_save": True,
         },
@@ -204,12 +208,14 @@ def student_delete(request, student_id):
     cascade_warning = ""
     if collection_count or clothing_count:
         cascade_warning = (
-            f"Deleting this student will also permanently delete {collection_count} "
-            f"collection record(s) and {clothing_count} clothing check(s)."
+            _("Deleting this student will also permanently delete %(collections)s "
+              "collection record(s) and %(clothing)s clothing check(s).")
+            % {"collections": collection_count, "clothing": clothing_count}
         )
     blocked_message = (
-        f"This student has {receipt_count} linked supply record(s). Delete those "
-        "supply records first to preserve the relationship history."
+        _("This student has %(count)s linked supply record(s). Delete those "
+          "supply records first to preserve the relationship history.")
+        % {"count": receipt_count}
         if receipt_count
         else ""
     )
@@ -320,17 +326,17 @@ def collection_create(request):
         "contributions/form.html",
         {
             "form": form,
-            "eyebrow": "School records · Student contributions",
-            "title": "Record a collection",
-            "description": "Record a student payment, an item issued, or both.",
-            "section_title": "Collection details",
-            "section_description": "Select a student and enter the amount collected or quantity issued.",
-            "button_text": "Save collection",
+            "eyebrow": _("School records · Student contributions"),
+            "title": _("Record a collection"),
+            "description": _("Record a student payment, an item issued, or both."),
+            "section_title": _("Collection details"),
+            "section_description": _("Select a student and enter the amount collected or quantity issued."),
+            "button_text": _("Save collection"),
             "cancel_url": "collection-list",
             "can_save": Student.objects.exists(),
-            "prerequisite_title": "Register a student first",
-            "prerequisite_description": "A collection must be linked to a student record.",
-            "prerequisite_action": "Register student",
+            "prerequisite_title": _("Register a student first"),
+            "prerequisite_description": _("A collection must be linked to a student record."),
+            "prerequisite_action": _("Register student"),
             "prerequisite_url": "student-create",
         },
     )
@@ -398,8 +404,12 @@ def supply_delete(request, receipt_id):
     )
     student = receipt.student or "Unassigned"
     record_title = (
-        f"{receipt.get_item_display()} (quantity {receipt.quantity_collected}) "
-        f"for {student}"
+        _("%(item)s (quantity %(quantity)s) for %(student)s")
+        % {
+            "item": receipt.get_item_display(),
+            "quantity": receipt.quantity_collected,
+            "student": student,
+        }
     )
     return _confirm_record_deletion(
         request,
@@ -456,8 +466,12 @@ def clothing_verification_delete(request, student_id, verification_id):
         student_id=student_id,
     )
     record_title = (
-        f"{verification.get_category_display()}: {verification.clothing_item} "
-        f"for {verification.student}"
+        _("%(category)s: %(item)s for %(student)s")
+        % {
+            "category": verification.get_category_display(),
+            "item": verification.clothing_item,
+            "student": verification.student,
+        }
     )
     return _confirm_record_deletion(
         request,
@@ -577,23 +591,23 @@ def supply_create(request, receipt_id=None):
             "form": form,
             "supply_item_formset": item_formset,
             "editing_supply": receipt is not None,
-            "eyebrow": "Storekeeper · Supplies",
-            "title": "Edit supply receipt" if receipt else "Record supplies collected",
+            "eyebrow": _("Storekeeper · Supplies"),
+            "title": _("Edit supply receipt") if receipt else _("Record supplies collected"),
             "description": (
-                "Update the student and details for this receipt."
+                _("Update the student and details for this receipt.")
                 if receipt
-                else "Record tools and other supplies received for a student."
+                else _("Record tools and other supplies received for a student.")
             ),
-            "section_title": "Supply receipt",
+            "section_title": _("Supply receipt"),
             "section_description": (
-                "Select the student, then enter each item and its quantity."
+                _("Select the student, then enter each item and its quantity.")
             ),
-            "button_text": "Update supply receipt" if receipt else "Save supply items",
+            "button_text": _("Update supply receipt") if receipt else _("Save supply items"),
             "cancel_url": "supply-list",
             "can_save": Student.objects.exists(),
-            "prerequisite_title": "Register a student first",
-            "prerequisite_description": "Every supply receipt must be linked to a student.",
-            "prerequisite_action": "Register student",
+            "prerequisite_title": _("Register a student first"),
+            "prerequisite_description": _("Every supply receipt must be linked to a student."),
+            "prerequisite_action": _("Register student"),
             "prerequisite_url": "student-create",
         },
     )

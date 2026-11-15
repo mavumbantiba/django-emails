@@ -1,6 +1,7 @@
 {% load i18n static %}
+{% get_current_language as current_language %}
 <!doctype html>
-<html lang="en">
+<html lang="{{ current_language }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -150,6 +151,26 @@
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .language-switch {
+            display: flex;
+            margin: 0;
+        }
+
+        .language-switch button {
+            min-height: 40px;
+            padding: 0 11px;
+            border: 1px solid rgba(255, 255, 255, 0.34);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.96);
+            cursor: pointer;
+            font: 600 13px "Segoe UI", Arial, sans-serif;
+        }
+
+        .language-switch button:hover {
+            background: rgba(255, 255, 255, 0.14);
         }
 
         .main-nav a,
@@ -383,21 +404,31 @@
                 <span class="brand-mark" aria-hidden="true">KS</span>
                 <span>
                     <span class="brand-name">Kafunjo Secondary School</span>
-                    <span class="brand-caption">School management</span>
+                    <span class="brand-caption">{% trans "School management" %}</span>
                 </span>
             </a>
-            <nav class="main-nav" aria-label="Main navigation">
-                <a href="/">Overview</a>
-                <a href="/students/">Students</a>
-                <a href="/parents/">Parents</a>
-                <a href="/collections/">Collections</a>
+            <nav class="main-nav" aria-label="{% trans 'Main navigation' %}">
+                <a href="/">{% trans "Overview" %}</a>
+                <a href="/students/">{% trans "Students" %}</a>
+                <a href="/parents/">{% trans "Parents" %}</a>
+                <a href="/collections/">{% trans "Collections" %}</a>
             </nav>
             <div class="header-actions">
-                <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false">Dark mode</button>
+                <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+                        data-light-label="{% trans 'Light mode' %}"
+                        data-dark-label="{% trans 'Dark mode' %}">{% trans "Dark mode" %}</button>
+                <form class="language-switch" action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <input type="hidden" name="language" value="{% if current_language == 'sw' %}en-us{% else %}sw{% endif %}">
+                    <button type="submit" aria-label="{% trans 'Switch language' %}">
+                        {% if current_language == 'sw' %}English{% else %}Kiswahili{% endif %}
+                    </button>
+                </form>
                 {% if user.is_authenticated %}
-                    <a class="header-link" href="{% url 'profile' %}">My account</a>
+                    <a class="header-link" href="{% url 'profile' %}">{% trans "My account" %}</a>
                 {% else %}
-                    <a class="header-link" href="{% url 'account_login' %}">Sign in</a>
+                    <a class="header-link" href="{% url 'account_login' %}">{% trans "Sign in" %}</a>
                 {% endif %}
             </div>
         </div>

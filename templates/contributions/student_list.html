@@ -1,10 +1,11 @@
 {% extends "contributions/base.html" %}
+{% load i18n %}
 
-{% block title %}Students{% endblock %}
+{% block title %}{% trans "Students" %}{% endblock %}
 
 {% block content %}
-    <h1 class="page-heading">Students</h1>
-    <p class="page-description">Search student registration and family details.</p>
+    <h1 class="page-heading">{% trans "Students" %}</h1>
+    <p class="page-description">{% trans "Search student registration and family details." %}</p>
     <div class="data-toolbar">
         <form class="search-form" method="get" action="{% url 'student-list' %}"
               hx-get="{% url 'student-list' %}"
@@ -13,12 +14,12 @@
               hx-swap="innerHTML"
               hx-indicator="#student-search-status"
               hx-sync="this:replace">
-            <label class="visually-hidden" for="student-search">Search students</label>
-            <input id="student-search" type="search" name="q" value="{{ query }}" placeholder="Search name, admission number, parent, or location">
-            <button type="submit">Search</button>
-            <span id="student-search-status" class="search-status htmx-indicator" role="status">Searching…</span>
+            <label class="visually-hidden" for="student-search">{% trans "Search students" %}</label>
+            <input id="student-search" type="search" name="q" value="{{ query }}" placeholder="{% trans 'Search name, admission number, parent, or location' %}">
+            <button type="submit">{% trans "Search" %}</button>
+            <span id="student-search-status" class="search-status htmx-indicator" role="status">{% trans "Searching…" %}</span>
         </form>
-        <a class="button" href="{% url 'student-create' %}">Register student</a>
+        <a class="button" href="{% url 'student-create' %}">{% trans "Register student" %}</a>
     </div>
     <div id="student-results" aria-live="polite">
         {% include "contributions/partials/student_results.html" %}

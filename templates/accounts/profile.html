@@ -1,16 +1,26 @@
+{% load i18n %}
+{% get_current_language as current_language %}
 <!doctype html>
-<html lang="en">
+<html lang="{{ current_language }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Your account</title>
+    <title>{% trans "Your account" %}</title>
 </head>
 <body>
     <main>
-        <h1>Account created successfully</h1>
-        <p>You are signed in as {{ request.user.email|default:request.user.username }}.</p>
-        <p><a href="{% url 'home' %}">Continue to the home page</a></p>
-        <p><a href="{% url 'accounts:2fa' %}">Set up two-factor authentication</a></p>
+        <form action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <input type="hidden" name="language" value="{% if current_language == 'sw' %}en-us{% else %}sw{% endif %}">
+            <button type="submit" aria-label="{% trans 'Switch language' %}">
+                {% if current_language == 'sw' %}English{% else %}Kiswahili{% endif %}
+            </button>
+        </form>
+        <h1>{% trans "Account created successfully" %}</h1>
+        <p>{% trans "You are signed in as" %} {{ request.user.email|default:request.user.username }}.</p>
+        <p><a href="{% url 'home' %}">{% trans "Continue to the home page" %}</a></p>
+        <p><a href="{% url 'accounts:2fa' %}">{% trans "Set up two-factor authentication" %}</a></p>
     </main>
 </body>
 </html>

@@ -1,8 +1,9 @@
+{% load i18n %}
 {% if students %}
     <div class="table-wrap">
         <table>
             <thead>
-                <tr><th>Admission number</th><th>Student</th><th>Class</th><th>Parent</th><th>Phone</th><th>Location</th><th>Clothing checks</th><th>Supply history</th><th></th></tr>
+                <tr><th>{% trans "Admission number" %}</th><th>{% trans "Student" %}</th><th>{% trans "Class" %}</th><th>{% trans "Parent" %}</th><th>{% trans "Phone" %}</th><th>{% trans "Location" %}</th><th>{% trans "Clothing checks" %}</th><th>{% trans "Supply history" %}</th><th></th></tr>
             </thead>
             <tbody>
                 {% for student in students %}
@@ -13,11 +14,11 @@
                         <td>{{ student.parent.full_name }}</td>
                         <td>{{ student.parent.phone_number }}</td>
                         <td>{{ student.region }}, {{ student.district }}, {{ student.ward }}, {{ student.village }}, {{ student.street }}</td>
-                        <td><a class="button" href="{% url 'student-clothing' student.pk %}">Verify clothes</a></td>
-                        <td><a class="button" href="{% url 'student-supply-history' student.pk %}">View supplies</a></td>
+                        <td><a class="button" href="{% url 'student-clothing' student.pk %}">{% trans "Verify clothes" %}</a></td>
+                        <td><a class="button" href="{% url 'student-supply-history' student.pk %}">{% trans "View supplies" %}</a></td>
                         <td>
                             <a class="button button-danger button-small"
-                               href="{% url 'student-delete' student.pk %}">Delete</a>
+                               href="{% url 'student-delete' student.pk %}">{% trans "Delete" %}</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -25,7 +26,7 @@
         </table>
     </div>
 {% elif query %}
-    <p>No students match "{{ query }}".</p>
+    <p>{% blocktrans with query=query %}No students match "{{ query }}".{% endblocktrans %}</p>
 {% else %}
-    <p>No students have been registered.</p>
+    <p>{% trans "No students have been registered." %}</p>
 {% endif %}

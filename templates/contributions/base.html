@@ -1,6 +1,7 @@
-{% load static %}
+{% load static i18n %}
+{% get_current_language as current_language %}
 <!doctype html>
-<html lang="en">
+<html lang="{{ current_language }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -222,6 +223,26 @@
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .language-switch {
+            display: flex;
+            margin: 0;
+        }
+
+        .language-switch button {
+            min-height: 42px;
+            padding: 0 12px;
+            border: 1px solid rgba(255, 255, 255, 0.34);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.99);
+            cursor: pointer;
+            font: 700 13px "Segoe UI", Arial, sans-serif;
+        }
+
+        .language-switch button:hover {
+            background: rgba(255, 255, 255, 0.16);
         }
 
         .header-action {
@@ -1048,19 +1069,29 @@
                 <span class="brand-mark" aria-hidden="true">KS</span>
                 <span>
                     <span class="brand-name">Kafunjo Secondary School</span>
-                    <span class="brand-caption">School management</span>
+                    <span class="brand-caption">{% trans "School management" %}</span>
                 </span>
             </a>
-            <nav class="primary-nav" aria-label="Main navigation">
-                <a class="{% if request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'home-legacy' %}active{% endif %}" href="{% url 'home' %}">Overview</a>
-                <a class="{% if 'student-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'student-list' %}">Students</a>
-                <a class="{% if 'parent-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'parent-list' %}">Parents</a>
-                <a class="{% if 'collection-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'collection-list' %}">Collections</a>
-                <a class="{% if 'supply-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'supply-list' %}">Store supplies</a>
+            <nav class="primary-nav" aria-label="{% trans 'Main navigation' %}">
+                <a class="{% if request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'home-legacy' %}active{% endif %}" href="{% url 'home' %}">{% trans "Overview" %}</a>
+                <a class="{% if 'student-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'student-list' %}">{% trans "Students" %}</a>
+                <a class="{% if 'parent-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'parent-list' %}">{% trans "Parents" %}</a>
+                <a class="{% if 'collection-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'collection-list' %}">{% trans "Collections" %}</a>
+                <a class="{% if 'supply-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'supply-list' %}">{% trans "Store supplies" %}</a>
             </nav>
             <div class="header-actions">
-                <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false">Dark mode</button>
-                <a class="header-action" href="{% url 'student-create' %}">+ Register student</a>
+                <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+                        data-light-label="{% trans 'Light mode' %}"
+                        data-dark-label="{% trans 'Dark mode' %}">{% trans "Dark mode" %}</button>
+                <form class="language-switch" action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <input type="hidden" name="language" value="{% if current_language == 'sw' %}en-us{% else %}sw{% endif %}">
+                    <button type="submit" aria-label="{% trans 'Switch language' %}">
+                        {% if current_language == 'sw' %}English{% else %}Kiswahili{% endif %}
+                    </button>
+                </form>
+                <a class="header-action" href="{% url 'student-create' %}">{% trans "+ Register student" %}</a>
             </div>
         </div>
     </header>

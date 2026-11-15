@@ -1,5 +1,6 @@
 {% extends "contributions/base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}{{ title }}{% endblock %}
 
@@ -48,12 +49,12 @@
                         {% endif %}
                         <div class="supply-items-heading">
                             <div>
-                                <h3>Items and quantities</h3>
-                                <p>Add one row for each item the student brought.</p>
+                                <h3>{% trans "Items and quantities" %}</h3>
+                                <p>{% trans "Add one row for each item the student brought." %}</p>
                             </div>
                             {% if not editing_supply %}
                                 <button type="button" class="button" data-add-supply-item>
-                                    Add another item
+                                    {% trans "Add another item" %}
                                 </button>
                             {% endif %}
                         </div>
@@ -65,7 +66,7 @@
                                     {% endfor %}
                                     {% if not editing_supply and not forloop.first %}
                                         <button type="button" class="button" data-remove-supply-item>
-                                            Remove item
+                                            {% trans "Remove item" %}
                                         </button>
                                     {% endif %}
                                 </div>
@@ -78,7 +79,7 @@
                                         {% include "contributions/partials/form_field.html" with field=field %}
                                     {% endfor %}
                                     <button type="button" class="button" data-remove-supply-item>
-                                        Remove item
+                                        {% trans "Remove item" %}
                                     </button>
                                 </div>
                             </template>
@@ -90,7 +91,7 @@
 
         <div class="form-actions">
             <button type="submit"{% if not can_save %} disabled{% endif %}>{{ button_text }}</button>
-            <a class="button button-cancel" href="{% url cancel_url %}">Cancel</a>
+            <a class="button button-cancel" href="{% url cancel_url %}">{% trans "Cancel" %}</a>
         </div>
     </form>
     {% if supply_item_formset and not editing_supply %}

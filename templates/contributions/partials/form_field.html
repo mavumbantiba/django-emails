@@ -1,3 +1,4 @@
+{% load i18n %}
 <div class="form-field{% if wide %} form-field-wide{% endif %}">
     <label for="{{ field.id_for_label }}">
         {{ field.label }}{% if field.field.required %} <span class="required-mark" aria-hidden="true">*</span>{% endif %}

@@ -1,32 +1,33 @@
 {% extends "contributions/base.html" %}
+{% load i18n %}
 
-{% block title %}Student supply history{% endblock %}
+{% block title %}{% trans "Student supply history" %}{% endblock %}
 
 {% block content %}
-    <p class="eyebrow">Storekeeper · Individual student record</p>
-    <h1 class="page-heading">Supply history</h1>
+    <p class="eyebrow">{% trans "Storekeeper · Individual student record" %}</p>
+    <h1 class="page-heading">{% trans "Supply history" %}</h1>
     <p class="page-description">
         {{ student.admission_number }} · {{ student.first_name }} {{ student.middle_name }} {{ student.last_name }}
         · {{ student.class_level }}
     </p>
 
     <div class="data-toolbar">
-        <p>Each delivery stays as its own dated record. Totals include all recorded deliveries.</p>
-        <a class="button" href="{% url 'supply-create' %}?student={{ student.pk }}">Record more items</a>
+        <p>{% trans "Each delivery stays as its own dated record. Totals include all recorded deliveries." %}</p>
+        <a class="button" href="{% url 'supply-create' %}?student={{ student.pk }}">{% trans "Record more items" %}</a>
     </div>
 
     <section aria-labelledby="supply-totals-title">
         <div class="section-heading">
             <div>
-                <p class="eyebrow">Cumulative record</p>
-                <h2 id="supply-totals-title">Total received by item</h2>
+                <p class="eyebrow">{% trans "Cumulative record" %}</p>
+                <h2 id="supply-totals-title">{% trans "Total received by item" %}</h2>
             </div>
         </div>
         {% if supply_totals %}
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr><th>Item</th><th>Total quantity received</th></tr>
+                        <tr><th>{% trans "Item" %}</th><th>{% trans "Total quantity received" %}</th></tr>
                     </thead>
                     <tbody>
                         {% for total in supply_totals %}
@@ -39,22 +40,22 @@
                 </table>
             </div>
         {% else %}
-            <p>No supply items have been recorded for this student yet.</p>
+            <p>{% trans "No supply items have been recorded for this student yet." %}</p>
         {% endif %}
     </section>
 
     <section aria-labelledby="supply-history-title">
         <div class="section-heading">
             <div>
-                <p class="eyebrow">Individual deliveries</p>
-                <h2 id="supply-history-title">Delivery history</h2>
+                <p class="eyebrow">{% trans "Individual deliveries" %}</p>
+                <h2 id="supply-history-title">{% trans "Delivery history" %}</h2>
             </div>
         </div>
         {% if receipts %}
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr><th>Date received</th><th>Item</th><th>Quantity</th><th>Source</th><th>Recorded by</th><th>Notes</th><th>Actions</th></tr>
+                        <tr><th>{% trans "Date received" %}</th><th>{% trans "Item" %}</th><th>{% trans "Quantity" %}</th><th>{% trans "Source" %}</th><th>{% trans "Recorded by" %}</th><th>{% trans "Notes" %}</th><th>{% trans "Actions" %}</th></tr>
                     </thead>
                     <tbody>
                         {% for receipt in receipts %}
@@ -68,9 +69,9 @@
                                 <td>
                                     <div class="record-actions">
                                         <a class="button button-edit button-small"
-                                           href="{% url 'supply-edit' receipt.pk %}">Edit</a>
+                                           href="{% url 'supply-edit' receipt.pk %}">{% trans "Edit" %}</a>
                                         <a class="button button-danger button-small"
-                                           href="{% url 'supply-delete' receipt.pk %}">Delete</a>
+                                           href="{% url 'supply-delete' receipt.pk %}">{% trans "Delete" %}</a>
                                     </div>
                                 </td>
                             </tr>
@@ -79,12 +80,12 @@
                 </table>
             </div>
         {% else %}
-            <p>Every new delivery for this student will appear here separately.</p>
+            <p>{% trans "Every new delivery for this student will appear here separately." %}</p>
         {% endif %}
     </section>
 
     <div class="form-actions">
-        <a class="button" href="{% url 'student-list' %}">Back to students</a>
-        <a class="button" href="{% url 'supply-list' %}">All supply records</a>
+        <a class="button" href="{% url 'student-list' %}">{% trans "Back to students" %}</a>
+        <a class="button" href="{% url 'supply-list' %}">{% trans "All supply records" %}</a>
     </div>
 {% endblock %}

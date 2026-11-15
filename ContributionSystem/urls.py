@@ -4,6 +4,7 @@ from . import views
 
 
 urlpatterns = [
+    path("i18n/", include("django.conf.urls.i18n")),
     path("accounts/profile/", views.profile, name="profile"),
     path("", views.home, name="home"),
     path("home/", views.home, name="home-legacy"),

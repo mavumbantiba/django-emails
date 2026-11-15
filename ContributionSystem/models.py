@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class Parent(models.Model):
@@ -23,9 +24,9 @@ class Parent(models.Model):
 
 class Student(models.Model):
     class Gender(models.TextChoices):
-        FEMALE = "F", "Female"
-        MALE = "M", "Male"
-        OTHER = "O", "Other"
+        FEMALE = "F", _("Female")
+        MALE = "M", _("Male")
+        OTHER = "O", _("Other")
 
     admission_number = models.CharField(max_length=30, unique=True)
     first_name = models.CharField(max_length=100)
@@ -62,14 +63,14 @@ class Student(models.Model):
 
 class StudentCollection(models.Model):
     class Category(models.TextChoices):
-        ACADEMIC_FEE = "academic_fee", "Academic fee"
-        REAM_A4 = "ream_a4", "A4 ream"
-        TSHIRT = "tshirt", "T-shirt"
-        SCHOOL_GUARD_FEE = "school_guard_fee", "School guard fee"
-        NECKTIE = "necktie", "Necktie"
-        LOGO = "logo", "Logo"
-        TABLE = "table", "Table"
-        CHAIR = "chair", "Chair"
+        ACADEMIC_FEE = "academic_fee", _("Academic fee")
+        REAM_A4 = "ream_a4", _("A4 ream")
+        TSHIRT = "tshirt", _("T-shirt")
+        SCHOOL_GUARD_FEE = "school_guard_fee", _("School guard fee")
+        NECKTIE = "necktie", _("Necktie")
+        LOGO = "logo", _("Logo")
+        TABLE = "table", _("Table")
+        CHAIR = "chair", _("Chair")
 
     student = models.ForeignKey(
         Student,
@@ -98,14 +99,14 @@ class StudentCollection(models.Model):
 
 class StoreSupplyReceipt(models.Model):
     class Item(models.TextChoices):
-        HOE = "hoe", "Hoe"
-        MACHETE = "machete", "Machete"
-        TOILET_PAPER = "toilet_paper", "Toilet paper"
-        BROOM = "broom", "Broom"
-        JERRYCAN = "jerrycan", "Jerrycan"
-        SICKLE = "sickle", "Sickle"
-        MATTOCK = "mattock", "Mattock"
-        FORKED_HOE = "forked_hoe", "Forked hoe"
+        HOE = "hoe", _("Hoe")
+        MACHETE = "machete", _("Machete")
+        TOILET_PAPER = "toilet_paper", _("Toilet paper")
+        BROOM = "broom", _("Broom")
+        JERRYCAN = "jerrycan", _("Jerrycan")
+        SICKLE = "sickle", _("Sickle")
+        MATTOCK = "mattock", _("Mattock")
+        FORKED_HOE = "forked_hoe", _("Forked hoe")
 
     student = models.ForeignKey(
         Student,
@@ -137,8 +138,8 @@ class StoreSupplyReceipt(models.Model):
 
 class StudentClothingVerification(models.Model):
     class Category(models.TextChoices):
-        SCHOOL_UNIFORM = "school_uniform", "School uniform"
-        OTHER_ALLOWED = "other_allowed", "Other allowed clothing"
+        SCHOOL_UNIFORM = "school_uniform", _("School uniform")
+        OTHER_ALLOWED = "other_allowed", _("Other allowed clothing")
 
     student = models.ForeignKey(
         Student,

@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.utils import timezone
 from django.utils.text import slugify
+from django.utils.translation import gettext as _
 
 
 logger = logging.getLogger(__name__)
@@ -35,8 +36,10 @@ def send_record_notification(
     if not email_address:
         messages.warning(
             request,
-            "The record change was completed, but no email was sent because the "
-            "original creator has no available email address.",
+            _(
+                "The record change was completed, but no email was sent because the "
+                "original creator has no available email address."
+            ),
         )
         return False
 
@@ -83,16 +86,20 @@ def send_record_notification(
         )
         messages.warning(
             request,
-            "The record change was completed, but its email notification could not "
-            "be sent. Check the email server settings and try again.",
+            _(
+                "The record change was completed, but its email notification could not "
+                "be sent. Check the email server settings and try again."
+            ),
         )
         return False
 
     if sent_count != 1:
         messages.warning(
             request,
-            "The record change was completed, but its email notification was not "
-            "accepted by the email server.",
+            _(
+                "The record change was completed, but its email notification was not "
+                "accepted by the email server."
+            ),
         )
         return False
     return True

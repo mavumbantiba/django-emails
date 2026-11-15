@@ -1,63 +1,64 @@
 {% extends "contributions/base.html" %}
+{% load i18n %}
 
-{% block title %}Welcome | Kafunjo Secondary School{% endblock %}
+{% block title %}{% trans "Welcome" %} | Kafunjo Secondary School{% endblock %}
 
 {% block content %}
     <section class="welcome-panel card">
         <div class="welcome-copy">
-            <p class="eyebrow">School management portal</p>
-            <h1>Welcome to Kafunjo Secondary School</h1>
+            <p class="eyebrow">{% trans "School management portal" %}</p>
+            <h1>{% trans "Welcome to Kafunjo Secondary School" %}</h1>
             {% if request.user.is_authenticated %}
-                <p>Good to see you, {{ request.user.email|default:request.user.username }}. What would you like to manage today?</p>
+                <p>{% blocktrans with user_name=request.user.email|default:request.user.username %}Good to see you, {{ user_name }}. What would you like to manage today?{% endblocktrans %}</p>
                 <div class="welcome-actions">
-                    <a class="button" href="{% url 'student-create' %}">Register a student</a>
-                    <a class="welcome-link" href="{% url 'student-list' %}">View student records</a>
+                    <a class="button" href="{% url 'student-create' %}">{% trans "Register a student" %}</a>
+                    <a class="welcome-link" href="{% url 'student-list' %}">{% trans "View student records" %}</a>
                 </div>
             {% else %}
-                <p>One place to manage student registration, family details, and school contributions.</p>
+                <p>{% trans "One place to manage student registration, family details, and school contributions." %}</p>
                 <div class="welcome-actions">
-                    <a class="button" href="{% url 'account_login' %}">Sign in to continue</a>
+                    <a class="button" href="{% url 'account_login' %}">{% trans "Sign in to continue" %}</a>
                 </div>
             {% endif %}
         </div>
         <aside class="welcome-aside">
-            <p class="eyebrow">Kagera · Karagwe</p>
-            <strong>Supporting every student</strong>
-            <p>Keep student, parent, and contribution records organized in one place.</p>
+            <p class="eyebrow">{% trans "Kagera · Karagwe" %}</p>
+            <strong>{% trans "Supporting every student" %}</strong>
+            <p>{% trans "Keep student, parent, and contribution records organized in one place." %}</p>
         </aside>
     </section>
 
     <section aria-labelledby="quick-actions-title">
         <div class="section-heading">
             <div>
-                <p class="eyebrow">Get started</p>
-                <h2 id="quick-actions-title">Quick actions</h2>
+                <p class="eyebrow">{% trans "Get started" %}</p>
+                <h2 id="quick-actions-title">{% trans "Quick actions" %}</h2>
             </div>
         </div>
         <div class="quick-actions">
             <article class="quick-card card">
                 <span class="quick-card-mark" aria-hidden="true">01</span>
-                <h3>Student registration</h3>
-                <p>Register students and connect each one to a parent.</p>
-                <a href="{% url 'student-list' %}">Open student records &rarr;</a>
+                <h3>{% trans "Student registration" %}</h3>
+                <p>{% trans "Register students and connect each one to a parent." %}</p>
+                <a href="{% url 'student-list' %}">{% trans "Open student records" %} &rarr;</a>
             </article>
             <article class="quick-card card">
                 <span class="quick-card-mark" aria-hidden="true">02</span>
-                <h3>Parent records</h3>
-                <p>Add parent contact details and find linked students.</p>
-                <a href="{% url 'parent-list' %}">Open parent records &rarr;</a>
+                <h3>{% trans "Parent records" %}</h3>
+                <p>{% trans "Add parent contact details and find linked students." %}</p>
+                <a href="{% url 'parent-list' %}">{% trans "Open parent records" %} &rarr;</a>
             </article>
             <article class="quick-card card">
                 <span class="quick-card-mark" aria-hidden="true">03</span>
-                <h3>School contributions</h3>
-                <p>Record fees collected and supplies issued to students.</p>
-                <a href="{% url 'collection-list' %}">Open collections &rarr;</a>
+                <h3>{% trans "School contributions" %}</h3>
+                <p>{% trans "Record fees collected and supplies issued to students." %}</p>
+                <a href="{% url 'collection-list' %}">{% trans "Open collections" %} &rarr;</a>
             </article>
             <article class="quick-card card">
                 <span class="quick-card-mark" aria-hidden="true">04</span>
-                <h3>Store supplies</h3>
-                <p>Record tools and other supplies received by the school store.</p>
-                <a href="{% url 'supply-list' %}">Open store records &rarr;</a>
+                <h3>{% trans "Store supplies" %}</h3>
+                <p>{% trans "Record tools and other supplies received by the school store." %}</p>
+                <a href="{% url 'supply-list' %}">{% trans "Open store records" %} &rarr;</a>
             </article>
         </div>
     </section>
