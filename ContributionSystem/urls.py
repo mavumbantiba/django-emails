@@ -19,6 +19,11 @@ urlpatterns = [
     path("students/", views.student_list, name="student-list"),
     path("students/register/", views.student_create, name="student-create"),
     path(
+        "students/<int:student_id>/edit/",
+        views.student_edit,
+        name="student-edit",
+    ),
+    path(
         "students/<int:student_id>/delete/",
         views.student_delete,
         name="student-delete",
@@ -45,6 +50,11 @@ urlpatterns = [
     ),
     path("collections/", views.collection_list, name="collection-list"),
     path("collections/add/", views.collection_create, name="collection-create"),
+    path(
+        "collections/<int:collection_id>/edit/",
+        views.collection_create,
+        name="collection-edit",
+    ),
     path(
         "collections/<int:collection_id>/delete/",
         views.collection_delete,

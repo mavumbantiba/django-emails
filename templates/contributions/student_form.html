@@ -5,7 +5,7 @@
 
 {% block content %}
     <p class="eyebrow">{% trans "Second master · Student records" %}</p>
-    <h1 class="page-heading">{% trans "Register a student" %}</h1>
+    <h1 class="page-heading">{% if editing_student %}{% trans "Edit student record" %}{% else %}{% trans "Register a student" %}{% endif %}</h1>
     <p class="page-description">{% trans "Enter the student’s details, parent contact, and home address." %}</p>
 
     <form class="registration-form" method="post">
@@ -72,7 +72,7 @@
         </section>
 
         <div class="form-actions">
-            <button type="submit"{% if not has_parents %} disabled{% endif %}>{% trans "Save student registration" %}</button>
+            <button type="submit"{% if not has_parents %} disabled{% endif %}>{% if editing_student %}{% trans "Save changes" %}{% else %}{% trans "Save student registration" %}{% endif %}</button>
             <a class="button button-cancel" href="{% url 'student-list' %}">{% trans "Cancel" %}</a>
         </div>
     </form>

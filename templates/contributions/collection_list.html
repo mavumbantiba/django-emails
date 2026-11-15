@@ -5,7 +5,7 @@
 
 {% block content %}
     <h1 class="page-heading">{% trans "Student collections" %}</h1>
-    <p class="page-description">{% trans "Search fees collected and supplies issued." %}</p>
+    <p class="page-description">{% trans "Search and manage the collection categories assigned to your role." %}</p>
     <div class="data-toolbar">
         <form class="search-form" method="get" action="{% url 'collection-list' %}"
               hx-get="{% url 'collection-list' %}"
@@ -15,7 +15,7 @@
               hx-indicator="#collection-search-status"
               hx-sync="this:replace">
             <label class="visually-hidden" for="collection-search">{% trans "Search collections" %}</label>
-            <input id="collection-search" type="search" name="q" value="{{ query }}" placeholder="{% trans 'Search student, parent, or item' %}">
+            <input id="collection-search" type="search" name="q" value="{{ query }}" placeholder="{% trans 'Search student, category, or notes' %}">
             <button type="submit">{% trans "Search" %}</button>
             <span id="collection-search-status" class="search-status htmx-indicator" role="status">{% trans "Searching…" %}</span>
         </form>

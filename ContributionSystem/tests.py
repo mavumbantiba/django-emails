@@ -5,11 +5,18 @@ from unittest.mock import patch
 from allauth.account.internal.flows.login import AUTHENTICATION_METHODS_SESSION_KEY
 from allauth.mfa.models import Authenticator
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core import mail
-from django.test import TestCase, override_settings
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import translation
 
+from .access import (
+    ACCOUNTANT_ROLE,
+    ACADEMIC_ROLE,
+    SECOND_HEAD_ROLE,
+)
+from .adapters import SchoolAccountAdapter
 from .models import (
     Parent,
     Student,
@@ -19,7 +26,13 @@ from .models import (
 )
 
 
-def login_with_totp(client, user, recently_authenticated=True):
+def login_with_totp(client, user, recently_authenticated=True, roles=None):
+    if roles is None and not user.is_superuser:
+        user.is_superuser = True
+        user.is_staff = True
+        user.save(update_fields=["is_superuser", "is_staff"])
+    elif roles:
+        user.groups.add(*Group.objects.filter(name__in=roles))
     client.force_login(user)
     Authenticator.objects.create(
         user=user,
@@ -990,6 +1003,188 @@ class LanguageSwitchTests(TestCase):
     def test_model_choices_use_the_selected_language(self):
         with translation.override("sw"):
             self.assertEqual(str(Student.Gender.choices[0][1]), "Mwanamke")
+
+
+class SchoolRoleAccessTests(TestCase):
+    def setUp(self):
+        self.parent = Parent.objects.create(
+            full_name="Amina Mwinyi",
+            phone_number="0712345678",
+        )
+        self.student = Student.objects.create(
+            admission_number="KSS-ROLE-1",
+            first_name="Neema",
+            last_name="Amina",
+            gender=Student.Gender.FEMALE,
+            class_level="Form One",
+            parent=self.parent,
+            ward="Kayanga",
+            village="Town",
+            street="Main Road",
+        )
+
+    def create_role_user(self, username, *roles):
+        user = get_user_model().objects.create_user(
+            username=username,
+            password="test-password",
+        )
+        login_with_totp(self.client, user, roles=roles)
+        return user
+
+    def test_academic_can_manage_only_academic_fee_collections(self):
+        user = self.create_role_user("academic-role-user", ACADEMIC_ROLE)
+        academic_collection = StudentCollection.objects.create(
+            student=self.student,
+            category=StudentCollection.Category.ACADEMIC_FEE,
+            recorded_by=user,
+        )
+        StudentCollection.objects.create(
+            student=self.student,
+            category=StudentCollection.Category.TSHIRT,
+        )
+        StudentCollection.objects.create(
+            student=self.student,
+            category=StudentCollection.Category.REAM_A4,
+        )
+
+        request = RequestFactory().get("/")
+        request.user = user
+        self.assertEqual(
+            SchoolAccountAdapter().get_login_redirect_url(request),
+            reverse("collection-list"),
+        )
+
+        response = self.client.get(reverse("collection-list"))
+        self.assertContains(response, "Academic fee")
+        self.assertNotContains(response, "T-shirt")
+        self.assertNotContains(response, "A4 ream")
+
+        form_response = self.client.get(reverse("collection-create"))
+        category_choices = {
+            value
+            for value, _ in form_response.context["form"].fields["category"].choices
+        }
+        self.assertEqual(category_choices - {""}, {
+            StudentCollection.Category.ACADEMIC_FEE,
+        })
+
+        invalid_response = self.client.post(
+            reverse("collection-create"),
+            {
+                "student": self.student.pk,
+                "category": StudentCollection.Category.TSHIRT,
+                "amount_collected": "0",
+                "quantity_issued": "1",
+                "notes": "",
+            },
+        )
+        self.assertEqual(invalid_response.status_code, 200)
+        self.assertEqual(StudentCollection.objects.count(), 3)
+        self.assertEqual(
+            self.client.get(
+                reverse("collection-edit", args=[2]),
+            ).status_code,
+            404,
+        )
+        self.assertEqual(self.client.get(reverse("student-list")).status_code, 403)
+
+        with patch("ContributionSystem.views.send_record_notification"):
+            self.client.post(
+                reverse("collection-edit", args=[academic_collection.pk]),
+                {
+                    "student": self.student.pk,
+                    "category": StudentCollection.Category.ACADEMIC_FEE,
+                    "amount_collected": "12500",
+                    "quantity_issued": "0",
+                    "notes": "Updated by academic",
+                },
+            )
+        academic_collection.refresh_from_db()
+        self.assertEqual(academic_collection.amount_collected, 12500)
+
+    def test_accountant_can_manage_only_assigned_collection_categories(self):
+        self.create_role_user("accountant-role-user", ACCOUNTANT_ROLE)
+        for category in StudentCollection.Category.values:
+            StudentCollection.objects.create(
+                student=self.student,
+                category=category,
+            )
+
+        response = self.client.get(reverse("collection-list"))
+        self.assertContains(response, "T-shirt")
+        self.assertContains(response, "School guard fee")
+        self.assertContains(response, "Necktie")
+        self.assertContains(response, "Table")
+        self.assertContains(response, "Chair")
+        self.assertNotContains(response, "Academic fee")
+        self.assertNotContains(response, "A4 ream")
+        self.assertNotContains(response, "Logo")
+        self.assertEqual(self.client.get(reverse("student-list")).status_code, 403)
+
+    def test_second_head_can_manage_student_registration_and_uniform_checks(self):
+        user = self.create_role_user("second-head-role-user", SECOND_HEAD_ROLE)
+        request = RequestFactory().get("/")
+        request.user = user
+        self.assertEqual(
+            SchoolAccountAdapter().get_login_redirect_url(request),
+            reverse("student-list"),
+        )
+
+        self.assertEqual(self.client.get(reverse("student-list")).status_code, 200)
+        self.assertEqual(
+            self.client.get(
+                reverse("student-edit", args=[self.student.pk])
+            ).status_code,
+            200,
+        )
+        self.assertEqual(
+            self.client.get(
+                reverse("student-clothing", args=[self.student.pk])
+            ).status_code,
+            200,
+        )
+        self.assertEqual(
+            self.client.get(reverse("collection-list")).status_code,
+            403,
+        )
+
+        with patch("ContributionSystem.views.send_record_notification"):
+            self.client.post(
+                reverse("student-edit", args=[self.student.pk]),
+                {
+                    "admission_number": self.student.admission_number,
+                    "first_name": "Updated",
+                    "middle_name": "",
+                    "last_name": self.student.last_name,
+                    "gender": Student.Gender.FEMALE,
+                    "date_of_birth": "",
+                    "class_level": self.student.class_level,
+                    "parent": self.parent.pk,
+                    "region": self.student.region,
+                    "district": self.student.district,
+                    "ward": self.student.ward,
+                    "village": self.student.village,
+                    "street": self.student.street,
+                },
+            )
+        self.student.refresh_from_db()
+        self.assertEqual(self.student.first_name, "Updated")
+
+    def test_users_without_exactly_one_role_cannot_open_role_pages(self):
+        user = self.create_role_user(
+            "multi-role-user",
+            ACADEMIC_ROLE,
+            SECOND_HEAD_ROLE,
+        )
+        request = RequestFactory().get("/")
+        request.user = user
+
+        self.assertEqual(
+            SchoolAccountAdapter().get_login_redirect_url(request),
+            reverse("profile"),
+        )
+        self.assertEqual(self.client.get(reverse("student-list")).status_code, 403)
+        self.assertEqual(self.client.get(reverse("collection-list")).status_code, 403)
 
 
 class UserProfileTests(TestCase):

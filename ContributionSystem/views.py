@@ -13,6 +13,13 @@ from django.utils.translation import gettext as _
 from django.views.decorators.vary import vary_on_headers
 from django.views.decorators.http import require_http_methods
 
+from .access import (
+    ACCOUNTANT_ROLE,
+    ACADEMIC_ROLE,
+    SECOND_HEAD_ROLE,
+    allowed_collection_categories,
+    role_required,
+)
 from .forms import (
     ParentForm,
     StudentClothingVerificationForm,
@@ -115,6 +122,7 @@ def _confirm_record_deletion(
 
 
 @login_required
+@role_required(SECOND_HEAD_ROLE)
 @vary_on_headers("HX-Request")
 def parent_list(request):
     query = request.GET.get("q", "").strip()
@@ -134,6 +142,7 @@ def parent_list(request):
 
 
 @login_required
+@role_required(SECOND_HEAD_ROLE)
 @reauthentication_required
 @require_http_methods(["GET", "POST"])
 def parent_delete(request, parent_id):
@@ -164,6 +173,7 @@ def parent_delete(request, parent_id):
 
 
 @login_required
+@role_required(SECOND_HEAD_ROLE)
 def parent_create(request):
     form = ParentForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -197,6 +207,7 @@ def parent_create(request):
 
 
 @login_required
+@role_required(SECOND_HEAD_ROLE)
 @vary_on_headers("HX-Request")
 def student_list(request):
     query = request.GET.get("q", "").strip()
@@ -225,6 +236,7 @@ def student_list(request):
 
 
 @login_required
+@role_required(SECOND_HEAD_ROLE)
 @reauthentication_required
 @require_http_methods(["GET", "POST"])
 def student_delete(request, student_id):
@@ -284,6 +296,7 @@ def student_delete(request, student_id):
 
 
 @login_required
+@role_required(SECOND_HEAD_ROLE)
 def student_create(request):
     form = StudentForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -302,25 +315,62 @@ def student_create(request):
     return render(
         request,
         "contributions/student_form.html",
-        {"form": form, "has_parents": Parent.objects.exists()},
+        {
+            "form": form,
+            "has_parents": Parent.objects.exists(),
+            "editing_student": False,
+        },
     )
 
 
 @login_required
+@role_required(SECOND_HEAD_ROLE)
+@require_http_methods(["GET", "POST"])
+def student_edit(request, student_id):
+    student = get_object_or_404(Student, pk=student_id)
+    form = StudentForm(request.POST or None, instance=student)
+    if request.method == "POST" and form.is_valid():
+        before = record_snapshot(student)
+        recipient = student.registered_by
+        updated_student = form.save()
+        send_record_notification(
+            request,
+            recipient=recipient,
+            action="updated",
+            record_type="Student",
+            record_identifier=updated_student.admission_number,
+            data={
+                "before": before,
+                "after": record_snapshot(updated_student),
+            },
+        )
+        return redirect("student-list")
+
+    return render(
+        request,
+        "contributions/student_form.html",
+        {
+            "form": form,
+            "has_parents": Parent.objects.exists(),
+            "editing_student": True,
+        },
+    )
+
+
+@login_required
+@role_required(ACADEMIC_ROLE, ACCOUNTANT_ROLE)
 @vary_on_headers("HX-Request")
 def collection_list(request):
+    categories = allowed_collection_categories(request.user)
     query = request.GET.get("q", "").strip()
-    collections = StudentCollection.objects.select_related(
-        "student",
-        "student__parent",
-        "recorded_by",
-    )
+    collections = StudentCollection.objects.filter(
+        category__in=categories,
+    ).select_related("student", "recorded_by")
     if query:
         collections = collections.filter(
             Q(student__admission_number__icontains=query)
             | Q(student__first_name__icontains=query)
             | Q(student__last_name__icontains=query)
-            | Q(student__parent__full_name__icontains=query)
             | Q(category__icontains=query)
             | Q(notes__icontains=query)
         )
@@ -329,24 +379,59 @@ def collection_list(request):
         if request.headers.get("HX-Request") == "true"
         else "contributions/collection_list.html"
     )
-    return render(request, template, {"collections": collections, "query": query})
+    return render(
+        request,
+        template,
+        {
+            "collections": collections,
+            "query": query,
+        },
+    )
 
 
 @login_required
-def collection_create(request):
-    form = StudentCollectionForm(request.POST or None)
-    if request.method == "POST" and form.is_valid():
-        collection = form.save(commit=False)
-        collection.recorded_by = request.user
-        collection.save()
-        send_record_notification(
-            request,
-            recipient=collection.recorded_by,
-            action="recorded",
-            record_type="Student collection",
-            record_identifier=collection.pk,
-            data=record_snapshot(collection),
+@role_required(ACADEMIC_ROLE, ACCOUNTANT_ROLE)
+def collection_create(request, collection_id=None):
+    categories = allowed_collection_categories(request.user)
+    collection = None
+    if collection_id is not None:
+        collection = get_object_or_404(
+            StudentCollection.objects.filter(category__in=categories),
+            pk=collection_id,
         )
+    form = StudentCollectionForm(
+        request.POST or None,
+        instance=collection,
+        allowed_categories=categories,
+    )
+    if request.method == "POST" and form.is_valid():
+        if collection is None:
+            collection = form.save(commit=False)
+            collection.recorded_by = request.user
+            collection.save()
+            send_record_notification(
+                request,
+                recipient=collection.recorded_by,
+                action="recorded",
+                record_type="Student collection",
+                record_identifier=collection.pk,
+                data=record_snapshot(collection),
+            )
+        else:
+            before = record_snapshot(collection)
+            recipient = collection.recorded_by
+            collection = form.save()
+            send_record_notification(
+                request,
+                recipient=recipient,
+                action="updated",
+                record_type="Student collection",
+                record_identifier=collection.pk,
+                data={
+                    "before": before,
+                    "after": record_snapshot(collection),
+                },
+            )
         return redirect("collection-list")
     return render(
         request,
@@ -354,13 +439,22 @@ def collection_create(request):
         {
             "form": form,
             "eyebrow": _("School records · Student contributions"),
-            "title": _("Record a collection"),
-            "description": _("Record a student payment, an item issued, or both."),
+            "title": (
+                _("Edit collection")
+                if collection
+                else _("Record a collection")
+            ),
+            "description": (
+                _("Update this student collection.")
+                if collection
+                else _("Record a student payment, an item issued, or both.")
+            ),
             "section_title": _("Collection details"),
             "section_description": _("Select a student and enter the amount collected or quantity issued."),
-            "button_text": _("Save collection"),
+            "button_text": _("Save changes") if collection else _("Save collection"),
             "cancel_url": "collection-list",
             "can_save": Student.objects.exists(),
+            "editing_collection": collection is not None,
             "prerequisite_title": _("Register a student first"),
             "prerequisite_description": _("A collection must be linked to a student record."),
             "prerequisite_action": _("Register student"),
@@ -370,11 +464,14 @@ def collection_create(request):
 
 
 @login_required
+@role_required(ACADEMIC_ROLE, ACCOUNTANT_ROLE)
 @reauthentication_required
 @require_http_methods(["GET", "POST"])
 def collection_delete(request, collection_id):
     collection = get_object_or_404(
-        StudentCollection.objects.select_related("student"),
+        StudentCollection.objects.filter(
+            category__in=allowed_collection_categories(request.user),
+        ).select_related("student"),
         pk=collection_id,
     )
     return _confirm_record_deletion(
@@ -393,6 +490,7 @@ def collection_delete(request, collection_id):
 
 
 @login_required
+@role_required()
 @vary_on_headers("HX-Request")
 def supply_list(request):
     query = request.GET.get("q", "").strip()
@@ -422,6 +520,7 @@ def supply_list(request):
 
 
 @login_required
+@role_required()
 @reauthentication_required
 @require_http_methods(["GET", "POST"])
 def supply_delete(request, receipt_id):
@@ -454,6 +553,7 @@ def supply_delete(request, receipt_id):
 
 
 @login_required
+@role_required()
 def student_supply_history(request, student_id):
     student = get_object_or_404(
         Student.objects.select_related("parent"),
@@ -484,6 +584,7 @@ def student_supply_history(request, student_id):
 
 
 @login_required
+@role_required(SECOND_HEAD_ROLE)
 @reauthentication_required
 @require_http_methods(["GET", "POST"])
 def clothing_verification_delete(request, student_id, verification_id):
@@ -516,6 +617,7 @@ def clothing_verification_delete(request, student_id, verification_id):
 
 
 @login_required
+@role_required()
 def supply_create(request, receipt_id=None):
     receipt = None
     if receipt_id is not None:
@@ -641,6 +743,7 @@ def supply_create(request, receipt_id=None):
 
 
 @login_required
+@role_required(SECOND_HEAD_ROLE)
 def student_clothing(request, student_id, verification_id=None):
     student = get_object_or_404(
         Student.objects.select_related("parent"),

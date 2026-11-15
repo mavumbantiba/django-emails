@@ -58,6 +58,15 @@ class StudentForm(forms.ModelForm):
 
 
 class StudentCollectionForm(forms.ModelForm):
+    def __init__(self, *args, allowed_categories=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if allowed_categories is not None:
+            self.fields["category"].choices = [
+                choice
+                for choice in self.fields["category"].choices
+                if choice[0] == "" or choice[0] in allowed_categories
+            ]
+
     class Meta:
         model = StudentCollection
         exclude = ("recorded_at", "recorded_by")

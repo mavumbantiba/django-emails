@@ -3,7 +3,7 @@
     <div class="table-wrap">
         <table>
             <thead>
-                <tr><th>{% trans "Admission number" %}</th><th>{% trans "Student" %}</th><th>{% trans "Class" %}</th><th>{% trans "Parent" %}</th><th>{% trans "Phone" %}</th><th>{% trans "Location" %}</th><th>{% trans "Clothing checks" %}</th><th>{% trans "Supply history" %}</th><th></th></tr>
+                <tr><th>{% trans "Admission number" %}</th><th>{% trans "Student" %}</th><th>{% trans "Class" %}</th><th>{% trans "Parent" %}</th><th>{% trans "Phone" %}</th><th>{% trans "Location" %}</th><th>{% trans "Clothing checks" %}</th>{% if can_manage_store_supplies %}<th>{% trans "Supply history" %}</th>{% endif %}<th></th></tr>
             </thead>
             <tbody>
                 {% for student in students %}
@@ -15,8 +15,12 @@
                         <td>{{ student.parent.phone_number }}</td>
                         <td>{{ student.region }}, {{ student.district }}, {{ student.ward }}, {{ student.village }}, {{ student.street }}</td>
                         <td><a class="button" href="{% url 'student-clothing' student.pk %}">{% trans "Verify clothes" %}</a></td>
-                        <td><a class="button" href="{% url 'student-supply-history' student.pk %}">{% trans "View supplies" %}</a></td>
+                        {% if can_manage_store_supplies %}
+                            <td><a class="button" href="{% url 'student-supply-history' student.pk %}">{% trans "View supplies" %}</a></td>
+                        {% endif %}
                         <td>
+                            <a class="button button-small"
+                               href="{% url 'student-edit' student.pk %}">{% trans "Edit" %}</a>
                             <a class="button button-danger button-small"
                                href="{% url 'student-delete' student.pk %}">{% trans "Delete" %}</a>
                         </td>

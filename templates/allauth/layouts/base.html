@@ -409,9 +409,13 @@
             </a>
             <nav class="main-nav" aria-label="{% trans 'Main navigation' %}">
                 <a href="/">{% trans "Overview" %}</a>
-                <a href="/students/">{% trans "Students" %}</a>
-                <a href="/parents/">{% trans "Parents" %}</a>
-                <a href="/collections/">{% trans "Collections" %}</a>
+                {% if can_manage_students %}
+                    <a href="/students/">{% trans "Students" %}</a>
+                    <a href="/parents/">{% trans "Parents" %}</a>
+                {% endif %}
+                {% if can_manage_collections %}
+                    <a href="/collections/">{% trans "Collections" %}</a>
+                {% endif %}
             </nav>
             <div class="header-actions">
                 <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"

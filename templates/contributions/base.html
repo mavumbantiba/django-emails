@@ -1074,10 +1074,16 @@
             </a>
             <nav class="primary-nav" aria-label="{% trans 'Main navigation' %}">
                 <a class="{% if request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'home-legacy' %}active{% endif %}" href="{% url 'home' %}">{% trans "Overview" %}</a>
-                <a class="{% if 'student-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'student-list' %}">{% trans "Students" %}</a>
-                <a class="{% if 'parent-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'parent-list' %}">{% trans "Parents" %}</a>
-                <a class="{% if 'collection-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'collection-list' %}">{% trans "Collections" %}</a>
-                <a class="{% if 'supply-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'supply-list' %}">{% trans "Store supplies" %}</a>
+                {% if can_manage_students %}
+                    <a class="{% if 'student-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'student-list' %}">{% trans "Students" %}</a>
+                    <a class="{% if 'parent-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'parent-list' %}">{% trans "Parents" %}</a>
+                {% endif %}
+                {% if can_manage_collections %}
+                    <a class="{% if 'collection-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'collection-list' %}">{% trans "Collections" %}</a>
+                {% endif %}
+                {% if can_manage_store_supplies %}
+                    <a class="{% if 'supply-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'supply-list' %}">{% trans "Store supplies" %}</a>
+                {% endif %}
             </nav>
             <div class="header-actions">
                 <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
@@ -1094,7 +1100,9 @@
                 {% if user.is_authenticated %}
                     <a class="header-action" href="{% url 'profile' %}">{% trans "My profile" %}</a>
                 {% endif %}
-                <a class="header-action" href="{% url 'student-create' %}">{% trans "+ Register student" %}</a>
+                {% if can_manage_students %}
+                    <a class="header-action" href="{% url 'student-create' %}">{% trans "+ Register student" %}</a>
+                {% endif %}
             </div>
         </div>
     </header>

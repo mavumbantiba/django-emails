@@ -15,6 +15,8 @@
                         <td>{{ collection.quantity_issued }}</td>
                         <td>{{ collection.recorded_by|default:"—" }}</td>
                         <td>
+                            <a class="button button-small"
+                               href="{% url 'collection-edit' collection.pk %}">{% trans "Edit" %}</a>
                             <a class="button button-danger button-small"
                                href="{% url 'collection-delete' collection.pk %}">{% trans "Delete" %}</a>
                         </td>
