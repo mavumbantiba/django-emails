@@ -13,6 +13,7 @@
                 <div class="welcome-actions">
                     <a class="button" href="{% url 'student-create' %}">{% trans "Register a student" %}</a>
                     <a class="welcome-link" href="{% url 'student-list' %}">{% trans "View student records" %}</a>
+                    <a class="welcome-link" href="{% url 'profile' %}">{% trans "View my profile" %}</a>
                 </div>
             {% else %}
                 <p>{% trans "One place to manage student registration, family details, and school contributions." %}</p>

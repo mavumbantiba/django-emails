@@ -1091,6 +1091,9 @@
                         {% if current_language == 'sw' %}English{% else %}Kiswahili{% endif %}
                     </button>
                 </form>
+                {% if user.is_authenticated %}
+                    <a class="header-action" href="{% url 'profile' %}">{% trans "My profile" %}</a>
+                {% endif %}
                 <a class="header-action" href="{% url 'student-create' %}">{% trans "+ Register student" %}</a>
             </div>
         </div>

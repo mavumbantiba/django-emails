@@ -993,6 +993,20 @@ class LanguageSwitchTests(TestCase):
 
 
 class UserProfileTests(TestCase):
+    def test_authenticated_homepage_links_to_the_user_profile(self):
+        user = get_user_model().objects.create_user(
+            username="homepage-profile-user",
+            password="test-password",
+        )
+        login_with_totp(self.client, user)
+
+        response = self.client.get(reverse("home"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, reverse("profile"))
+        self.assertContains(response, "View my profile")
+        self.assertContains(response, "My profile")
+
     def test_profile_shows_logged_in_users_details_and_security_status(self):
         user = get_user_model().objects.create_user(
             username="profile-user",

@@ -452,6 +452,9 @@ msgstr "Akaunti"
 msgid "My profile"
 msgstr "Wasifu wangu"
 
+msgid "View my profile"
+msgstr "Tazama wasifu wangu"
+
 msgid "View your account details and manage your sign-in security."
 msgstr "Tazama taarifa za akaunti yako na simamia usalama wa kuingia."
 
