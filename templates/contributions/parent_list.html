@@ -1,0 +1,26 @@
+{% extends "contributions/base.html" %}
+
+{% block title %}Parents{% endblock %}
+
+{% block content %}
+    <h2>Parents</h2>
+    <p><a href="{% url 'parent-create' %}">Add parent</a></p>
+    {% if parents %}
+        <table>
+            <thead>
+                <tr><th>Name</th><th>Phone</th><th>Email</th></tr>
+            </thead>
+            <tbody>
+                {% for parent in parents %}
+                    <tr>
+                        <td>{{ parent.full_name }}</td>
+                        <td>{{ parent.phone_number }}</td>
+                        <td>{{ parent.email|default:"—" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No parents have been added.</p>
+    {% endif %}
+{% endblock %}

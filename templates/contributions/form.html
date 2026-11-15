@@ -1,0 +1,16 @@
+{% extends "contributions/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+    {% if form.fields.parent and not form.fields.parent.queryset.exists %}
+        <p>No parent records yet. <a href="{% url 'parent-create' %}">Add a parent first</a>.</p>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+        <a href="{% url cancel_url %}">Cancel</a>
+    </form>
+{% endblock %}

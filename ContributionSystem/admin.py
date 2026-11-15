@@ -1,51 +1,56 @@
-# from django.contrib import admin
-# from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-# from django.contrib.auth.forms import BaseUserCreationForm, UserChangeForm
+from django.contrib import admin
 
-# from .models import User
+from .models import Parent, Student, StudentCollection
 
 
-# class UserCreationForm(BaseUserCreationForm):
-#     class Meta(BaseUserCreationForm.Meta):
-#         model = User
-#         fields = ("email",)
+@admin.register(Parent)
+class ParentAdmin(admin.ModelAdmin):
+    list_display = ("full_name", "phone_number", "email")
+    search_fields = ("full_name", "phone_number", "email")
 
 
-# class CustomUserChangeForm(UserChangeForm):
-#     class Meta(UserChangeForm.Meta):
-#         model = User
-#         fields = "__all__"
+@admin.register(Student)
+class StudentAdmin(admin.ModelAdmin):
+    list_display = (
+        "admission_number",
+        "first_name",
+        "last_name",
+        "class_level",
+        "parent",
+        "region",
+        "district",
+        "registered_at",
+    )
+    list_filter = ("class_level", "gender")
+    search_fields = (
+        "admission_number",
+        "first_name",
+        "middle_name",
+        "last_name",
+        "parent__full_name",
+        "parent__phone_number",
+        "region",
+        "district",
+        "ward",
+        "village",
+        "street",
+    )
+    autocomplete_fields = ("parent",)
 
 
-# @admin.register(User)
-# class UserAdmin(BaseUserAdmin):
-#     form = CustomUserChangeForm
-#     add_form = UserCreationForm
-#     ordering = ("email",)
-#     list_display = ("email", "first_name", "last_name", "role", "is_staff")
-#     fieldsets = (
-#         (None, {"fields": ("email", "password")}),
-#         ("Personal info", {"fields": ("first_name", "last_name", "phone", "photo", "role")}),
-#         (
-#             "Permissions",
-#             {
-#                 "fields": (
-#                     "is_active",
-#                     "is_staff",
-#                     "is_superuser",
-#                     "groups",
-#                     "user_permissions",
-#                 )
-#             },
-#         ),
-#         ("Important dates", {"fields": ("last_login", "date_joined")}),
-#     )
-#     add_fieldsets = (
-#         (
-#             None,
-#             {
-#                 "classes": ("wide",),
-#                 "fields": ("email", "password1", "password2", "role"),
-#             },
-#         ),
-#     )
+@admin.register(StudentCollection)
+class StudentCollectionAdmin(admin.ModelAdmin):
+    list_display = (
+        "student",
+        "category",
+        "amount_collected",
+        "quantity_issued",
+        "recorded_at",
+        "recorded_by",
+    )
+    list_filter = ("category", "recorded_at")
+    search_fields = (
+        "student__admission_number",
+        "student__first_name",
+        "student__last_name",
+    )

@@ -1,0 +1,29 @@
+{% extends "contributions/base.html" %}
+
+{% block title %}Student collections{% endblock %}
+
+{% block content %}
+    <h2>Student collections</h2>
+    <p><a href="{% url 'collection-create' %}">Record collection</a></p>
+    {% if collections %}
+        <table>
+            <thead>
+                <tr><th>Date</th><th>Student</th><th>Category</th><th>Amount collected</th><th>Quantity issued</th><th>Recorded by</th></tr>
+            </thead>
+            <tbody>
+                {% for collection in collections %}
+                    <tr>
+                        <td>{{ collection.recorded_at }}</td>
+                        <td>{{ collection.student }}</td>
+                        <td>{{ collection.get_category_display }}</td>
+                        <td>{{ collection.amount_collected }}</td>
+                        <td>{{ collection.quantity_issued }}</td>
+                        <td>{{ collection.recorded_by|default:"—" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No collections have been recorded.</p>
+    {% endif %}
+{% endblock %}
