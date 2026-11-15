@@ -3,27 +3,24 @@
 {% block title %}Student collections{% endblock %}
 
 {% block content %}
-    <h2>Student collections</h2>
-    <p><a href="{% url 'collection-create' %}">Record collection</a></p>
-    {% if collections %}
-        <table>
-            <thead>
-                <tr><th>Date</th><th>Student</th><th>Category</th><th>Amount collected</th><th>Quantity issued</th><th>Recorded by</th></tr>
-            </thead>
-            <tbody>
-                {% for collection in collections %}
-                    <tr>
-                        <td>{{ collection.recorded_at }}</td>
-                        <td>{{ collection.student }}</td>
-                        <td>{{ collection.get_category_display }}</td>
-                        <td>{{ collection.amount_collected }}</td>
-                        <td>{{ collection.quantity_issued }}</td>
-                        <td>{{ collection.recorded_by|default:"—" }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No collections have been recorded.</p>
-    {% endif %}
+    <h1 class="page-heading">Student collections</h1>
+    <p class="page-description">Search fees collected and supplies issued.</p>
+    <div class="data-toolbar">
+        <form class="search-form" method="get" action="{% url 'collection-list' %}"
+              hx-get="{% url 'collection-list' %}"
+              hx-trigger="input changed delay:300ms from:input, submit"
+              hx-target="#collection-results"
+              hx-swap="innerHTML"
+              hx-indicator="#collection-search-status"
+              hx-sync="this:replace">
+            <label class="visually-hidden" for="collection-search">Search collections</label>
+            <input id="collection-search" type="search" name="q" value="{{ query }}" placeholder="Search student, parent, or item">
+            <button type="submit">Search</button>
+            <span id="collection-search-status" class="search-status htmx-indicator" role="status">Searching…</span>
+        </form>
+        <a class="button" href="{% url 'collection-create' %}">Record collection</a>
+    </div>
+    <div id="collection-results" aria-live="polite">
+        {% include "contributions/partials/collection_results.html" %}
+    </div>
 {% endblock %}

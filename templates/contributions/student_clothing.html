@@ -1,0 +1,81 @@
+{% extends "contributions/base.html" %}
+
+{% block title %}Clothing verification{% endblock %}
+
+{% block content %}
+    <p class="eyebrow">Student registration · Clothing check</p>
+    <h1 class="page-heading">Clothing verification</h1>
+    <p class="page-description">
+        {{ student.admission_number }} · {{ student.first_name }} {{ student.last_name }}
+    </p>
+
+    <section class="form-section card" aria-labelledby="clothing-check-title">
+        <div class="form-section-heading">
+            <span class="form-section-number" aria-hidden="true">01</span>
+            <div>
+                <h2 id="clothing-check-title">
+                    {% if verification %}Update clothing check{% else %}Add clothing to verify{% endif %}
+                </h2>
+                <p>Enter each uniform or other allowed clothing item separately.</p>
+            </div>
+        </div>
+        <form class="registration-form" method="post">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="form-error-summary" role="alert">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <div class="form-grid">
+                {% include "contributions/partials/form_field.html" with field=form.category %}
+                {% include "contributions/partials/form_field.html" with field=form.clothing_item %}
+                {% include "contributions/partials/form_field.html" with field=form.is_verified %}
+                {% include "contributions/partials/form_field.html" with field=form.notes wide=True %}
+            </div>
+            <div class="form-actions">
+                <button type="submit">
+                    {% if verification %}Update check{% else %}Save clothing check{% endif %}
+                </button>
+                {% if verification %}
+                    <a class="button button-cancel" href="{% url 'student-clothing' student.pk %}">Cancel edit</a>
+                {% else %}
+                    <a class="button" href="{% url 'student-list' %}">Finish for now</a>
+                {% endif %}
+            </div>
+        </form>
+    </section>
+
+    <section aria-labelledby="existing-checks-title">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Registration checklist</p>
+                <h2 id="existing-checks-title">Clothing records</h2>
+            </div>
+        </div>
+        {% if verifications %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Type</th><th>Item</th><th>Status</th><th>Verified by</th><th>Notes</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        {% for check in verifications %}
+                            <tr>
+                                <td>{{ check.get_category_display }}</td>
+                                <td>{{ check.clothing_item }}</td>
+                                <td>{% if check.is_verified %}Verified{% else %}Not verified{% endif %}</td>
+                                <td>{{ check.verified_by|default:"—" }}</td>
+                                <td>{{ check.notes|default:"—" }}</td>
+                                <td>
+                                    <a href="{% url 'student-clothing-edit' student.pk check.pk %}">Edit</a>
+                                    <a class="button button-danger button-small"
+                                       href="{% url 'clothing-verification-delete' student.pk check.pk %}">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>No clothing items have been checked yet. You can finish now and add them later.</p>
+        {% endif %}
+    </section>
+{% endblock %}

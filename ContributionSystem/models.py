@@ -6,6 +6,13 @@ class Parent(models.Model):
     full_name = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=30)
     email = models.EmailField(blank=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_parents",
+    )
 
     class Meta:
         ordering = ["full_name"]
@@ -87,3 +94,80 @@ class StudentCollection(models.Model):
 
     def __str__(self):
         return f"{self.student} - {self.get_category_display()}"
+
+
+class StoreSupplyReceipt(models.Model):
+    class Item(models.TextChoices):
+        HOE = "hoe", "Hoe"
+        MACHETE = "machete", "Machete"
+        TOILET_PAPER = "toilet_paper", "Toilet paper"
+        BROOM = "broom", "Broom"
+        JERRYCAN = "jerrycan", "Jerrycan"
+        SICKLE = "sickle", "Sickle"
+        MATTOCK = "mattock", "Mattock"
+        FORKED_HOE = "forked_hoe", "Forked hoe"
+
+    student = models.ForeignKey(
+        Student,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="store_supply_receipts",
+    )
+    item = models.CharField(max_length=30, choices=Item.choices)
+    quantity_collected = models.PositiveIntegerField()
+    source = models.CharField(max_length=200, blank=True)
+    collected_at = models.DateField(auto_now_add=True)
+    recorded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="store_supply_receipts",
+    )
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["-collected_at", "item"]
+
+    def __str__(self):
+        student = self.student or "Unassigned"
+        return f"{self.get_item_display()} - {self.quantity_collected} ({student})"
+
+
+class StudentClothingVerification(models.Model):
+    class Category(models.TextChoices):
+        SCHOOL_UNIFORM = "school_uniform", "School uniform"
+        OTHER_ALLOWED = "other_allowed", "Other allowed clothing"
+
+    student = models.ForeignKey(
+        Student,
+        on_delete=models.CASCADE,
+        related_name="clothing_verifications",
+    )
+    category = models.CharField(max_length=20, choices=Category.choices)
+    clothing_item = models.CharField(max_length=100)
+    is_verified = models.BooleanField(default=False)
+    notes = models.TextField(blank=True)
+    recorded_at = models.DateTimeField(auto_now_add=True)
+    recorded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="recorded_clothing_verifications",
+    )
+    verified_at = models.DateTimeField(null=True, blank=True)
+    verified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="verified_student_clothing",
+    )
+
+    class Meta:
+        ordering = ["category", "clothing_item"]
+
+    def __str__(self):
+        return f"{self.student} - {self.clothing_item}"

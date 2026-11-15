@@ -3,24 +3,24 @@
 {% block title %}Parents{% endblock %}
 
 {% block content %}
-    <h2>Parents</h2>
-    <p><a href="{% url 'parent-create' %}">Add parent</a></p>
-    {% if parents %}
-        <table>
-            <thead>
-                <tr><th>Name</th><th>Phone</th><th>Email</th></tr>
-            </thead>
-            <tbody>
-                {% for parent in parents %}
-                    <tr>
-                        <td>{{ parent.full_name }}</td>
-                        <td>{{ parent.phone_number }}</td>
-                        <td>{{ parent.email|default:"—" }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No parents have been added.</p>
-    {% endif %}
+    <h1 class="page-heading">Parents</h1>
+    <p class="page-description">Search parent contact records or add a new parent.</p>
+    <div class="data-toolbar">
+        <form class="search-form" method="get" action="{% url 'parent-list' %}"
+              hx-get="{% url 'parent-list' %}"
+              hx-trigger="input changed delay:300ms from:input, submit"
+              hx-target="#parent-results"
+              hx-swap="innerHTML"
+              hx-indicator="#parent-search-status"
+              hx-sync="this:replace">
+            <label class="visually-hidden" for="parent-search">Search parents</label>
+            <input id="parent-search" type="search" name="q" value="{{ query }}" placeholder="Search name, phone, or email">
+            <button type="submit">Search</button>
+            <span id="parent-search-status" class="search-status htmx-indicator" role="status">Searching…</span>
+        </form>
+        <a class="button" href="{% url 'parent-create' %}">Add parent</a>
+    </div>
+    <div id="parent-results" aria-live="polite">
+        {% include "contributions/partials/parent_results.html" %}
+    </div>
 {% endblock %}

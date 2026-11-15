@@ -1,0 +1,78 @@
+{% extends "contributions/base.html" %}
+
+{% block title %}Register student{% endblock %}
+
+{% block content %}
+    <p class="eyebrow">Second master · Student records</p>
+    <h1 class="page-heading">Register a student</h1>
+    <p class="page-description">Enter the student’s details, parent contact, and home address.</p>
+
+    <form class="registration-form" method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="form-error-summary" role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <section class="form-section card" aria-labelledby="student-details-title">
+            <div class="form-section-heading">
+                <span class="form-section-number" aria-hidden="true">01</span>
+                <div>
+                    <h2 id="student-details-title">Student details</h2>
+                    <p>Basic information used for the student’s school record.</p>
+                </div>
+            </div>
+            <div class="form-grid">
+                {% include "contributions/partials/form_field.html" with field=form.admission_number wide=True %}
+                {% include "contributions/partials/form_field.html" with field=form.first_name %}
+                {% include "contributions/partials/form_field.html" with field=form.middle_name %}
+                {% include "contributions/partials/form_field.html" with field=form.last_name %}
+                {% include "contributions/partials/form_field.html" with field=form.gender %}
+                {% include "contributions/partials/form_field.html" with field=form.date_of_birth %}
+                {% include "contributions/partials/form_field.html" with field=form.class_level %}
+            </div>
+        </section>
+
+        <section class="form-section card" aria-labelledby="parent-details-title">
+            <div class="form-section-heading">
+                <span class="form-section-number" aria-hidden="true">02</span>
+                <div>
+                    <h2 id="parent-details-title">Parent or guardian</h2>
+                    <p>Every student must be linked to a parent record.</p>
+                </div>
+            </div>
+            {% if has_parents %}
+                <div class="form-grid">
+                    {% include "contributions/partials/form_field.html" with field=form.parent wide=True %}
+                </div>
+            {% else %}
+                <div class="form-prerequisite-notice">
+                    <strong>Add a parent before registering this student</strong>
+                    <p>A parent record is required to complete student registration.</p>
+                    <a class="button" href="{% url 'parent-create' %}">Add parent</a>
+                </div>
+            {% endif %}
+        </section>
+
+        <section class="form-section card" aria-labelledby="address-title">
+            <div class="form-section-heading">
+                <span class="form-section-number" aria-hidden="true">03</span>
+                <div>
+                    <h2 id="address-title">Physical address</h2>
+                    <p>Region and district default to Kagera and Karagwe. Update them if needed.</p>
+                </div>
+            </div>
+            <div class="form-grid">
+                {% include "contributions/partials/form_field.html" with field=form.region %}
+                {% include "contributions/partials/form_field.html" with field=form.district %}
+                {% include "contributions/partials/form_field.html" with field=form.ward %}
+                {% include "contributions/partials/form_field.html" with field=form.village %}
+                {% include "contributions/partials/form_field.html" with field=form.street wide=True %}
+            </div>
+        </section>
+
+        <div class="form-actions">
+            <button type="submit"{% if not has_parents %} disabled{% endif %}>Save student registration</button>
+            <a class="button button-cancel" href="{% url 'student-list' %}">Cancel</a>
+        </div>
+    </form>
+{% endblock %}

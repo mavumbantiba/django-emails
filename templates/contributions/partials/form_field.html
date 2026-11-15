@@ -1,0 +1,8 @@
+<div class="form-field{% if wide %} form-field-wide{% endif %}">
+    <label for="{{ field.id_for_label }}">
+        {{ field.label }}{% if field.field.required %} <span class="required-mark" aria-hidden="true">*</span>{% endif %}
+    </label>
+    {{ field }}
+    {% if field.help_text %}<p class="form-help">{{ field.help_text }}</p>{% endif %}
+    {{ field.errors }}
+</div>

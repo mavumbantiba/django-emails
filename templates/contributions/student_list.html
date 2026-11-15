@@ -3,27 +3,24 @@
 {% block title %}Students{% endblock %}
 
 {% block content %}
-    <h2>Students</h2>
-    <p><a href="{% url 'student-create' %}">Register student</a></p>
-    {% if students %}
-        <table>
-            <thead>
-                <tr><th>Admission number</th><th>Student</th><th>Class</th><th>Parent</th><th>Phone</th><th>Location</th></tr>
-            </thead>
-            <tbody>
-                {% for student in students %}
-                    <tr>
-                        <td>{{ student.admission_number }}</td>
-                        <td>{{ student.first_name }} {{ student.middle_name }} {{ student.last_name }}</td>
-                        <td>{{ student.class_level }}</td>
-                        <td>{{ student.parent.full_name }}</td>
-                        <td>{{ student.parent.phone_number }}</td>
-                        <td>{{ student.region }}, {{ student.district }}, {{ student.ward }}, {{ student.village }}, {{ student.street }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No students have been registered.</p>
-    {% endif %}
+    <h1 class="page-heading">Students</h1>
+    <p class="page-description">Search student registration and family details.</p>
+    <div class="data-toolbar">
+        <form class="search-form" method="get" action="{% url 'student-list' %}"
+              hx-get="{% url 'student-list' %}"
+              hx-trigger="input changed delay:300ms from:input, submit"
+              hx-target="#student-results"
+              hx-swap="innerHTML"
+              hx-indicator="#student-search-status"
+              hx-sync="this:replace">
+            <label class="visually-hidden" for="student-search">Search students</label>
+            <input id="student-search" type="search" name="q" value="{{ query }}" placeholder="Search name, admission number, parent, or location">
+            <button type="submit">Search</button>
+            <span id="student-search-status" class="search-status htmx-indicator" role="status">Searching…</span>
+        </form>
+        <a class="button" href="{% url 'student-create' %}">Register student</a>
+    </div>
+    <div id="student-results" aria-live="polite">
+        {% include "contributions/partials/student_results.html" %}
+    </div>
 {% endblock %}

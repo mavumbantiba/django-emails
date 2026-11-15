@@ -1,16 +1,99 @@
 {% extends "contributions/base.html" %}
+{% load static %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <h2>{{ title }}</h2>
-    {% if form.fields.parent and not form.fields.parent.queryset.exists %}
-        <p>No parent records yet. <a href="{% url 'parent-create' %}">Add a parent first</a>.</p>
-    {% endif %}
-    <form method="post">
+    <p class="eyebrow">{{ eyebrow }}</p>
+    <h1 class="page-heading">{{ title }}</h1>
+    <p class="page-description">{{ description }}</p>
+
+    <form class="registration-form" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save</button>
-        <a href="{% url cancel_url %}">Cancel</a>
+        {% if form.non_field_errors %}
+            <div class="form-error-summary" role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <section class="form-section card" aria-labelledby="entry-details-title">
+            <div class="form-section-heading">
+                <span class="form-section-number" aria-hidden="true">01</span>
+                <div>
+                    <h2 id="entry-details-title">{{ section_title }}</h2>
+                    <p>{{ section_description }}</p>
+                </div>
+            </div>
+            {% if not can_save %}
+                <div class="form-prerequisite-notice">
+                    <strong>{{ prerequisite_title }}</strong>
+                    <p>{{ prerequisite_description }}</p>
+                    <a class="button" href="{% url prerequisite_url %}">{{ prerequisite_action }}</a>
+                </div>
+            {% else %}
+                <div class="form-grid">
+                    {% for field in form %}
+                        {% if field.name == "student" or field.name == "notes" %}
+                            {% include "contributions/partials/form_field.html" with field=field wide=True %}
+                        {% else %}
+                            {% include "contributions/partials/form_field.html" with field=field %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% if supply_item_formset %}
+                    <div class="supply-items-section" data-supply-formset>
+                        {{ supply_item_formset.management_form }}
+                        {% if supply_item_formset.non_form_errors %}
+                            <div class="form-error-summary" role="alert">
+                                {{ supply_item_formset.non_form_errors }}
+                            </div>
+                        {% endif %}
+                        <div class="supply-items-heading">
+                            <div>
+                                <h3>Items and quantities</h3>
+                                <p>Add one row for each item the student brought.</p>
+                            </div>
+                            {% if not editing_supply %}
+                                <button type="button" class="button" data-add-supply-item>
+                                    Add another item
+                                </button>
+                            {% endif %}
+                        </div>
+                        <div class="supply-item-list">
+                            {% for item_form in supply_item_formset %}
+                                <div class="supply-item-row" data-supply-item-row>
+                                    {% for field in item_form %}
+                                        {% include "contributions/partials/form_field.html" with field=field %}
+                                    {% endfor %}
+                                    {% if not editing_supply and not forloop.first %}
+                                        <button type="button" class="button" data-remove-supply-item>
+                                            Remove item
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if not editing_supply %}
+                            <template data-empty-supply-item>
+                                <div class="supply-item-row" data-supply-item-row>
+                                    {% for field in supply_item_formset.empty_form %}
+                                        {% include "contributions/partials/form_field.html" with field=field %}
+                                    {% endfor %}
+                                    <button type="button" class="button" data-remove-supply-item>
+                                        Remove item
+                                    </button>
+                                </div>
+                            </template>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endif %}
+        </section>
+
+        <div class="form-actions">
+            <button type="submit"{% if not can_save %} disabled{% endif %}>{{ button_text }}</button>
+            <a class="button button-cancel" href="{% url cancel_url %}">Cancel</a>
+        </div>
     </form>
+    {% if supply_item_formset and not editing_supply %}
+        <script src="{% static 'js/supply-items.js' %}" defer></script>
+    {% endif %}
 {% endblock %}

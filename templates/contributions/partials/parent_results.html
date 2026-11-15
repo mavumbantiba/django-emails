@@ -1,0 +1,26 @@
+{% if parents %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Name</th><th>Phone</th><th>Email</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for parent in parents %}
+                    <tr>
+                        <td>{{ parent.full_name }}</td>
+                        <td>{{ parent.phone_number }}</td>
+                        <td>{{ parent.email|default:"—" }}</td>
+                        <td>
+                            <a class="button button-danger button-small"
+                               href="{% url 'parent-delete' parent.pk %}">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% elif query %}
+    <p>No parents match "{{ query }}".</p>
+{% else %}
+    <p>No parents have been added.</p>
+{% endif %}

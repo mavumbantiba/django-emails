@@ -1,0 +1,42 @@
+{% if supplies %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Date received</th><th>Student</th><th>Item</th><th>Quantity</th><th>Source</th><th>Recorded by</th><th>Notes</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for supply in supplies %}
+                    <tr>
+                        <td>{{ supply.collected_at }}</td>
+                        <td>
+                            {% if supply.student %}
+                                <a href="{% url 'student-supply-history' supply.student.pk %}">
+                                    {{ supply.student }}
+                                </a>
+                            {% else %}
+                                Unassigned
+                            {% endif %}
+                        </td>
+                        <td>{{ supply.get_item_display }}</td>
+                        <td>{{ supply.quantity_collected }}</td>
+                        <td>{{ supply.source|default:"—" }}</td>
+                        <td>{{ supply.recorded_by|default:"—" }}</td>
+                        <td>{{ supply.notes|default:"—" }}</td>
+                        <td>
+                            <div class="record-actions">
+                                <a class="button button-edit button-small"
+                                   href="{% url 'supply-edit' supply.pk %}">Edit</a>
+                                <a class="button button-danger button-small"
+                                   href="{% url 'supply-delete' supply.pk %}">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% elif query %}
+    <p>No supply receipts match "{{ query }}".</p>
+{% else %}
+    <p>No store supplies have been recorded.</p>
+{% endif %}

@@ -1,0 +1,31 @@
+{% if students %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Admission number</th><th>Student</th><th>Class</th><th>Parent</th><th>Phone</th><th>Location</th><th>Clothing checks</th><th>Supply history</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                    <tr>
+                        <td>{{ student.admission_number }}</td>
+                        <td>{{ student.first_name }} {{ student.middle_name }} {{ student.last_name }}</td>
+                        <td>{{ student.class_level }}</td>
+                        <td>{{ student.parent.full_name }}</td>
+                        <td>{{ student.parent.phone_number }}</td>
+                        <td>{{ student.region }}, {{ student.district }}, {{ student.ward }}, {{ student.village }}, {{ student.street }}</td>
+                        <td><a class="button" href="{% url 'student-clothing' student.pk %}">Verify clothes</a></td>
+                        <td><a class="button" href="{% url 'student-supply-history' student.pk %}">View supplies</a></td>
+                        <td>
+                            <a class="button button-danger button-small"
+                               href="{% url 'student-delete' student.pk %}">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% elif query %}
+    <p>No students match "{{ query }}".</p>
+{% else %}
+    <p>No students have been registered.</p>
+{% endif %}

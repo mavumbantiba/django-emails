@@ -1,18 +1,64 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Home</title>
-</head>
-<body>
-    <main>
-        <h1>Welcome to Kafunjo Secondary School</h1>
-        <p>You are signed in as {{ request.user.email|default:request.user.username }}.</p>
-        <p><a href="{% url 'profile' %}">View your account</a></p>
-        <p><a href="{% url 'student-list' %}">Manage students</a></p>
-        <p><a href="{% url 'parent-list' %}">Manage parents</a></p>
-        <p><a href="{% url 'collection-list' %}">Manage student collections</a></p>
-    </main>
-</body>
-</html>
+{% extends "contributions/base.html" %}
+
+{% block title %}Welcome | Kafunjo Secondary School{% endblock %}
+
+{% block content %}
+    <section class="welcome-panel card">
+        <div class="welcome-copy">
+            <p class="eyebrow">School management portal</p>
+            <h1>Welcome to Kafunjo Secondary School</h1>
+            {% if request.user.is_authenticated %}
+                <p>Good to see you, {{ request.user.email|default:request.user.username }}. What would you like to manage today?</p>
+                <div class="welcome-actions">
+                    <a class="button" href="{% url 'student-create' %}">Register a student</a>
+                    <a class="welcome-link" href="{% url 'student-list' %}">View student records</a>
+                </div>
+            {% else %}
+                <p>One place to manage student registration, family details, and school contributions.</p>
+                <div class="welcome-actions">
+                    <a class="button" href="{% url 'account_login' %}">Sign in to continue</a>
+                </div>
+            {% endif %}
+        </div>
+        <aside class="welcome-aside">
+            <p class="eyebrow">Kagera · Karagwe</p>
+            <strong>Supporting every student</strong>
+            <p>Keep student, parent, and contribution records organized in one place.</p>
+        </aside>
+    </section>
+
+    <section aria-labelledby="quick-actions-title">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Get started</p>
+                <h2 id="quick-actions-title">Quick actions</h2>
+            </div>
+        </div>
+        <div class="quick-actions">
+            <article class="quick-card card">
+                <span class="quick-card-mark" aria-hidden="true">01</span>
+                <h3>Student registration</h3>
+                <p>Register students and connect each one to a parent.</p>
+                <a href="{% url 'student-list' %}">Open student records &rarr;</a>
+            </article>
+            <article class="quick-card card">
+                <span class="quick-card-mark" aria-hidden="true">02</span>
+                <h3>Parent records</h3>
+                <p>Add parent contact details and find linked students.</p>
+                <a href="{% url 'parent-list' %}">Open parent records &rarr;</a>
+            </article>
+            <article class="quick-card card">
+                <span class="quick-card-mark" aria-hidden="true">03</span>
+                <h3>School contributions</h3>
+                <p>Record fees collected and supplies issued to students.</p>
+                <a href="{% url 'collection-list' %}">Open collections &rarr;</a>
+            </article>
+            <article class="quick-card card">
+                <span class="quick-card-mark" aria-hidden="true">04</span>
+                <h3>Store supplies</h3>
+                <p>Record tools and other supplies received by the school store.</p>
+                <a href="{% url 'supply-list' %}">Open store records &rarr;</a>
+            </article>
+        </div>
+    </section>
+{% endblock %}

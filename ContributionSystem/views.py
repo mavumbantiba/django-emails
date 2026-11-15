@@ -1,8 +1,31 @@
+from allauth.account.decorators import reauthentication_required
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.db import transaction
+from django.db.models.deletion import ProtectedError
+from django.db.models import Q, Sum
+from django.forms import formset_factory
+from django.shortcuts import get_object_or_404, redirect, render, resolve_url
+from django.urls import reverse
+from django.utils import timezone
+from django.views.decorators.vary import vary_on_headers
+from django.views.decorators.http import require_http_methods
 
-from .forms import ParentForm, StudentCollectionForm, StudentForm
-from .models import Parent, Student, StudentCollection
+from .forms import (
+    ParentForm,
+    StudentClothingVerificationForm,
+    StudentCollectionForm,
+    StoreSupplyItemForm,
+    StudentForm,
+    StoreSupplyReceiptForm,
+)
+from .models import (
+    Parent,
+    Student,
+    StudentClothingVerification,
+    StudentCollection,
+    StoreSupplyReceipt,
+)
+from .notifications import record_snapshot, send_record_notification
 
 
 @login_required
@@ -10,34 +33,221 @@ def profile(request):
     return render(request, 'accounts/profile.html')
 
 
-@login_required
 def home(request):
     return render(request, 'home.html')
 
 
+def _confirm_record_deletion(
+    request,
+    record,
+    record_title,
+    return_url,
+    cascade_warning="",
+    blocked_message="",
+    blocked_link="",
+    notification=None,
+):
+    return_url = resolve_url(return_url)
+    context = {
+        "record_title": record_title,
+        "return_url": return_url,
+        "cascade_warning": cascade_warning,
+        "blocked_message": blocked_message,
+        "blocked_link": blocked_link,
+    }
+    if request.method == "POST":
+        if blocked_message:
+            return render(
+                request,
+                "contributions/confirm_delete.html",
+                context,
+                status=409,
+            )
+        try:
+            with transaction.atomic():
+                record.delete()
+        except ProtectedError:
+            context["blocked_message"] = (
+                "This record is now linked to other records and cannot be deleted. "
+                "Review or remove the linked records first."
+            )
+            context["blocked_link"] = blocked_link
+            return render(
+                request,
+                "contributions/confirm_delete.html",
+                context,
+                status=409,
+            )
+        if notification:
+            send_record_notification(request, **notification)
+        return redirect(return_url)
+    return render(request, "contributions/confirm_delete.html", context)
+
+
 @login_required
+@vary_on_headers("HX-Request")
 def parent_list(request):
+    query = request.GET.get("q", "").strip()
     parents = Parent.objects.all()
-    return render(request, "contributions/parent_list.html", {"parents": parents})
+    if query:
+        parents = parents.filter(
+            Q(full_name__icontains=query)
+            | Q(phone_number__icontains=query)
+            | Q(email__icontains=query)
+        )
+    template = (
+        "contributions/partials/parent_results.html"
+        if request.headers.get("HX-Request") == "true"
+        else "contributions/parent_list.html"
+    )
+    return render(request, template, {"parents": parents, "query": query})
+
+
+@login_required
+@reauthentication_required
+@require_http_methods(["GET", "POST"])
+def parent_delete(request, parent_id):
+    parent = get_object_or_404(Parent, pk=parent_id)
+    student_count = parent.students.count()
+    blocked_message = (
+        f"This parent is linked to {student_count} student record(s). "
+        "Remove or reassign those students before deleting this parent."
+        if student_count
+        else ""
+    )
+    return _confirm_record_deletion(
+        request,
+        parent,
+        str(parent),
+        "parent-list",
+        blocked_message=blocked_message,
+        blocked_link=reverse("student-list"),
+        notification={
+            "recipient": parent.created_by,
+            "action": "deleted",
+            "record_type": "Parent",
+            "record_identifier": parent.pk,
+            "data": record_snapshot(parent),
+        },
+    )
 
 
 @login_required
 def parent_create(request):
     form = ParentForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
-        form.save()
+        parent = form.save(commit=False)
+        parent.created_by = request.user
+        parent.save()
+        send_record_notification(
+            request,
+            recipient=parent.created_by,
+            action="recorded",
+            record_type="Parent",
+            record_identifier=parent.pk,
+            data=record_snapshot(parent),
+        )
         return redirect("parent-list")
     return render(
         request,
         "contributions/form.html",
-        {"form": form, "title": "Add parent", "cancel_url": "parent-list"},
+        {
+            "form": form,
+            "eyebrow": "School records · Parent information",
+            "title": "Add a parent",
+            "description": "Save a parent or guardian’s contact details for student registration.",
+            "section_title": "Parent contact details",
+            "section_description": "Enter a name and a phone number. Email is optional.",
+            "button_text": "Save parent",
+            "cancel_url": "parent-list",
+            "can_save": True,
+        },
     )
 
 
 @login_required
+@vary_on_headers("HX-Request")
 def student_list(request):
+    query = request.GET.get("q", "").strip()
     students = Student.objects.select_related("parent")
-    return render(request, "contributions/student_list.html", {"students": students})
+    if query:
+        students = students.filter(
+            Q(admission_number__icontains=query)
+            | Q(first_name__icontains=query)
+            | Q(middle_name__icontains=query)
+            | Q(last_name__icontains=query)
+            | Q(class_level__icontains=query)
+            | Q(parent__full_name__icontains=query)
+            | Q(parent__phone_number__icontains=query)
+            | Q(region__icontains=query)
+            | Q(district__icontains=query)
+            | Q(ward__icontains=query)
+            | Q(village__icontains=query)
+            | Q(street__icontains=query)
+        )
+    template = (
+        "contributions/partials/student_results.html"
+        if request.headers.get("HX-Request") == "true"
+        else "contributions/student_list.html"
+    )
+    return render(request, template, {"students": students, "query": query})
+
+
+@login_required
+@reauthentication_required
+@require_http_methods(["GET", "POST"])
+def student_delete(request, student_id):
+    student = get_object_or_404(Student, pk=student_id)
+    receipt_count = student.store_supply_receipts.count()
+    collection_count = student.collections.count()
+    clothing_count = student.clothing_verifications.count()
+    cascade_warning = ""
+    if collection_count or clothing_count:
+        cascade_warning = (
+            f"Deleting this student will also permanently delete {collection_count} "
+            f"collection record(s) and {clothing_count} clothing check(s)."
+        )
+    blocked_message = (
+        f"This student has {receipt_count} linked supply record(s). Delete those "
+        "supply records first to preserve the relationship history."
+        if receipt_count
+        else ""
+    )
+    deletion_data = record_snapshot(student)
+    if request.method == "POST" and not blocked_message:
+        deletion_data = {
+            "student": deletion_data,
+            "collections": [
+                record_snapshot(collection)
+                for collection in student.collections.select_related("recorded_by")
+            ],
+            "clothing_checks": [
+                record_snapshot(check)
+                for check in student.clothing_verifications.select_related(
+                    "recorded_by",
+                    "verified_by",
+                )
+            ],
+        }
+    return _confirm_record_deletion(
+        request,
+        student,
+        str(student),
+        "student-list",
+        cascade_warning=cascade_warning,
+        blocked_message=blocked_message,
+        blocked_link=reverse(
+            "student-supply-history",
+            kwargs={"student_id": student.pk},
+        ),
+        notification={
+            "recipient": student.registered_by,
+            "action": "deleted",
+            "record_type": "Student",
+            "record_identifier": student.admission_number,
+            "data": deletion_data,
+        },
+    )
 
 
 @login_required
@@ -47,22 +257,46 @@ def student_create(request):
         student = form.save(commit=False)
         student.registered_by = request.user
         student.save()
-        return redirect("student-list")
+        send_record_notification(
+            request,
+            recipient=student.registered_by,
+            action="recorded",
+            record_type="Student",
+            record_identifier=student.admission_number,
+            data=record_snapshot(student),
+        )
+        return redirect("student-clothing", student_id=student.pk)
     return render(
         request,
-        "contributions/form.html",
-        {"form": form, "title": "Register student", "cancel_url": "student-list"},
+        "contributions/student_form.html",
+        {"form": form, "has_parents": Parent.objects.exists()},
     )
 
 
 @login_required
+@vary_on_headers("HX-Request")
 def collection_list(request):
-    collections = StudentCollection.objects.select_related("student", "recorded_by")
-    return render(
-        request,
-        "contributions/collection_list.html",
-        {"collections": collections},
+    query = request.GET.get("q", "").strip()
+    collections = StudentCollection.objects.select_related(
+        "student",
+        "student__parent",
+        "recorded_by",
     )
+    if query:
+        collections = collections.filter(
+            Q(student__admission_number__icontains=query)
+            | Q(student__first_name__icontains=query)
+            | Q(student__last_name__icontains=query)
+            | Q(student__parent__full_name__icontains=query)
+            | Q(category__icontains=query)
+            | Q(notes__icontains=query)
+        )
+    template = (
+        "contributions/partials/collection_results.html"
+        if request.headers.get("HX-Request") == "true"
+        else "contributions/collection_list.html"
+    )
+    return render(request, template, {"collections": collections, "query": query})
 
 
 @login_required
@@ -72,13 +306,356 @@ def collection_create(request):
         collection = form.save(commit=False)
         collection.recorded_by = request.user
         collection.save()
+        send_record_notification(
+            request,
+            recipient=collection.recorded_by,
+            action="recorded",
+            record_type="Student collection",
+            record_identifier=collection.pk,
+            data=record_snapshot(collection),
+        )
         return redirect("collection-list")
     return render(
         request,
         "contributions/form.html",
         {
             "form": form,
-            "title": "Record student collection",
+            "eyebrow": "School records · Student contributions",
+            "title": "Record a collection",
+            "description": "Record a student payment, an item issued, or both.",
+            "section_title": "Collection details",
+            "section_description": "Select a student and enter the amount collected or quantity issued.",
+            "button_text": "Save collection",
             "cancel_url": "collection-list",
+            "can_save": Student.objects.exists(),
+            "prerequisite_title": "Register a student first",
+            "prerequisite_description": "A collection must be linked to a student record.",
+            "prerequisite_action": "Register student",
+            "prerequisite_url": "student-create",
+        },
+    )
+
+
+@login_required
+@reauthentication_required
+@require_http_methods(["GET", "POST"])
+def collection_delete(request, collection_id):
+    collection = get_object_or_404(
+        StudentCollection.objects.select_related("student"),
+        pk=collection_id,
+    )
+    return _confirm_record_deletion(
+        request,
+        collection,
+        str(collection),
+        "collection-list",
+        notification={
+            "recipient": collection.recorded_by,
+            "action": "deleted",
+            "record_type": "Student collection",
+            "record_identifier": collection.pk,
+            "data": record_snapshot(collection),
+        },
+    )
+
+
+@login_required
+@vary_on_headers("HX-Request")
+def supply_list(request):
+    query = request.GET.get("q", "").strip()
+    supplies = StoreSupplyReceipt.objects.select_related("student", "recorded_by")
+    if query:
+        matching_items = [
+            value
+            for value, label in StoreSupplyReceipt.Item.choices
+            if query.casefold() in label.casefold()
+        ]
+        supplies = supplies.filter(
+            Q(item__icontains=query)
+            | Q(item__in=matching_items)
+            | Q(student__admission_number__icontains=query)
+            | Q(student__first_name__icontains=query)
+            | Q(student__middle_name__icontains=query)
+            | Q(student__last_name__icontains=query)
+            | Q(source__icontains=query)
+            | Q(notes__icontains=query)
+        )
+    template = (
+        "contributions/partials/supply_results.html"
+        if request.headers.get("HX-Request") == "true"
+        else "contributions/supply_list.html"
+    )
+    return render(request, template, {"supplies": supplies, "query": query})
+
+
+@login_required
+@reauthentication_required
+@require_http_methods(["GET", "POST"])
+def supply_delete(request, receipt_id):
+    receipt = get_object_or_404(
+        StoreSupplyReceipt.objects.select_related("student"),
+        pk=receipt_id,
+    )
+    student = receipt.student or "Unassigned"
+    record_title = (
+        f"{receipt.get_item_display()} (quantity {receipt.quantity_collected}) "
+        f"for {student}"
+    )
+    return _confirm_record_deletion(
+        request,
+        receipt,
+        record_title,
+        "supply-list",
+        notification={
+            "recipient": receipt.recorded_by,
+            "action": "deleted",
+            "record_type": "Store supply receipt",
+            "record_identifier": receipt.pk,
+            "data": record_snapshot(receipt),
+        },
+    )
+
+
+@login_required
+def student_supply_history(request, student_id):
+    student = get_object_or_404(
+        Student.objects.select_related("parent"),
+        pk=student_id,
+    )
+    receipts = StoreSupplyReceipt.objects.filter(student=student).select_related(
+        "recorded_by"
+    ).order_by("-collected_at", "-pk")
+    item_labels = dict(StoreSupplyReceipt.Item.choices)
+    supply_totals = [
+        {
+            "item_label": item_labels.get(entry["item"], entry["item"]),
+            "quantity": entry["total_quantity"],
+        }
+        for entry in receipts.values("item")
+        .annotate(total_quantity=Sum("quantity_collected"))
+        .order_by("item")
+    ]
+    return render(
+        request,
+        "contributions/student_supply_history.html",
+        {
+            "student": student,
+            "receipts": receipts,
+            "supply_totals": supply_totals,
+        },
+    )
+
+
+@login_required
+@reauthentication_required
+@require_http_methods(["GET", "POST"])
+def clothing_verification_delete(request, student_id, verification_id):
+    verification = get_object_or_404(
+        StudentClothingVerification.objects.select_related("student"),
+        pk=verification_id,
+        student_id=student_id,
+    )
+    record_title = (
+        f"{verification.get_category_display()}: {verification.clothing_item} "
+        f"for {verification.student}"
+    )
+    return _confirm_record_deletion(
+        request,
+        verification,
+        record_title,
+        reverse("student-clothing", kwargs={"student_id": verification.student_id}),
+        notification={
+            "recipient": verification.recorded_by,
+            "action": "deleted",
+            "record_type": "Student clothing verification",
+            "record_identifier": verification.pk,
+            "data": record_snapshot(verification),
+        },
+    )
+
+
+@login_required
+def supply_create(request, receipt_id=None):
+    receipt = None
+    if receipt_id is not None:
+        receipt = get_object_or_404(StoreSupplyReceipt, pk=receipt_id)
+    initial = {}
+    if receipt is None and request.method == "GET":
+        initial_student = request.GET.get("student")
+        if initial_student:
+            initial["student"] = initial_student
+    form = StoreSupplyReceiptForm(
+        request.POST or None,
+        instance=receipt,
+        initial=initial or None,
+    )
+    item_formset_class = formset_factory(
+        StoreSupplyItemForm,
+        extra=0 if receipt else 1,
+        min_num=1,
+        validate_min=True,
+    )
+    initial_items = (
+        [{"item": receipt.item, "quantity_collected": receipt.quantity_collected}]
+        if receipt
+        else None
+    )
+    item_formset = item_formset_class(
+        request.POST or None,
+        initial=initial_items,
+        prefix="items",
+    )
+    if request.method == "POST":
+        form_is_valid = form.is_valid()
+        item_formset_is_valid = item_formset.is_valid()
+        if form_is_valid and item_formset_is_valid:
+            if receipt:
+                before = record_snapshot(receipt)
+                recipient = receipt.recorded_by
+                with transaction.atomic():
+                    supply = form.save(commit=False)
+                    item_data = item_formset.cleaned_data[0]
+                    supply.item = item_data["item"]
+                    supply.quantity_collected = item_data["quantity_collected"]
+                    supply.save()
+                send_record_notification(
+                    request,
+                    recipient=recipient,
+                    action="updated",
+                    record_type="Store supply receipt",
+                    record_identifier=supply.pk,
+                    data={
+                        "before": before,
+                        "after": record_snapshot(supply),
+                    },
+                )
+            else:
+                student = form.cleaned_data["student"]
+                recorded_items = []
+                with transaction.atomic():
+                    for item_data in item_formset.cleaned_data:
+                        if not item_data:
+                            continue
+                        supply = StoreSupplyReceipt.objects.create(
+                            student=student,
+                            item=item_data["item"],
+                            quantity_collected=item_data["quantity_collected"],
+                            source=form.cleaned_data["source"],
+                            notes=form.cleaned_data["notes"],
+                            recorded_by=request.user,
+                        )
+                        recorded_items.append(
+                            {
+                                "receipt_id": supply.pk,
+                                "item": supply.get_item_display(),
+                                "quantity": supply.quantity_collected,
+                            }
+                        )
+                send_record_notification(
+                    request,
+                    recipient=request.user,
+                    action="recorded",
+                    record_type="Store supply delivery",
+                    record_identifier=student.admission_number,
+                    data={
+                        "student": str(student),
+                        "items": recorded_items,
+                        "source": form.cleaned_data["source"],
+                        "notes": form.cleaned_data["notes"],
+                    },
+                )
+            if receipt is None and request.GET.get("student"):
+                return redirect(
+                    "student-supply-history",
+                    student_id=form.cleaned_data["student"].pk,
+                )
+            return redirect("supply-list")
+    return render(
+        request,
+        "contributions/form.html",
+        {
+            "form": form,
+            "supply_item_formset": item_formset,
+            "editing_supply": receipt is not None,
+            "eyebrow": "Storekeeper · Supplies",
+            "title": "Edit supply receipt" if receipt else "Record supplies collected",
+            "description": (
+                "Update the student and details for this receipt."
+                if receipt
+                else "Record tools and other supplies received for a student."
+            ),
+            "section_title": "Supply receipt",
+            "section_description": (
+                "Select the student, then enter each item and its quantity."
+            ),
+            "button_text": "Update supply receipt" if receipt else "Save supply items",
+            "cancel_url": "supply-list",
+            "can_save": Student.objects.exists(),
+            "prerequisite_title": "Register a student first",
+            "prerequisite_description": "Every supply receipt must be linked to a student.",
+            "prerequisite_action": "Register student",
+            "prerequisite_url": "student-create",
+        },
+    )
+
+
+@login_required
+def student_clothing(request, student_id, verification_id=None):
+    student = get_object_or_404(
+        Student.objects.select_related("parent"),
+        pk=student_id,
+    )
+    verification = None
+    if verification_id is not None:
+        verification = get_object_or_404(
+            StudentClothingVerification,
+            pk=verification_id,
+            student=student,
+        )
+    form = StudentClothingVerificationForm(
+        request.POST or None,
+        instance=verification,
+    )
+    if request.method == "POST" and form.is_valid():
+        before = record_snapshot(verification) if verification else None
+        recipient = verification.recorded_by if verification else request.user
+        clothing_check = form.save(commit=False)
+        clothing_check.student = student
+        if verification is None:
+            clothing_check.recorded_by = request.user
+        if clothing_check.is_verified:
+            if clothing_check.verified_at is None:
+                clothing_check.verified_at = timezone.now()
+                clothing_check.verified_by = request.user
+        else:
+            clothing_check.verified_at = None
+            clothing_check.verified_by = None
+        clothing_check.save()
+        send_record_notification(
+            request,
+            recipient=recipient,
+            action="updated" if verification else "recorded",
+            record_type="Student clothing verification",
+            record_identifier=clothing_check.pk,
+            data={
+                "before": before,
+                "after": record_snapshot(clothing_check),
+            }
+            if verification
+            else record_snapshot(clothing_check),
+        )
+        return redirect("student-clothing", student_id=student.pk)
+
+    return render(
+        request,
+        "contributions/student_clothing.html",
+        {
+            "student": student,
+            "form": form,
+            "verification": verification,
+            "verifications": student.clothing_verifications.select_related(
+                "recorded_by",
+                "verified_by",
+            ),
         },
     )
