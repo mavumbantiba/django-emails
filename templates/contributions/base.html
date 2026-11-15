@@ -6,10 +6,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Kafunjo Secondary School{% endblock %}</title>
-    <script {% csp_nonce_attr %}>
+    <script nonce="{{ request.csp_nonce }}">
         document.documentElement.dataset.theme = localStorage.getItem("kafunjo-theme") || "light";
     </script>
-    <style {% csp_nonce_attr %}>
+    <style nonce="{{ request.csp_nonce }}">
         :root {
             color-scheme: light;
             --navy: #101820;

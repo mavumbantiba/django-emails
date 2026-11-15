@@ -1,3 +1,5 @@
+import secrets
+
 from django.conf import settings
 from django.shortcuts import redirect
 
@@ -9,7 +11,24 @@ class ResponseSecurityHeadersMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        nonce = secrets.token_urlsafe(16)
+        request.csp_nonce = nonce
         response = self.get_response(request)
+        policy_parts = []
+        for directive, sources in settings.SECURE_CSP.items():
+            if isinstance(sources, str):
+                sources = [sources]
+            rendered_sources = [
+                source.replace('{nonce}', nonce) for source in sources
+            ]
+            if rendered_sources:
+                policy_parts.append(
+                    f"{directive} {' '.join(rendered_sources)}"
+                )
+        response.setdefault(
+            "Content-Security-Policy",
+            "; ".join(policy_parts),
+        )
         response.setdefault("Cross-Origin-Resource-Policy", "same-origin")
         return response
 

@@ -14,8 +14,6 @@ from datetime import timedelta
 import os
 from pathlib import Path
 
-from django.utils.csp import CSP
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -67,7 +65,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.middleware.csp.ContentSecurityPolicyMiddleware',
     'ContributionSystem.middleware.ResponseSecurityHeadersMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -81,16 +78,16 @@ MIDDLEWARE = [
 ]
 
 SECURE_CSP = {
-    'default-src': [CSP.SELF],
-    'base-uri': [CSP.SELF],
-    'connect-src': [CSP.SELF],
-    'font-src': [CSP.SELF],
-    'form-action': [CSP.SELF],
-    'frame-ancestors': [CSP.NONE],
-    'img-src': [CSP.SELF, 'data:'],
-    'object-src': [CSP.NONE],
-    'script-src': [CSP.SELF, CSP.NONCE],
-    'style-src': [CSP.SELF, CSP.NONCE],
+    'default-src': ["'self'"],
+    'base-uri': ["'self'"],
+    'connect-src': ["'self'"],
+    'font-src': ["'self'"],
+    'form-action': ["'self'"],
+    'frame-ancestors': ["'none'"],
+    'img-src': ["'self'", 'data:'],
+    'object-src': ["'none'"],
+    'script-src': ["'self'", "'nonce-{nonce}'"],
+    'style-src': ["'self'", "'nonce-{nonce}'"],
 }
 SECURE_HSTS_SECONDS = 31536000
 SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -170,7 +167,6 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
-                'django.template.context_processors.csp',
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.i18n',
                 'django.contrib.messages.context_processors.messages',
