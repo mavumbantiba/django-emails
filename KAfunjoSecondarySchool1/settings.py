@@ -196,7 +196,7 @@ LANGUAGES = [
 ]
 LOCALE_PATHS = [BASE_DIR / 'locale']
 
-TIME_ZONE = 'Africa/Da_es_Salaam'
+TIME_ZONE = 'Africa/Dar_es_Salaam'
 
 USE_I18N = True
 
