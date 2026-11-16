@@ -1219,6 +1219,16 @@ class SocialLoginTests(TestCase):
             self.assertContains(response, provider)
 
 
+class ContentSecurityPolicyTests(TestCase):
+    def test_form_action_allows_pythonanywhere_social_login_endpoint(self):
+        response = self.client.get(reverse("account_login"))
+
+        self.assertIn(
+            "form-action 'self' https://mavumba.pythonanywhere.com",
+            response.headers["Content-Security-Policy"],
+        )
+
+
 class UserProfileTests(TestCase):
     def test_accounts_namespace_alias_resolves_existing_routes(self):
         self.assertEqual(reverse("accounts:profile"), reverse("profile"))

@@ -96,7 +96,7 @@ SECURE_CSP = {
     'base-uri': ["'self'"],
     'connect-src': ["'self'"],
     'font-src': ["'self'"],
-    'form-action': ["'self'"],
+    'form-action': ["'self'", 'https://mavumba.pythonanywhere.com'],
     'frame-ancestors': ["'none'"],
     'img-src': ["'self'", 'data:'],
     'object-src': ["'none'"],
