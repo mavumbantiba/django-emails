@@ -72,5 +72,6 @@ urlpatterns = [
         views.supply_create,
         name="supply-edit",
     ),
+    path("accounts/logout/", views.mfa_logout, name="account_logout"),
     path("accounts/", include("allauth.urls")),
 ]

@@ -809,10 +809,6 @@ class DeletionReauthenticationTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("mfa_reauthenticate"), response["Location"])
         self.assertNotIn(reverse("account_reauthenticate"), response["Location"])
-        self.assertIn("next=/admin/", response["Location"])
-
-        mfa_challenge = self.client.get(response["Location"])
-        self.assertEqual(mfa_challenge.status_code, 200)
 
     def test_admin_record_delete_also_requires_mfa_reauthentication(self):
         admin_user = get_user_model().objects.create_superuser(
@@ -842,6 +838,34 @@ class DeletionReauthenticationTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("mfa_reauthenticate"), response["Location"])
         self.assertNotIn(reverse("account_reauthenticate"), response["Location"])
+        self.assertIn("next=%2Fadmin%2F", response["Location"])
+
+        mfa_challenge = self.client.get(response["Location"])
+        self.assertEqual(mfa_challenge.status_code, 200)
+
+
+class LogoutMFAReauthenticationTests(TestCase):
+    def setUp(self):
+        user = get_user_model().objects.create_user(
+            username="mfa-logout",
+            password="test-password",
+        )
+        login_with_totp(self.client, user, recently_authenticated=False)
+
+    def assert_logout_requires_mfa(self, url):
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("mfa_reauthenticate"), response["Location"])
+        self.assertNotIn(reverse("account_reauthenticate"), response["Location"])
+        challenge = self.client.get(response["Location"])
+        self.assertEqual(challenge.status_code, 200)
+
+    def test_account_logout_requires_mfa_reauthentication(self):
+        self.assert_logout_requires_mfa(reverse("account_logout"))
+
+    def test_admin_logout_requires_mfa_reauthentication(self):
+        self.assert_logout_requires_mfa(reverse("admin:logout"))
 
 
 @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")

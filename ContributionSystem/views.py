@@ -1,7 +1,8 @@
 from allauth.account.decorators import reauthentication_required
+from allauth.account.views import logout as allauth_logout
 from allauth.mfa.models import Authenticator
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models.deletion import ProtectedError
 from django.db.models import Q, Sum
@@ -37,6 +38,10 @@ from .models import (
     StoreSupplyReceipt,
 )
 from .notifications import record_snapshot, send_record_notification
+from .security import require_mfa_reauthentication
+
+
+mfa_logout = require_mfa_reauthentication(allauth_logout)
 
 
 @login_required

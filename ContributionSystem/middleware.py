@@ -1,8 +1,4 @@
 import secrets
-import time
-
-from allauth.account import app_settings as account_settings
-from allauth.account.authentication import get_authentication_records
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.conf import settings
 from django.shortcuts import redirect
@@ -10,6 +6,8 @@ from django.urls import reverse
 from django.utils.http import urlencode
 
 from allauth.mfa.models import Authenticator
+
+from .security import has_recent_mfa_authentication
 
 
 class ResponseSecurityHeadersMiddleware:
@@ -81,19 +79,7 @@ class RequireTOTPEnrollmentMiddleware:
             if not match or match.namespace != "admin":
                 return None
 
-            authentication_records = get_authentication_records(request)
-            latest_authentication = (
-                authentication_records[-1] if authentication_records else {}
-            )
-            authenticated_at = latest_authentication.get("at")
-            has_recent_mfa = (
-                latest_authentication.get("method") == "mfa"
-                and isinstance(authenticated_at, (int, float))
-                and 0
-                <= time.time() - authenticated_at
-                < account_settings.REAUTHENTICATION_TIMEOUT
-            )
-            if has_recent_mfa:
+            if has_recent_mfa_authentication(request):
                 return None
 
             return redirect(

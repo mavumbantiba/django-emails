@@ -41,7 +41,12 @@ class SchoolAccountAdapter(DefaultAccountAdapter):
             and url_name
             and url_name.endswith("_delete")
         )
-        if url_name in DELETE_URL_NAMES or is_admin_delete:
+        is_logout = url_name == "account_logout" or (
+            request
+            and request.path.startswith("/admin/")
+            and url_name == "logout"
+        )
+        if url_name in DELETE_URL_NAMES or is_admin_delete or is_logout:
             return [
                 method
                 for method in methods
