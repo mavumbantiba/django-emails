@@ -17,6 +17,9 @@
                     {% if can_manage_collections %}
                         <a class="welcome-link" href="{% url 'collection-list' %}">{% trans "Manage collections" %}</a>
                     {% endif %}
+                    {% if request.user.is_superuser %}
+                        <a class="button" href="{% url 'admin:auth_user_changelist' %}">{% trans "Manage users" %}</a>
+                    {% endif %}
                     <a class="welcome-link" href="{% url 'profile' %}">{% trans "View my profile" %}</a>
                 </div>
             {% else %}

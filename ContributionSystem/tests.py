@@ -1354,6 +1354,32 @@ class UserProfileTests(TestCase):
         ):
             self.assertContains(response, reverse(route_name))
 
+    def test_superuser_homepage_links_to_user_management(self):
+        user = get_user_model().objects.create_user(
+            username="homepage-admin-user",
+            password="test-password",
+        )
+        login_with_totp(self.client, user)
+
+        response = self.client.get(reverse("home"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, reverse("admin:auth_user_changelist"))
+        self.assertContains(response, "Manage users")
+
+    def test_non_superuser_homepage_hides_user_management_link(self):
+        user = get_user_model().objects.create_user(
+            username="homepage-standard-user",
+            password="test-password",
+        )
+        login_with_totp(self.client, user, roles=())
+
+        response = self.client.get(reverse("home"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, reverse("admin:auth_user_changelist"))
+        self.assertNotContains(response, "Manage users")
+
     def test_unauthenticated_homepage_hides_student_and_collection_actions(self):
         response = self.client.get(reverse("home"))
 
