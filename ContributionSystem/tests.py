@@ -826,6 +826,19 @@ class DeletionReauthenticationTests(TestCase):
         self.assertIn(reverse("mfa_reauthenticate"), response["Location"])
         self.assertNotIn(reverse("account_reauthenticate"), response["Location"])
 
+    def test_admin_dashboard_requires_mfa_even_after_password_reauthentication(self):
+        session = self.client.session
+        session[AUTHENTICATION_METHODS_SESSION_KEY] = [
+            {"method": "password", "at": time.time()}
+        ]
+        session.save()
+
+        response = self.client.get(reverse("admin:index"))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("mfa_reauthenticate"), response["Location"])
+        self.assertNotIn(reverse("account_reauthenticate"), response["Location"])
+
 
 @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
 class RecordNotificationTests(TestCase):
