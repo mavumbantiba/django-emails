@@ -1,5 +1,5 @@
 from allauth.account.decorators import reauthentication_required
-from allauth.account.views import logout as allauth_logout
+from allauth.account.views import LogoutView as AllauthLogoutView
 from allauth.mfa.models import Authenticator
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -41,7 +41,12 @@ from .notifications import record_snapshot, send_record_notification
 from .security import require_mfa_reauthentication
 
 
-mfa_logout = require_mfa_reauthentication(allauth_logout)
+class SchoolLogoutView(AllauthLogoutView):
+    def get_redirect_url(self):
+        return reverse("home")
+
+
+mfa_logout = require_mfa_reauthentication(SchoolLogoutView.as_view())
 
 
 @login_required

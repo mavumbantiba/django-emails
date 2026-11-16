@@ -867,6 +867,35 @@ class LogoutMFAReauthenticationTests(TestCase):
     def test_admin_logout_requires_mfa_reauthentication(self):
         self.assert_logout_requires_mfa(reverse("admin:logout"))
 
+    def set_recent_mfa_authentication(self):
+        session = self.client.session
+        session[AUTHENTICATION_METHODS_SESSION_KEY] = [
+            {"method": "mfa", "type": "totp", "at": time.time()}
+        ]
+        session.save()
+
+    def test_account_logout_redirects_home_after_mfa(self):
+        self.set_recent_mfa_authentication()
+
+        response = self.client.post(
+            reverse("account_logout"),
+            {"next": reverse("admin:index")},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["Location"], reverse("home"))
+
+    def test_admin_logout_redirects_home_after_mfa(self):
+        self.set_recent_mfa_authentication()
+
+        response = self.client.post(
+            reverse("admin:logout"),
+            {"next": reverse("admin:index")},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["Location"], reverse("home"))
+
 
 @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
 class RecordNotificationTests(TestCase):

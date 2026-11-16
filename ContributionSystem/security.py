@@ -5,6 +5,7 @@ from allauth.account import app_settings as account_settings
 from allauth.account.authentication import get_authentication_records
 from allauth.core.exceptions import ReauthenticationRequired
 from allauth.mfa.models import Authenticator
+from django.contrib.auth import REDIRECT_FIELD_NAME
 
 
 def has_recent_mfa_authentication(request):
@@ -29,6 +30,18 @@ def require_mfa_reauthentication(view_func):
             and not has_recent_mfa_authentication(request)
         ):
             raise ReauthenticationRequired()
+        return view_func(request, *args, **kwargs)
+
+    return wrapped_view
+
+
+def force_logout_home(view_func):
+    @wraps(view_func)
+    def wrapped_view(request, *args, **kwargs):
+        request.GET = request.GET.copy()
+        request.GET.pop(REDIRECT_FIELD_NAME, None)
+        request.POST = request.POST.copy()
+        request.POST.pop(REDIRECT_FIELD_NAME, None)
         return view_func(request, *args, **kwargs)
 
     return wrapped_view

@@ -12,13 +12,15 @@ from .models import (
     StoreSupplyReceipt,
 )
 from .notifications import record_snapshot, send_record_notification
-from .security import require_mfa_reauthentication
+from .security import force_logout_home, require_mfa_reauthentication
 
 
 admin.site.site_header = "Kafunjo Secondary School Administration"
 admin.site.site_title = "Kafunjo Secondary School Admin Portal"
 admin.site.index_title = "School Management Dashboard"
-admin.site.logout = require_mfa_reauthentication(admin.site.logout)
+admin.site.logout = require_mfa_reauthentication(
+    force_logout_home(admin.site.logout)
+)
 
 
 class RecordAuditAdminMixin:
