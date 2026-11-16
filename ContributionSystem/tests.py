@@ -1323,6 +1323,27 @@ class ContentSecurityPolicyTests(TestCase):
         )
 
 
+class AdminBrandingTests(TestCase):
+    def test_school_branding_appears_on_admin_login_and_dashboard(self):
+        response = self.client.get(reverse("admin:login"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Kafunjo Secondary School Administration")
+        self.assertContains(response, "Kafunjo Secondary School Admin Portal")
+
+        user = get_user_model().objects.create_user(
+            username="admin-branding-user",
+            password="test-password",
+        )
+        login_with_totp(self.client, user)
+
+        response = self.client.get(reverse("admin:index"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Kafunjo Secondary School Administration")
+        self.assertContains(response, "School Management Dashboard")
+
+
 class UserProfileTests(TestCase):
     def test_accounts_namespace_alias_resolves_existing_routes(self):
         self.assertEqual(reverse("accounts:profile"), reverse("profile"))

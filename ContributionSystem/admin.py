@@ -14,6 +14,11 @@ from .models import (
 from .notifications import record_snapshot, send_record_notification
 
 
+admin.site.site_header = "Kafunjo Secondary School Administration"
+admin.site.site_title = "Kafunjo Secondary School Admin Portal"
+admin.site.index_title = "School Management Dashboard"
+
+
 class RecordAuditAdminMixin:
     creator_field = ""
     record_type = ""
