@@ -100,7 +100,7 @@ SECURE_CSP = {
     'frame-ancestors': ["'none'"],
     'img-src': ["'self'", 'data:'],
     'object-src': ["'none'"],
-    'script-src': ["'self'", "'nonce-{nonce}'"],
+    'script-src': ["'nonce-{nonce}'", "'strict-dynamic'", "'self'"],
     'style-src': ["'self'", "'nonce-{nonce}'"],
 }
 SECURE_HSTS_SECONDS = 31536000

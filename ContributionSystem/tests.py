@@ -1,12 +1,14 @@
 import time
+from html.parser import HTMLParser
 from smtplib import SMTPException
 from unittest.mock import patch
 
 from allauth.account.internal.flows.login import AUTHENTICATION_METHODS_SESSION_KEY
 from allauth.mfa.models import Authenticator
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import AnonymousUser, Group
 from django.core import mail
+from django.template.loader import render_to_string
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import translation
@@ -45,6 +47,16 @@ def login_with_totp(client, user, recently_authenticated=True, roles=None):
             {"method": "mfa", "type": "totp", "at": time.time()}
         ]
         session.save()
+
+
+class ScriptNonceParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.script_attributes = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "script":
+            self.script_attributes.append(dict(attrs))
 
 
 class HtmxListSearchTests(TestCase):
@@ -1220,6 +1232,71 @@ class SocialLoginTests(TestCase):
 
 
 class ContentSecurityPolicyTests(TestCase):
+    def assert_script_tags_use_nonce(self, response):
+        nonce = response.wsgi_request.csp_nonce
+        parser = ScriptNonceParser()
+        parser.feed(response.content.decode())
+        executable_scripts = [
+            attrs
+            for attrs in parser.script_attributes
+            if attrs.get("type") != "application/json"
+        ]
+
+        self.assertTrue(executable_scripts)
+        for attrs in executable_scripts:
+            self.assertEqual(attrs.get("nonce"), nonce)
+
+    def test_scripts_use_strict_dynamic_and_response_nonces(self):
+        for url in (reverse("home"), reverse("account_login")):
+            response = self.client.get(url)
+            nonce = response.wsgi_request.csp_nonce
+
+            self.assertIn(
+                f"script-src 'nonce-{nonce}' 'strict-dynamic' 'self'",
+                response.headers["Content-Security-Policy"],
+            )
+            self.assertNotIn(
+                "'unsafe-inline'",
+                response.headers["Content-Security-Policy"],
+            )
+            self.assert_script_tags_use_nonce(response)
+
+    def test_allauth_account_and_mfa_scripts_use_response_nonces(self):
+        user = get_user_model().objects.create_user(
+            username="csp-nonce-user",
+            password="test-password",
+        )
+        login_with_totp(self.client, user)
+        generate_codes_response = self.client.post(
+            reverse("mfa_generate_recovery_codes")
+        )
+        self.assertEqual(generate_codes_response.status_code, 302)
+
+        for route_name in (
+            "account_email",
+            "mfa_view_recovery_codes",
+        ):
+            response = self.client.get(reverse(route_name))
+
+            self.assertEqual(response.status_code, 200, route_name)
+            self.assert_script_tags_use_nonce(response)
+
+    def test_allauth_webauthn_scripts_use_response_nonce(self):
+        nonce = "test-csp-nonce"
+        request = RequestFactory().get("/")
+        request.csp_nonce = nonce
+        request.user = AnonymousUser()
+        markup = render_to_string(
+            "mfa/webauthn/snippets/scripts.html",
+            request=request,
+        )
+        parser = ScriptNonceParser()
+        parser.feed(markup)
+
+        self.assertEqual(len(parser.script_attributes), 3)
+        for attrs in parser.script_attributes:
+            self.assertEqual(attrs.get("nonce"), nonce)
+
     def test_form_action_allows_pythonanywhere_social_login_endpoint(self):
         response = self.client.get(reverse("account_login"))
 
@@ -1235,6 +1312,10 @@ class ContentSecurityPolicyTests(TestCase):
         self.assertContains(
             response,
             f'htmx.config.inlineStyleNonce = "{nonce}"',
+        )
+        self.assertContains(
+            response,
+            f'htmx.config.inlineScriptNonce = "{nonce}"',
         )
         self.assertIn(
             f"style-src 'self' 'nonce-{nonce}'",

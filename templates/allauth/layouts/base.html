@@ -472,7 +472,7 @@
     </main>
     {% block extra_body %}
     {% endblock extra_body %}
-    <script src="{% static 'js/live-clock.js' %}" defer></script>
-    <script src="{% static 'js/ui-feedback.js' %}" defer></script>
+    <script src="{% static 'js/live-clock.js' %}" nonce="{{ request.csp_nonce }}" defer></script>
+    <script src="{% static 'js/ui-feedback.js' %}" nonce="{{ request.csp_nonce }}" defer></script>
 </body>
 </html>

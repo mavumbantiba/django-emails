@@ -95,6 +95,6 @@
         </div>
     </form>
     {% if supply_item_formset and not editing_supply %}
-        <script src="{% static 'js/supply-items.js' %}" defer></script>
+        <script src="{% static 'js/supply-items.js' %}" nonce="{{ request.csp_nonce }}" defer></script>
     {% endif %}
 {% endblock %}
