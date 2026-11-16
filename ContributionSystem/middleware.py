@@ -1,5 +1,5 @@
-import time
 import secrets
+import time
 
 from allauth.account import app_settings as account_settings
 from allauth.account.authentication import get_authentication_records

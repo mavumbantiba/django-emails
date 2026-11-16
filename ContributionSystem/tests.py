@@ -809,6 +809,10 @@ class DeletionReauthenticationTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("mfa_reauthenticate"), response["Location"])
         self.assertNotIn(reverse("account_reauthenticate"), response["Location"])
+        self.assertIn("next=/admin/", response["Location"])
+
+        mfa_challenge = self.client.get(response["Location"])
+        self.assertEqual(mfa_challenge.status_code, 200)
 
     def test_admin_record_delete_also_requires_mfa_reauthentication(self):
         admin_user = get_user_model().objects.create_superuser(
