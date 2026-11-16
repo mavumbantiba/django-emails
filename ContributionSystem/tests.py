@@ -1228,6 +1228,19 @@ class ContentSecurityPolicyTests(TestCase):
             response.headers["Content-Security-Policy"],
         )
 
+    def test_htmx_indicator_styles_use_the_response_nonce(self):
+        response = self.client.get(reverse("home"))
+        nonce = response.wsgi_request.csp_nonce
+
+        self.assertContains(
+            response,
+            f'htmx.config.inlineStyleNonce = "{nonce}"',
+        )
+        self.assertIn(
+            f"style-src 'self' 'nonce-{nonce}'",
+            response.headers["Content-Security-Policy"],
+        )
+
 
 class UserProfileTests(TestCase):
     def test_accounts_namespace_alias_resolves_existing_routes(self):
