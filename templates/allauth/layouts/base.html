@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block head_title %}Kafunjo Secondary School{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/user-greeting.css' %}">
     <script nonce="{{ request.csp_nonce }}">
         document.documentElement.dataset.theme = localStorage.getItem("kafunjo-theme") || "light";
     </script>
@@ -438,6 +439,7 @@
         </div>
     </header>
     <main class="auth-main">
+        {% include "partials/user_greeting_clock.html" %}
         {% block body %}
             {% if messages %}
                 <div class="auth-messages" role="status">
@@ -470,6 +472,7 @@
     </main>
     {% block extra_body %}
     {% endblock extra_body %}
+    <script src="{% static 'js/live-clock.js' %}" defer></script>
     <script src="{% static 'js/ui-feedback.js' %}" defer></script>
 </body>
 </html>

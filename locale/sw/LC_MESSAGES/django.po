@@ -787,3 +787,12 @@ msgstr "Vazi"
 
 msgid "Is verified"
 msgstr "Imethibitishwa"
+
+msgid "East Africa Time"
+msgstr "Saa za Afrika Mashariki"
+
+msgid "Current time in Tanzania"
+msgstr "Saa ya sasa nchini Tanzania"
+
+msgid "Your account is signed in, but no school role is assigned. Contact a school administrator to request data access."
+msgstr "Akaunti yako imeingia, lakini haijapangiwa jukumu la shule. Wasiliana na msimamizi wa shule kuomba ruhusa ya kufikia taarifa."

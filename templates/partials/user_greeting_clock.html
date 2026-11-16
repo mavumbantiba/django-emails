@@ -1,0 +1,15 @@
+{% load i18n %}
+{% if request.user.is_authenticated %}
+    <section class="user-greeting">
+        <span class="user-greeting-mark" aria-hidden="true">KS</span>
+        <p class="user-greeting-message">
+            {% blocktrans with user_name=request.user.first_name|default:request.user.email|default:request.user.username %}Good to see you, {{ user_name }}. What would you like to manage today?{% endblocktrans %}
+        </p>
+        <div class="user-greeting-clock">
+            <span class="user-greeting-clock-label">{% trans "East Africa Time" %}</span>
+            <time class="live-clock"
+                  data-time-zone="Africa/Dar_es_Salaam"
+                  aria-label="{% trans 'Current time in Tanzania' %}">{% now "H:i:s" %}</time>
+        </div>
+    </section>
+{% endif %}

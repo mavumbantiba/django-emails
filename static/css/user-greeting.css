@@ -1,0 +1,90 @@
+.user-greeting {
+    display: flex;
+    min-width: 0;
+    margin: 0 0 20px;
+    padding: 14px 18px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: linear-gradient(115deg, var(--surface), var(--surface-raised));
+    box-shadow: 0 5px 20px rgb(20 43 59 / 5%);
+    color: var(--ink, var(--text, #1d2c36));
+}
+
+.user-greeting-mark {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    place-items: center;
+    border: 1px solid rgb(22 122 81 / 20%);
+    border-radius: 12px;
+    background: rgb(22 122 81 / 10%);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+}
+
+.user-greeting-message {
+    min-width: 0;
+    margin: 0;
+    flex: 1 1 240px;
+    font-size: 14px;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+}
+
+.user-greeting-clock {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-greeting-clock-label {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.live-clock {
+    min-width: 94px;
+    padding: 7px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--green);
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.role-access-notice {
+    margin: 0;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--blue);
+    border-radius: 9px;
+    background: var(--surface-raised);
+    color: var(--muted);
+    font-size: 14px;
+}
+
+@media (max-width: 480px) {
+    .user-greeting {
+        padding: 12px;
+    }
+
+    .user-greeting-clock {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

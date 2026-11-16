@@ -1240,6 +1240,9 @@ class UserProfileTests(TestCase):
         self.assertContains(response, reverse("profile"))
         self.assertContains(response, "View my profile")
         self.assertContains(response, "My profile")
+        self.assertContains(response, "Good to see you, homepage-profile-user")
+        self.assertContains(response, 'class="live-clock"')
+        self.assertContains(response, "Africa/Dar_es_Salaam")
         for route_name in (
             "student-list",
             "collection-list",
@@ -1252,6 +1255,7 @@ class UserProfileTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, reverse("account_login"))
+        self.assertNotContains(response, 'class="live-clock"')
         for route_name in (
             "student-list",
             "student-create",
@@ -1260,6 +1264,20 @@ class UserProfileTests(TestCase):
             "supply-list",
         ):
             self.assertNotContains(response, reverse(route_name))
+
+    def test_signed_in_user_without_school_role_sees_access_notice(self):
+        user = get_user_model().objects.create_user(
+            username="unassigned-user",
+            password="test-password",
+        )
+        login_with_totp(self.client, user, roles=())
+
+        response = self.client.get(reverse("home"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "no school role is assigned")
+        self.assertNotContains(response, reverse("student-list"))
+        self.assertNotContains(response, reverse("collection-list"))
 
     def test_profile_shows_logged_in_users_details_and_security_status(self):
         user = get_user_model().objects.create_user(
@@ -1278,6 +1296,8 @@ class UserProfileTests(TestCase):
         self.assertContains(response, "profile@example.test")
         self.assertContains(response, "profile-user")
         self.assertContains(response, "An authenticator app is connected")
+        self.assertContains(response, "Good to see you, Amina")
+        self.assertContains(response, 'class="live-clock"')
         self.assertContains(response, reverse("account_email"))
         self.assertContains(response, reverse("account_change_password"))
         self.assertContains(response, reverse("mfa_index"))
