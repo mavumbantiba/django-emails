@@ -425,6 +425,7 @@
             position: relative;
             z-index: 1;
             max-width: 580px;
+            min-width: 0;
         }
 
         .eyebrow {
@@ -1014,7 +1015,10 @@
             }
 
             .header-actions {
-                margin-left: auto;
+                width: 100%;
+                margin-left: 0;
+                flex-wrap: wrap;
+                justify-content: flex-start;
             }
 
             .page-container {
@@ -1022,8 +1026,12 @@
             }
 
             .welcome-panel {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
                 gap: 22px;
+            }
+
+            .welcome-panel h1 {
+                overflow-wrap: anywhere;
             }
 
             .quick-actions {
@@ -1058,6 +1066,10 @@
                 padding: 0 10px;
                 font-size: 12px;
             }
+
+            .welcome-panel {
+                padding: 22px;
+            }
         }
     </style>
 </head>
@@ -1074,15 +1086,17 @@
             </a>
             <nav class="primary-nav" aria-label="{% trans 'Main navigation' %}">
                 <a class="{% if request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'home-legacy' %}active{% endif %}" href="{% url 'home' %}">{% trans "Overview" %}</a>
-                {% if can_manage_students %}
-                    <a class="{% if 'student-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'student-list' %}">{% trans "Students" %}</a>
-                    <a class="{% if 'parent-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'parent-list' %}">{% trans "Parents" %}</a>
-                {% endif %}
-                {% if can_manage_collections %}
-                    <a class="{% if 'collection-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'collection-list' %}">{% trans "Collections" %}</a>
-                {% endif %}
-                {% if can_manage_store_supplies %}
-                    <a class="{% if 'supply-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'supply-list' %}">{% trans "Store supplies" %}</a>
+                {% if user.is_authenticated %}
+                    {% if can_manage_students %}
+                        <a class="{% if 'student-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'student-list' %}">{% trans "Students" %}</a>
+                        <a class="{% if 'parent-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'parent-list' %}">{% trans "Parents" %}</a>
+                    {% endif %}
+                    {% if can_manage_collections %}
+                        <a class="{% if 'collection-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'collection-list' %}">{% trans "Collections" %}</a>
+                    {% endif %}
+                    {% if can_manage_store_supplies %}
+                        <a class="{% if 'supply-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'supply-list' %}">{% trans "Store supplies" %}</a>
+                    {% endif %}
                 {% endif %}
             </nav>
             <div class="header-actions">
@@ -1100,7 +1114,7 @@
                 {% if user.is_authenticated %}
                     <a class="header-action" href="{% url 'profile' %}">{% trans "My profile" %}</a>
                 {% endif %}
-                {% if can_manage_students %}
+                {% if user.is_authenticated and can_manage_students %}
                     <a class="header-action" href="{% url 'student-create' %}">{% trans "+ Register student" %}</a>
                 {% endif %}
             </div>

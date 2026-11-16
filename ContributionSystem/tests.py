@@ -1187,6 +1187,38 @@ class SchoolRoleAccessTests(TestCase):
         self.assertEqual(self.client.get(reverse("collection-list")).status_code, 403)
 
 
+class SocialLoginTests(TestCase):
+    @override_settings(SOCIALACCOUNT_PROVIDERS={})
+    def test_login_page_works_without_social_credentials(self):
+        response = self.client.get(reverse("account_login"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Or use a third-party")
+
+    @override_settings(
+        SOCIALACCOUNT_PROVIDERS={
+            "google": {
+                "APP": {"client_id": "google-client", "secret": "google-secret"}
+            },
+            "microsoft": {
+                "APP": {"client_id": "microsoft-client", "secret": "microsoft-secret"}
+            },
+            "github": {
+                "APP": {"client_id": "github-client", "secret": "github-secret"}
+            },
+            "amazon": {
+                "APP": {"client_id": "amazon-client", "secret": "amazon-secret"}
+            },
+        }
+    )
+    def test_login_page_offers_configured_social_providers(self):
+        response = self.client.get(reverse("account_login"))
+
+        self.assertEqual(response.status_code, 200)
+        for provider in ("Google", "Microsoft", "GitHub", "Amazon"):
+            self.assertContains(response, provider)
+
+
 class UserProfileTests(TestCase):
     def test_accounts_namespace_alias_resolves_existing_routes(self):
         self.assertEqual(reverse("accounts:profile"), reverse("profile"))
@@ -1208,6 +1240,26 @@ class UserProfileTests(TestCase):
         self.assertContains(response, reverse("profile"))
         self.assertContains(response, "View my profile")
         self.assertContains(response, "My profile")
+        for route_name in (
+            "student-list",
+            "collection-list",
+            "supply-list",
+        ):
+            self.assertContains(response, reverse(route_name))
+
+    def test_unauthenticated_homepage_hides_student_and_collection_actions(self):
+        response = self.client.get(reverse("home"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, reverse("account_login"))
+        for route_name in (
+            "student-list",
+            "student-create",
+            "parent-list",
+            "collection-list",
+            "supply-list",
+        ):
+            self.assertNotContains(response, reverse(route_name))
 
     def test_profile_shows_logged_in_users_details_and_security_status(self):
         user = get_user_model().objects.create_user(

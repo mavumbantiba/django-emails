@@ -28,6 +28,15 @@ if ENV_FILE.exists():
             'EMAIL_HOST_USER',
             'EMAIL_HOST_PASSWORD',
             'DEFAULT_FROM_EMAIL',
+            'GOOGLE_CLIENT_ID',
+            'GOOGLE_CLIENT_SECRET',
+            'MICROSOFT_CLIENT_ID',
+            'MICROSOFT_CLIENT_SECRET',
+            'MICROSOFT_TENANT',
+            'GITHUB_CLIENT_ID',
+            'GITHUB_CLIENT_SECRET',
+            'AMAZON_CLIENT_ID',
+            'AMAZON_CLIENT_SECRET',
         }:
             os.environ.setdefault(key, value.strip().strip('"').strip("'"))
 
@@ -58,6 +67,11 @@ INSTALLED_APPS = [
     'ContributionSystem',
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.microsoft',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.amazon',
     'allauth.mfa',
 ]
 
@@ -96,6 +110,9 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
 X_FRAME_OPTIONS = 'DENY'
 
 SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_AGE = 3 * 60
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_SAVE_EVERY_REQUEST = True
 CSRF_COOKIE_SECURE = True
 
 AUTHENTICATION_BACKENDS = [
@@ -112,6 +129,28 @@ ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_SIGNUP_REDIRECT_URL = 'profile'
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 LOGIN_REDIRECT_URL = 'profile'
+
+SOCIALACCOUNT_PROVIDERS = {}
+for provider, env_prefix in (
+    ('google', 'GOOGLE'),
+    ('microsoft', 'MICROSOFT'),
+    ('github', 'GITHUB'),
+    ('amazon', 'AMAZON'),
+):
+    client_id = os.environ.get(f'{env_prefix}_CLIENT_ID', '')
+    client_secret = os.environ.get(f'{env_prefix}_CLIENT_SECRET', '')
+    if not client_id or not client_secret:
+        continue
+
+    app_config = {
+        'client_id': client_id,
+        'secret': client_secret,
+    }
+    if provider == 'microsoft':
+        app_config['settings'] = {
+            'tenant': os.environ.get('MICROSOFT_TENANT', 'common'),
+        }
+    SOCIALACCOUNT_PROVIDERS[provider] = {'APP': app_config}
 
 # Email verification codes are sent during signup; login codes enable
 # passwordless email sign-in in addition to the configured email/password login.

@@ -34,44 +34,46 @@
         </aside>
     </section>
 
-    <section aria-labelledby="quick-actions-title">
-        <div class="section-heading">
-            <div>
-                <p class="eyebrow">{% trans "Get started" %}</p>
-                <h2 id="quick-actions-title">{% trans "Quick actions" %}</h2>
+    {% if request.user.is_authenticated %}
+        <section aria-labelledby="quick-actions-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">{% trans "Get started" %}</p>
+                    <h2 id="quick-actions-title">{% trans "Quick actions" %}</h2>
+                </div>
             </div>
-        </div>
-        <div class="quick-actions">
-            {% if can_manage_students %}
-                <article class="quick-card card">
-                    <span class="quick-card-mark" aria-hidden="true">01</span>
-                    <h3>{% trans "Student registration" %}</h3>
-                    <p>{% trans "Register students and connect each one to a parent." %}</p>
-                    <a href="{% url 'student-list' %}">{% trans "Open student records" %} &rarr;</a>
-                </article>
-                <article class="quick-card card">
-                    <span class="quick-card-mark" aria-hidden="true">02</span>
-                    <h3>{% trans "Parent records" %}</h3>
-                    <p>{% trans "Add parent contact details and find linked students." %}</p>
-                    <a href="{% url 'parent-list' %}">{% trans "Open parent records" %} &rarr;</a>
-                </article>
-            {% endif %}
-            {% if can_manage_collections %}
-                <article class="quick-card card">
-                    <span class="quick-card-mark" aria-hidden="true">03</span>
-                    <h3>{% trans "School contributions" %}</h3>
-                    <p>{% trans "Manage the collection categories assigned to your role." %}</p>
-                    <a href="{% url 'collection-list' %}">{% trans "Open collections" %} &rarr;</a>
-                </article>
-            {% endif %}
-            {% if can_manage_store_supplies %}
-                <article class="quick-card card">
-                    <span class="quick-card-mark" aria-hidden="true">04</span>
-                    <h3>{% trans "Store supplies" %}</h3>
-                    <p>{% trans "Record tools and other supplies received by the school store." %}</p>
-                    <a href="{% url 'supply-list' %}">{% trans "Open store records" %} &rarr;</a>
-                </article>
-            {% endif %}
-        </div>
-    </section>
+            <div class="quick-actions">
+                {% if can_manage_students %}
+                    <article class="quick-card card">
+                        <span class="quick-card-mark" aria-hidden="true">01</span>
+                        <h3>{% trans "Student registration" %}</h3>
+                        <p>{% trans "Register students and connect each one to a parent." %}</p>
+                        <a href="{% url 'student-list' %}">{% trans "Open student records" %} &rarr;</a>
+                    </article>
+                    <article class="quick-card card">
+                        <span class="quick-card-mark" aria-hidden="true">02</span>
+                        <h3>{% trans "Parent records" %}</h3>
+                        <p>{% trans "Add parent contact details and find linked students." %}</p>
+                        <a href="{% url 'parent-list' %}">{% trans "Open parent records" %} &rarr;</a>
+                    </article>
+                {% endif %}
+                {% if can_manage_collections %}
+                    <article class="quick-card card">
+                        <span class="quick-card-mark" aria-hidden="true">03</span>
+                        <h3>{% trans "School contributions" %}</h3>
+                        <p>{% trans "Manage the collection categories assigned to your role." %}</p>
+                        <a href="{% url 'collection-list' %}">{% trans "Open collections" %} &rarr;</a>
+                    </article>
+                {% endif %}
+                {% if can_manage_store_supplies %}
+                    <article class="quick-card card">
+                        <span class="quick-card-mark" aria-hidden="true">04</span>
+                        <h3>{% trans "Store supplies" %}</h3>
+                        <p>{% trans "Record tools and other supplies received by the school store." %}</p>
+                        <a href="{% url 'supply-list' %}">{% trans "Open store records" %} &rarr;</a>
+                    </article>
+                {% endif %}
+            </div>
+        </section>
+    {% endif %}
 {% endblock %}
