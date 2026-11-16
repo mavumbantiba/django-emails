@@ -1,6 +1,7 @@
 import secrets
-from django.contrib.auth import REDIRECT_FIELD_NAME
+
 from django.conf import settings
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.http import urlencode
