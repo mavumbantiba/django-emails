@@ -21,6 +21,8 @@
             --line: #e3e9e7;
             --green: #167a51;
             --green-hover: #115c3e;
+            --action-blue: #2563eb;
+            --action-blue-hover: #1d4ed8;
         }
 
         :root[data-theme="dark"] {
@@ -204,8 +206,7 @@
             background: #167a51;
         }
 
-        .header-link:hover,
-        .auth-card button[type="submit"]:hover {
+        .header-link:hover {
             background: var(--green-hover);
             color: #fff;
         }
@@ -279,10 +280,41 @@
             padding: 0 16px;
             border: 0;
             border-radius: 8px;
-            background: var(--green);
+            background: var(--action-blue);
             color: #fff;
             cursor: pointer;
             font: 700 14px "Segoe UI", Arial, sans-serif;
+        }
+
+        .auth-card button:hover,
+        .auth-card a[href]:not([href^="mailto:"]):not([href^="tel:"]):hover {
+            background: var(--action-blue-hover);
+            color: #fff;
+        }
+
+        .auth-card a[href]:not([href^="mailto:"]):not([href^="tel:"]) {
+            display: inline-flex;
+            min-height: 40px;
+            padding: 0 14px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            background: var(--action-blue);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 150ms ease;
+        }
+
+        .auth-card li {
+            list-style: none;
+        }
+
+        .auth-card li > a[href]:not([href^="mailto:"]):not([href^="tel:"]) {
+            width: 100%;
         }
 
         .auth-card button[type="submit"] {
@@ -293,9 +325,8 @@
         .auth-card button[form] {
             width: 100%;
             margin-top: 8px;
-            border: 1px solid var(--line);
-            background: var(--surface-raised);
-            color: var(--text);
+            background: var(--action-blue);
+            color: #fff;
         }
 
         .auth-card hr {
