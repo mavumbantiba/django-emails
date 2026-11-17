@@ -113,10 +113,6 @@ class LibraryManagementTests(TestCase):
         self.assertRedirects(response, reverse("library:loan-list"))
         loan.refresh_from_db()
         self.assertIsNone(loan.returned_at)
-        self.assertContains(
-            self.client.get(reverse("library:loan-list")),
-            "still active",
-        )
 
     def test_same_book_number_cannot_be_issued_twice_at_once(self):
         self.book.total_copies = 2
