@@ -309,9 +309,12 @@ paragraph(
 paragraph(
     "For lost credentials, users can try verified-email password reset or a "
     "previously saved MFA recovery code. If all factors are lost, the public "
-    "recovery form creates a pending human-review request. The application does "
-    "not automatically bypass MFA; when registered email is unavailable, the "
-    "school office must verify the requester using its identity process."
+    "recovery form creates a pending human-review request and emails active "
+    "staff accounts that have email addresses. If delivery cannot be completed, "
+    "the request remains saved and the user is warned to contact the school "
+    "office. The application does not automatically bypass MFA; when registered "
+    "email is unavailable, the school office must verify the requester using its "
+    "identity process."
 )
 subsection("Security and deployment reminders")
 paragraph(
@@ -367,7 +370,7 @@ for path, desc in [
     ("ContributionSystem/security.py", "Checks allauth authentication records for recent MFA, wraps protected views, and strips supplied redirect targets in forced logout flows."),
     ("ContributionSystem/middleware.py", "Adds CSP nonce and response security headers; redirects users lacking TOTP to enrollment and requires recent MFA for protected admin access."),
     ("ContributionSystem/context_processors.py", "Provides common school-role and access flags plus configured Umami values and current named route."),
-    ("ContributionSystem/notifications.py", "Creates PDF audit summaries, snapshots model fields/relationships, and emails changes. Delivery failures are surfaced without rolling back saved records."),
+    ("ContributionSystem/notifications.py", "Creates PDF audit summaries, snapshots model fields/relationships, and emails record changes. Also notifies active staff email recipients of account recovery requests; delivery failures are logged and surfaced without discarding the saved request."),
     ("ContributionSystem/admin.py", "School admin branding; account recovery review queue; model registrations. RecordAuditAdminMixin assigns creator attribution, blocks unsafe bulk deletion, gates delete reauthentication, and sends audit notifications."),
     ("ContributionSystem/urls.py", "Named routes for profiles, recovery/deletion, home, parent/student CRUD, clothing/supply history, collections, supplies, logout, i18n, and allauth."),
     ("ContributionSystem/views.py", "Views for profile/account/home and record workflows. Shared deletion helper handles confirmation and protected-record conflicts. Role checks guard record CRUD/search; collections filter categories; supply entry is transactional; clothing actions record verification metadata."),
@@ -484,10 +487,12 @@ paragraph(
 subsection("Recover and delete accounts")
 paragraph(
     "Lost-all-factor recovery submits a pending request for administrator review "
-    "without revealing account existence or resetting MFA. Account deletion from "
-    "the profile requires recent MFA plus a required confirmation checkbox. "
-    "Afterward the session is logged out and the user is deleted; school history "
-    "follows each relationship's SET_NULL/PROTECT behavior."
+    "without revealing account existence or resetting MFA. Active staff with "
+    "email addresses are notified; notification failures do not remove the "
+    "request and trigger a user-facing warning. Account deletion from the profile "
+    "requires recent MFA plus a required confirmation checkbox. Afterward the "
+    "session is logged out and the user is deleted; school history follows each "
+    "relationship's SET_NULL/PROTECT behavior."
 )
 
 section("11. Database changes and commands")
