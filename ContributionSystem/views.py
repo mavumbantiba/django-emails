@@ -99,7 +99,6 @@ def account_delete(request):
         user = request.user
         logout(request)
         user.delete()
-        messages.success(request, _("Your account has been permanently deleted."))
         return redirect("home")
     return render(request, "accounts/confirm_delete.html", {"form": form})
 

@@ -1514,6 +1514,19 @@ class AccountDeletionTests(TestCase):
         self.assertContains(response, 'name="confirm_deletion"')
         self.assertContains(response, "reauthenticate with MFA")
 
+    def test_account_deletion_requires_mfa_enrollment(self):
+        user = get_user_model().objects.create_user(
+            username="account-delete-without-mfa",
+            password="test-password",
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("account-delete"))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["Location"], reverse("mfa_activate_totp"))
+        self.assertTrue(get_user_model().objects.filter(pk=user.pk).exists())
+
     def test_account_is_not_deleted_without_explicit_confirmation(self):
         response = self.client.post(reverse("account-delete"))
 
@@ -1533,10 +1546,6 @@ class AccountDeletionTests(TestCase):
             get_user_model().objects.filter(pk=self.user.pk).exists()
         )
         self.assertFalse(response.wsgi_request.user.is_authenticated)
-        self.assertContains(
-            self.client.get(reverse("home")),
-            "Your account has been permanently deleted.",
-        )
 
 
 class UserProfileTests(TestCase):
