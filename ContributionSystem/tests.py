@@ -1416,11 +1416,12 @@ class ContentSecurityPolicyTests(TestCase):
         for attrs in parser.script_attributes:
             self.assertEqual(attrs.get("nonce"), nonce)
 
-    def test_form_action_allows_pythonanywhere_social_login_endpoint(self):
+    def test_form_action_allows_google_oauth_redirect(self):
         response = self.client.get(reverse("account_login"))
 
         self.assertIn(
-            "form-action 'self' https://mavumba.pythonanywhere.com",
+            "form-action 'self' https://mavumba.pythonanywhere.com "
+            "https://accounts.google.com",
             response.headers["Content-Security-Policy"],
         )
 
