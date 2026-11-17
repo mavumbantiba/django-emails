@@ -34,15 +34,23 @@ class BookForm(forms.ModelForm):
 
 
 class BookLoanForm(forms.ModelForm):
+    book_number = forms.CharField(
+        max_length=32,
+        label=_("Book copy number"),
+        help_text=_("Enter the identifier printed on this copy, for example 01/100."),
+        widget=forms.TextInput(attrs={"autocomplete": "off"}),
+    )
+
     class Meta:
         model = BookLoan
-        fields = ("book", "student", "due_date")
+        fields = ("book", "student", "book_number", "due_date")
         widgets = {
             "due_date": forms.DateInput(attrs={"type": "date"}),
         }
         labels = {
             "book": _("Book"),
             "student": _("Student"),
+            "book_number": _("Book copy number"),
             "due_date": _("Return by"),
         }
 
@@ -68,3 +76,18 @@ class BookLoanForm(forms.ModelForm):
             )
         )
         self.fields["due_date"].initial = timezone.localdate() + timedelta(days=14)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        book = cleaned_data.get("book")
+        book_number = cleaned_data.get("book_number")
+        if book and book_number and BookLoan.objects.filter(
+            book=book,
+            book_number=book_number,
+            returned_at__isnull=True,
+        ).exclude(pk=self.instance.pk).exists():
+            self.add_error(
+                "book_number",
+                _("That copy is already on an active loan."),
+            )
+        return cleaned_data

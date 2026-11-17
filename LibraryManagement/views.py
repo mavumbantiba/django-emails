@@ -143,6 +143,7 @@ def loan_list(request):
     if search:
         loans = loans.filter(
             Q(book__title__icontains=search)
+            | Q(book_number__icontains=search)
             | Q(student__first_name__icontains=search)
             | Q(student__last_name__icontains=search)
             | Q(student__admission_number__icontains=search)
@@ -171,6 +172,13 @@ def loan_create(request):
             active_loans = book.loans.filter(returned_at__isnull=True)
             if active_loans.count() >= book.total_copies:
                 form.add_error("book", _("There are no copies available to loan."))
+            elif active_loans.filter(
+                book_number=form.cleaned_data["book_number"]
+            ).exists():
+                form.add_error(
+                    "book_number",
+                    _("That copy is already on an active loan."),
+                )
             elif active_loans.filter(
                 student=form.cleaned_data["student"]
             ).exists():
@@ -207,6 +215,14 @@ def loan_return(request, loan_id):
         )
         if loan.returned_at is not None:
             messages.info(request, _("This book has already been returned."))
+        elif (
+            loan.book_number
+            and request.POST.get("book_number", "").strip() != loan.book_number
+        ):
+            messages.error(
+                request,
+                _("The book number does not match. This loan is still active."),
+            )
         else:
             loan.returned_at = timezone.now()
             loan.save(update_fields=["returned_at"])

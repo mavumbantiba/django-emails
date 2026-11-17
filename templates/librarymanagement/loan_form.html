@@ -9,7 +9,7 @@
         <section class="panel form-panel">
             <p class="eyebrow">{% trans "Circulation desk" %}</p>
             <h1>{{ page_title }}</h1>
-            <p class="form-intro">{% trans "Select an available title and the student borrowing it. The standard loan period is two weeks." %}</p>
+            <p class="form-intro">{% trans "Select an available title and the student borrowing it, then enter the copy number printed on the book. The standard loan period is two weeks." %}</p>
             <form method="post" class="library-form">
                 {% csrf_token %}
                 {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
@@ -18,6 +18,7 @@
                         <div class="field-wrap">
                             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                             {{ field }}
+                            {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
                             {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
                         </div>
                     {% endfor %}

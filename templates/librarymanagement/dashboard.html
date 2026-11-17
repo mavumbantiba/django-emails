@@ -128,7 +128,7 @@
                     <span class="recent-avatar" aria-hidden="true">{{ loan.student.first_name|slice:":1" }}{{ loan.student.last_name|slice:":1" }}</span>
                     <div class="recent-copy">
                         <strong>{{ loan.student.first_name }} {{ loan.student.last_name }}</strong>
-                        <span>{{ loan.book.title }} · {{ loan.issued_at|date:"M j, Y" }}</span>
+                        <span>{{ loan.book.title }}{% if loan.book_number %} · {% trans "Copy" %} {{ loan.book_number }}{% endif %} · {{ loan.issued_at|date:"M j, Y" }}</span>
                     </div>
                     {% if loan.returned_at %}
                         <span class="status-pill returned">{% trans "Returned" %}</span>

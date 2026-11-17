@@ -19,7 +19,7 @@
         <form class="catalog-filters loan-filters" method="get">
             <label class="search-field">
                 <span class="sr-only">{% trans "Search loans" %}</span>
-                <input type="search" name="q" value="{{ search }}" placeholder="{% trans 'Search student, admission number or book' %}">
+                <input type="search" name="q" value="{{ search }}" placeholder="{% trans 'Search student, admission number, book or copy number' %}">
             </label>
             <label>
                 <span class="sr-only">{% trans "Loan status" %}</span>
@@ -47,7 +47,11 @@
                 <tbody>
                     {% for loan in loans %}
                         <tr>
-                            <td><span class="book-title">{{ loan.book.title }}</span><span class="book-author">{{ loan.book.author }}</span></td>
+                            <td>
+                                <span class="book-title">{{ loan.book.title }}</span>
+                                <span class="book-author">{{ loan.book.author }}</span>
+                                <span class="book-author">{% trans "Copy number" %}: {{ loan.book_number|default:"—" }}</span>
+                            </td>
                             <td><span class="book-title">{{ loan.student.first_name }} {{ loan.student.last_name }}</span><span class="book-author">{{ loan.student.admission_number }} · {{ loan.student.class_level }}</span></td>
                             <td>{{ loan.issued_at|date:"M j, Y" }}</td>
                             <td>{{ loan.due_date|date:"M j, Y" }}</td>
@@ -64,7 +68,13 @@
                                 {% if not loan.returned_at %}
                                     <form method="post" action="{% url 'library:loan-return' loan.pk %}">
                                         {% csrf_token %}
-                                        <button class="button button-small button-primary" type="submit">{% trans "Mark returned" %}</button>
+                                        {% if loan.book_number %}
+                                            <label class="sr-only" for="return-book-number-{{ loan.pk }}">{% trans "Enter the returned book number" %}</label>
+                                            <input class="return-book-number" id="return-book-number-{{ loan.pk }}" name="book_number" type="text" placeholder="{{ loan.book_number }}" required autocomplete="off">
+                                            <button class="button button-small button-primary" type="submit">{% trans "Check and return" %}</button>
+                                        {% else %}
+                                            <button class="button button-small button-primary" type="submit">{% trans "Mark returned" %}</button>
+                                        {% endif %}
                                     </form>
                                 {% else %}
                                     <span class="book-author">{{ loan.returned_at|date:"M j, Y" }}</span>

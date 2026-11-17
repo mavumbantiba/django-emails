@@ -11,6 +11,19 @@
     --library-red: #b42318;
 }
 
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --library-ink: #e7edf3;
+    --library-muted: #bdc9d4;
+    --library-line: #354653;
+    --library-page: #101923;
+    --library-surface: #1b2935;
+    --library-blue: #83b9ff;
+    --library-blue-dark: #a9ceff;
+    --library-green: #55c58e;
+    --library-red: #ff8178;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -104,6 +117,21 @@ a {
 .profile-link {
     margin-left: auto;
     border: 1px solid rgb(255 255 255 / 28%);
+}
+
+.theme-toggle {
+    min-height: 38px;
+    padding: 0 11px;
+    border: 1px solid rgb(255 255 255 / 28%);
+    border-radius: 7px;
+    background: rgb(255 255 255 / 8%);
+    color: #eef5fb;
+    cursor: pointer;
+    font: 650 12px "Segoe UI", Arial, sans-serif;
+}
+
+.theme-toggle:hover {
+    background: rgb(255 255 255 / 16%);
 }
 
 .library-main {
@@ -674,6 +702,105 @@ a {
     border-color: #f0b5b1;
     background: #fff3f2;
     color: #8f1d16;
+}
+
+:root[data-theme="dark"] .button-quiet {
+    background: var(--library-surface);
+    color: var(--library-ink);
+}
+
+:root[data-theme="dark"] .button-quiet:hover {
+    background: #243543;
+    color: var(--library-ink);
+}
+
+:root[data-theme="dark"] .stat-icon {
+    background: #203a30;
+}
+
+:root[data-theme="dark"] .stat-icon-blue {
+    background: #22364d;
+}
+
+:root[data-theme="dark"] .stat-icon-gold {
+    background: #40371f;
+    color: #f4d477;
+}
+
+:root[data-theme="dark"] .stat-icon-red,
+:root[data-theme="dark"] .confirm-mark {
+    background: #432b2b;
+}
+
+:root[data-theme="dark"] .catalog-filters input,
+:root[data-theme="dark"] .catalog-filters select,
+:root[data-theme="dark"] .library-form input,
+:root[data-theme="dark"] .library-form select,
+:root[data-theme="dark"] .library-form textarea {
+    border-color: var(--library-line);
+    background: var(--library-surface);
+    color: var(--library-ink);
+}
+
+:root[data-theme="dark"] .library-table td,
+:root[data-theme="dark"] .recent-item {
+    border-color: var(--library-line);
+}
+
+:root[data-theme="dark"] .category-pill {
+    background: #2a3945;
+    color: #d3dee7;
+}
+
+:root[data-theme="dark"] .availability.available,
+:root[data-theme="dark"] .status-pill.active,
+:root[data-theme="dark"] .status-pill.returned {
+    background: #203b30;
+    color: #8fe1b4;
+}
+
+:root[data-theme="dark"] .availability.unavailable,
+:root[data-theme="dark"] .status-pill.overdue {
+    background: #432b2b;
+    color: #ffaaa3;
+}
+
+:root[data-theme="dark"] .row-actions a:last-child {
+    color: #ffaaa3;
+}
+
+:root[data-theme="dark"] .recent-avatar {
+    background: #263a4b;
+    color: #a9ceff;
+}
+
+:root[data-theme="dark"] .inline-warning {
+    background: #40371f;
+    color: #f4d477 !important;
+}
+
+:root[data-theme="dark"] .library-message {
+    border-color: #315b43;
+    background: #1d382b;
+    color: #a4e3bc;
+}
+
+:root[data-theme="dark"] .library-message.error {
+    border-color: #704241;
+    background: #3a2526;
+    color: #ffaaa3;
+}
+
+.return-book-number {
+    width: 100px;
+    min-height: 34px;
+    margin: 0 0 5px;
+    padding: 6px 8px;
+    border: 1px solid var(--library-line);
+    border-radius: 6px;
+    background: var(--library-surface);
+    color: var(--library-ink);
+    font: inherit;
 }
 
 .sr-only {

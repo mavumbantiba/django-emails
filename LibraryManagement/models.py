@@ -53,6 +53,12 @@ class BookLoan(models.Model):
         on_delete=models.PROTECT,
         related_name="loans",
     )
+    book_number = models.CharField(
+        max_length=32,
+        blank=True,
+        null=True,
+        help_text=_("Physical copy identifier, for example 01/100."),
+    )
     student = models.ForeignKey(
         Student,
         on_delete=models.PROTECT,
@@ -79,6 +85,11 @@ class BookLoan(models.Model):
                 fields=["book", "student"],
                 condition=Q(returned_at__isnull=True),
                 name="unique_active_student_book_loan",
+            ),
+            models.UniqueConstraint(
+                fields=["book", "book_number"],
+                condition=Q(returned_at__isnull=True),
+                name="unique_active_book_number",
             ),
         ]
 

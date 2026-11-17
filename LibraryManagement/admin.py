@@ -18,10 +18,18 @@ class BookAdmin(admin.ModelAdmin):
 
 @admin.register(BookLoan)
 class BookLoanAdmin(admin.ModelAdmin):
-    list_display = ("book", "student", "issued_at", "due_date", "returned_at")
+    list_display = (
+        "book",
+        "book_number",
+        "student",
+        "issued_at",
+        "due_date",
+        "returned_at",
+    )
     list_filter = ("due_date", "returned_at")
     search_fields = (
         "book__title",
+        "book_number",
         "student__first_name",
         "student__last_name",
         "student__admission_number",
