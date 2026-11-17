@@ -48,6 +48,9 @@ class LibraryManagementTests(TestCase):
     def test_library_requires_staff_access(self):
         response = self.client.get(reverse("library:dashboard"))
         self.assertEqual(response.status_code, 200)
+        homepage = self.client.get(reverse("home"))
+        self.assertContains(homepage, reverse("library:dashboard"))
+        self.assertContains(homepage, "Open the library")
 
         regular_user = get_user_model().objects.create_user(
             username="library-student",

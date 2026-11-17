@@ -1,0 +1,38 @@
+{% extends "contributions/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Delete account" %}{% endblock %}
+
+{% block content %}
+    <div class="delete-page">
+        <section class="delete-card card" aria-labelledby="delete-account-title">
+            <div class="delete-card-heading">
+                <span class="delete-icon" aria-hidden="true">!</span>
+                <div>
+                    <p class="eyebrow">{% trans "Account security · Delete confirmation" %}</p>
+                    <h1 id="delete-account-title" class="page-heading">{% trans "Delete your account?" %}</h1>
+                </div>
+            </div>
+            <div class="delete-warning" role="alert">
+                <strong>{% trans "This action cannot be undone." %}</strong>
+                <p>{% trans "Your login account and security methods will be permanently removed. School records may be retained and detached from your account." %}</p>
+                <p>{% trans "You must reauthenticate with MFA before this deletion can be confirmed." %}</p>
+            </div>
+            <form class="delete-confirmation-form" method="post">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="form-error-summary" role="alert">{{ form.non_field_errors }}</div>
+                {% endif %}
+                {% for field in form %}
+                    {% include "contributions/partials/form_field.html" with field=field %}
+                {% endfor %}
+                <div class="delete-card-actions">
+                    <button class="button button-delete-confirm" type="submit">
+                        {% trans "Delete my account permanently" %}
+                    </button>
+                    <a class="button button-cancel" href="{% url 'profile' %}">{% trans "Cancel" %}</a>
+                </div>
+            </form>
+        </section>
+    </div>
+{% endblock %}

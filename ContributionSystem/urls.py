@@ -7,6 +7,8 @@ urlpatterns = [
     path("i18n/", include("django.conf.urls.i18n")),
     path("accounts/profile/", views.profile, name="profile"),
     path("accounts/profile/edit/", views.profile_edit, name="profile-edit"),
+    path("accounts/recovery/", views.account_recovery, name="account-recovery"),
+    path("accounts/delete/", views.account_delete, name="account-delete"),
     path("", views.home, name="home"),
     path("home/", views.home, name="home-legacy"),
     path("parents/", views.parent_list, name="parent-list"),

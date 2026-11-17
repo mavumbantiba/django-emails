@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from allauth.account.decorators import reauthentication_required
 
 from .models import (
+    AccountRecoveryRequest,
     Parent,
     Student,
     StudentClothingVerification,
@@ -21,6 +22,20 @@ admin.site.index_title = "School Management Dashboard"
 admin.site.logout = require_mfa_reauthentication(
     force_logout_home(admin.site.logout)
 )
+
+
+@admin.register(AccountRecoveryRequest)
+class AccountRecoveryRequestAdmin(admin.ModelAdmin):
+    list_display = ("email", "status", "requested_at")
+    list_filter = ("status", "requested_at")
+    search_fields = ("email",)
+    readonly_fields = ("requested_at",)
+    help_texts = {
+        "email": (
+            "Verify the requester's identity through the school's established "
+            "process before changing credentials or MFA settings."
+        ),
+    }
 
 
 class RecordAuditAdminMixin:

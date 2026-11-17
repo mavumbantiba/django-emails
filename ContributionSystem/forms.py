@@ -3,12 +3,27 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 from .models import (
+    AccountRecoveryRequest,
     Parent,
     Student,
     StudentClothingVerification,
     StudentCollection,
     StoreSupplyReceipt,
 )
+
+
+class AccountRecoveryRequestForm(forms.ModelForm):
+    class Meta:
+        model = AccountRecoveryRequest
+        fields = ("email",)
+        labels = {"email": _("Email address on the account")}
+
+
+class AccountDeletionForm(forms.Form):
+    confirm_deletion = forms.BooleanField(
+        label=_("I understand that deleting my account cannot be undone."),
+        required=True,
+    )
 
 
 class UserProfileForm(forms.ModelForm):

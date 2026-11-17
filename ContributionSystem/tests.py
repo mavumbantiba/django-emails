@@ -21,6 +21,7 @@ from .access import (
 )
 from .adapters import SchoolAccountAdapter
 from .models import (
+    AccountRecoveryRequest,
     Parent,
     Student,
     StudentClothingVerification,
@@ -811,6 +812,13 @@ class DeletionReauthenticationTests(TestCase):
         self.assertIn(reverse("mfa_reauthenticate"), response["Location"])
         self.assertNotIn(reverse("account_reauthenticate"), response["Location"])
 
+    def test_account_deletion_requires_mfa_reauthentication(self):
+        response = self.client.get(reverse("account-delete"))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("mfa_reauthenticate"), response["Location"])
+        self.assertNotIn(reverse("account_reauthenticate"), response["Location"])
+
     def test_admin_record_delete_also_requires_mfa_reauthentication(self):
         admin_user = get_user_model().objects.create_superuser(
             username="mfa-admin",
@@ -1462,6 +1470,73 @@ class AdminBrandingTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Kafunjo Secondary School Administration")
         self.assertContains(response, "School Management Dashboard")
+        self.assertContains(response, reverse("library:dashboard"))
+        self.assertContains(response, "Library management")
+
+
+class AccountRecoveryTests(TestCase):
+    def test_recovery_request_is_submitted_without_account_lookup(self):
+        response = self.client.post(
+            reverse("account-recovery"),
+            {"email": "unknown@example.test"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Request received")
+        request = AccountRecoveryRequest.objects.get()
+        self.assertEqual(request.email, "unknown@example.test")
+        self.assertEqual(request.status, AccountRecoveryRequest.Status.PENDING)
+
+    def test_login_and_home_link_to_account_recovery(self):
+        self.assertContains(
+            self.client.get(reverse("account_login")),
+            reverse("account-recovery"),
+        )
+        self.assertContains(
+            self.client.get(reverse("home")),
+            reverse("account-recovery"),
+        )
+
+
+class AccountDeletionTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username="account-delete-user",
+            password="test-password",
+        )
+        login_with_totp(self.client, self.user, recently_authenticated=True)
+
+    def test_confirmation_page_explains_permanent_account_deletion(self):
+        response = self.client.get(reverse("account-delete"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "This action cannot be undone.")
+        self.assertContains(response, 'name="confirm_deletion"')
+        self.assertContains(response, "reauthenticate with MFA")
+
+    def test_account_is_not_deleted_without_explicit_confirmation(self):
+        response = self.client.post(reverse("account-delete"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            get_user_model().objects.filter(pk=self.user.pk).exists()
+        )
+
+    def test_mfa_reauthenticated_user_can_delete_account(self):
+        response = self.client.post(
+            reverse("account-delete"),
+            {"confirm_deletion": "on"},
+        )
+
+        self.assertRedirects(response, reverse("home"))
+        self.assertFalse(
+            get_user_model().objects.filter(pk=self.user.pk).exists()
+        )
+        self.assertFalse(response.wsgi_request.user.is_authenticated)
+        self.assertContains(
+            self.client.get(reverse("home")),
+            "Your account has been permanently deleted.",
+        )
 
 
 class UserProfileTests(TestCase):
@@ -1572,6 +1647,7 @@ class UserProfileTests(TestCase):
         self.assertContains(response, reverse("account_email"))
         self.assertContains(response, reverse("account_change_password"))
         self.assertContains(response, reverse("mfa_index"))
+        self.assertContains(response, reverse("account-delete"))
 
     def test_profile_requires_login(self):
         response = self.client.get(reverse("profile"))

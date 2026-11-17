@@ -91,6 +91,11 @@
                 </p>
                 <a href="{% url 'mfa_index' %}">{% trans "Manage security methods" %}</a>
             </article>
+            <article class="quick-card card">
+                <h3>{% trans "Delete account" %}</h3>
+                <p>{% trans "Permanently remove your login account after confirming with MFA." %}</p>
+                <a href="{% url 'account-delete' %}">{% trans "Review account deletion" %}</a>
+            </article>
         </div>
     </section>
 {% endblock %}

@@ -1,0 +1,51 @@
+{% extends "contributions/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Account recovery" %}{% endblock %}
+
+{% block content %}
+    <p class="eyebrow">{% trans "Account access" %}</p>
+    <h1 class="page-heading">{% trans "Recover account access" %}</h1>
+    <p class="page-description">
+        {% trans "If you can access your verified email, reset your password or use a saved MFA recovery code at sign-in. If you have lost access to every sign-in method, submit a request for administrator review." %}
+    </p>
+
+    <section class="form-section card" aria-labelledby="recovery-methods-title">
+        <div class="form-section-heading">
+            <span class="form-section-number" aria-hidden="true">01</span>
+            <div>
+                <h2 id="recovery-methods-title">{% trans "Try self-service recovery first" %}</h2>
+                <p>{% trans "A password reset does not remove MFA. Use a saved recovery code if you cannot use your authenticator." %}</p>
+            </div>
+        </div>
+        <p><a href="{% url 'account_reset_password' %}">{% trans "Reset your password by email" %}</a></p>
+    </section>
+
+    <form class="registration-form" method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="form-error-summary" role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
+        <section class="form-section card" aria-labelledby="recovery-request-title">
+            <div class="form-section-heading">
+                <span class="form-section-number" aria-hidden="true">02</span>
+                <div>
+                    <h2 id="recovery-request-title">{% trans "Request administrator review" %}</h2>
+                    <p>{% trans "Enter the email address associated with the account. An administrator will verify your identity before changing account credentials or MFA." %}</p>
+                </div>
+            </div>
+            <div class="form-grid">
+                {% for field in form %}
+                    {% include "contributions/partials/form_field.html" with field=field %}
+                {% endfor %}
+            </div>
+            <p class="form-help">
+                {% trans "If you can no longer access the registered email, contact the school office in person and complete its identity-verification process. Do not send your password or MFA codes." %}
+            </p>
+        </section>
+        <div class="form-actions">
+            <button type="submit">{% trans "Submit recovery request" %}</button>
+            <a class="button button-cancel" href="{% url 'account_login' %}">{% trans "Return to sign in" %}</a>
+        </div>
+    </form>
+{% endblock %}

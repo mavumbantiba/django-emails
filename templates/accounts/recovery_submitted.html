@@ -1,0 +1,20 @@
+{% extends "contributions/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Recovery request received" %}{% endblock %}
+
+{% block content %}
+    <section class="welcome-panel card" aria-labelledby="recovery-submitted-title">
+        <div class="welcome-copy">
+            <p class="eyebrow">{% trans "Account access" %}</p>
+            <h1 id="recovery-submitted-title">{% trans "Request received" %}</h1>
+            <p>
+                {% trans "Your request has been submitted for administrator review. For your security, account changes will only be made after your identity is verified." %}
+            </p>
+            <p>
+                {% trans "If you cannot access the email address on the account, contact the school office in person and follow its identity-verification process." %}
+            </p>
+            <a class="button" href="{% url 'account_login' %}">{% trans "Return to sign in" %}</a>
+        </div>
+    </section>
+{% endblock %}

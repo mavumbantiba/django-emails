@@ -2,6 +2,7 @@ from allauth.account.decorators import reauthentication_required
 from allauth.account.views import LogoutView as AllauthLogoutView
 from allauth.mfa.models import Authenticator
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models.deletion import ProtectedError
@@ -22,6 +23,8 @@ from .access import (
     role_required,
 )
 from .forms import (
+    AccountDeletionForm,
+    AccountRecoveryRequestForm,
     ParentForm,
     StudentClothingVerificationForm,
     StudentCollectionForm,
@@ -76,6 +79,29 @@ def profile_edit(request):
         messages.success(request, _("Your profile has been updated."))
         return redirect("profile")
     return render(request, "accounts/profile_edit.html", {"form": form})
+
+
+@require_http_methods(["GET", "POST"])
+def account_recovery(request):
+    form = AccountRecoveryRequestForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return render(request, "accounts/recovery_submitted.html")
+    return render(request, "accounts/recovery.html", {"form": form})
+
+
+@login_required
+@require_mfa_reauthentication
+@require_http_methods(["GET", "POST"])
+def account_delete(request):
+    form = AccountDeletionForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        user = request.user
+        logout(request)
+        user.delete()
+        messages.success(request, _("Your account has been permanently deleted."))
+        return redirect("home")
+    return render(request, "accounts/confirm_delete.html", {"form": form})
 
 
 def home(request):

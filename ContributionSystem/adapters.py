@@ -12,6 +12,7 @@ from .access import (
 DELETE_URL_NAMES = {
     "collection-delete",
     "clothing-verification-delete",
+    "account-delete",
     "parent-delete",
     "student-delete",
     "supply-delete",

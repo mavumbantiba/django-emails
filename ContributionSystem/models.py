@@ -22,6 +22,27 @@ class Parent(models.Model):
         return f"{self.full_name} ({self.phone_number})"
 
 
+class AccountRecoveryRequest(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending", _("Pending review")
+        REVIEWING = "reviewing", _("Under review")
+        RESOLVED = "resolved", _("Resolved")
+
+    email = models.EmailField()
+    status = models.CharField(
+        max_length=10,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
+    requested_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-requested_at"]
+
+    def __str__(self):
+        return f"{self.email} ({self.get_status_display()})"
+
+
 class Student(models.Model):
     class Gender(models.TextChoices):
         FEMALE = "F", _("Female")
