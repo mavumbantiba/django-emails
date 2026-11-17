@@ -40,7 +40,11 @@ from .models import (
     StudentCollection,
     StoreSupplyReceipt,
 )
-from .notifications import record_snapshot, send_record_notification
+from .notifications import (
+    record_snapshot,
+    send_account_recovery_notification,
+    send_record_notification,
+)
 from .security import require_mfa_reauthentication
 
 
@@ -85,7 +89,8 @@ def profile_edit(request):
 def account_recovery(request):
     form = AccountRecoveryRequestForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
-        form.save()
+        recovery_request = form.save()
+        send_account_recovery_notification(request, recovery_request)
         return render(request, "accounts/recovery_submitted.html")
     return render(request, "accounts/recovery.html", {"form": form})
 

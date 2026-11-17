@@ -6,6 +6,7 @@ from xml.sax.saxutils import escape
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
 from django.utils import timezone
 from django.utils.text import slugify
@@ -19,6 +20,69 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, Tabl
 
 
 logger = logging.getLogger(__name__)
+
+
+def send_account_recovery_notification(request, recovery_request):
+    admin_emails = list(
+        get_user_model()
+        .objects.filter(is_active=True, is_staff=True)
+        .exclude(email="")
+        .values_list("email", flat=True)
+        .distinct()
+    )
+    if not admin_emails:
+        logger.warning(
+            "Could not send account recovery notification: "
+            "no active staff email recipients"
+        )
+        messages.warning(
+            request,
+            _(
+                "Your request was recorded, but administrators could not be notified. "
+                "Please contact the school office."
+            ),
+        )
+        return False
+
+    email = EmailMessage(
+        subject="Kafunjo Secondary School account recovery request",
+        body=(
+            "A user has requested administrator review for account recovery.\n\n"
+            f"Account email: {recovery_request.email}\n"
+            "Requested at: "
+            f"{timezone.localtime(recovery_request.requested_at):%Y-%m-%d %H:%M:%S %Z}\n\n"
+            "Verify the requester's identity through the school's established "
+            "process before changing credentials or MFA settings."
+        ),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=admin_emails,
+    )
+    try:
+        sent_count = email.send(fail_silently=False)
+    except (OSError, SMTPException, ValueError) as error:
+        logger.warning(
+            "Could not send account recovery notification (%s)",
+            type(error).__name__,
+        )
+        messages.warning(
+            request,
+            _(
+                "Your request was recorded, but its email notification could not be "
+                "sent. Please contact the school office."
+            ),
+        )
+        return False
+
+    if sent_count != 1:
+        messages.warning(
+            request,
+            _(
+                "Your request was recorded, but its email notification was not "
+                "accepted by the email server. Please contact the school office."
+            ),
+        )
+        return False
+    return True
 
 
 def _build_record_pdf(payload):

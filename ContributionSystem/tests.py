@@ -1474,8 +1474,15 @@ class AdminBrandingTests(TestCase):
         self.assertContains(response, "Library management")
 
 
+@override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
 class AccountRecoveryTests(TestCase):
     def test_recovery_request_is_submitted_without_account_lookup(self):
+        admin = get_user_model().objects.create_user(
+            username="recovery-admin",
+            email="admin@example.test",
+            password="test-password",
+            is_staff=True,
+        )
         response = self.client.post(
             reverse("account-recovery"),
             {"email": "unknown@example.test"},
@@ -1486,6 +1493,40 @@ class AccountRecoveryTests(TestCase):
         request = AccountRecoveryRequest.objects.get()
         self.assertEqual(request.email, "unknown@example.test")
         self.assertEqual(request.status, AccountRecoveryRequest.Status.PENDING)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [admin.email])
+        self.assertIn(request.email, mail.outbox[0].body)
+
+    def test_recovery_request_warns_when_no_administrator_email_is_available(self):
+        response = self.client.post(
+            reverse("account-recovery"),
+            {"email": "unknown@example.test"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(AccountRecoveryRequest.objects.exists())
+        self.assertContains(response, "administrators could not be notified")
+        self.assertEqual(mail.outbox, [])
+
+    def test_recovery_request_is_saved_when_email_delivery_fails(self):
+        get_user_model().objects.create_user(
+            username="recovery-admin",
+            email="admin@example.test",
+            password="test-password",
+            is_staff=True,
+        )
+        with patch(
+            "ContributionSystem.notifications.EmailMessage.send",
+            side_effect=SMTPException("mail server unavailable"),
+        ):
+            response = self.client.post(
+                reverse("account-recovery"),
+                {"email": "unknown@example.test"},
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(AccountRecoveryRequest.objects.exists())
+        self.assertContains(response, "email notification could not be sent")
 
     def test_login_and_home_link_to_account_recovery(self):
         self.assertContains(
