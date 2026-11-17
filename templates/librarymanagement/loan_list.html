@@ -1,0 +1,81 @@
+{% extends "librarymanagement/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Book loans" %}{% endblock %}
+
+{% block content %}
+    <section class="library-hero compact-hero">
+        <div>
+            <p class="eyebrow">{% trans "Circulation desk" %}</p>
+            <h1>{% trans "Book loans" %}</h1>
+            <p class="hero-copy">{% trans "Track due dates, find overdue books, and record returns." %}</p>
+        </div>
+        <div class="hero-actions">
+            <a class="button button-light" href="{% url 'library:loan-create' %}">{% trans "Issue a book" %}</a>
+            <a class="button button-outline" href="{% url 'library:dashboard' %}">{% trans "Catalog" %}</a>
+        </div>
+    </section>
+    <section class="panel">
+        <form class="catalog-filters loan-filters" method="get">
+            <label class="search-field">
+                <span class="sr-only">{% trans "Search loans" %}</span>
+                <input type="search" name="q" value="{{ search }}" placeholder="{% trans 'Search student, admission number or book' %}">
+            </label>
+            <label>
+                <span class="sr-only">{% trans "Loan status" %}</span>
+                <select name="status">
+                    <option value="active" {% if selected_status == "active" %}selected{% endif %}>{% trans "Active loans" %}</option>
+                    <option value="overdue" {% if selected_status == "overdue" %}selected{% endif %}>{% trans "Overdue" %}</option>
+                    <option value="returned" {% if selected_status == "returned" %}selected{% endif %}>{% trans "Returned" %}</option>
+                    <option value="all" {% if selected_status == "all" %}selected{% endif %}>{% trans "All loans" %}</option>
+                </select>
+            </label>
+            <button class="button button-primary" type="submit">{% trans "Filter" %}</button>
+        </form>
+        <div class="table-scroll">
+            <table class="library-table">
+                <thead>
+                    <tr>
+                        <th scope="col">{% trans "Book" %}</th>
+                        <th scope="col">{% trans "Student" %}</th>
+                        <th scope="col">{% trans "Issued" %}</th>
+                        <th scope="col">{% trans "Due date" %}</th>
+                        <th scope="col">{% trans "Status" %}</th>
+                        <th scope="col"><span class="sr-only">{% trans "Actions" %}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for loan in loans %}
+                        <tr>
+                            <td><span class="book-title">{{ loan.book.title }}</span><span class="book-author">{{ loan.book.author }}</span></td>
+                            <td><span class="book-title">{{ loan.student.first_name }} {{ loan.student.last_name }}</span><span class="book-author">{{ loan.student.admission_number }} · {{ loan.student.class_level }}</span></td>
+                            <td>{{ loan.issued_at|date:"M j, Y" }}</td>
+                            <td>{{ loan.due_date|date:"M j, Y" }}</td>
+                            <td>
+                                {% if loan.returned_at %}
+                                    <span class="status-pill returned">{% trans "Returned" %}</span>
+                                {% elif loan.is_overdue %}
+                                    <span class="status-pill overdue">{% trans "Overdue" %}</span>
+                                {% else %}
+                                    <span class="status-pill active">{% trans "On loan" %}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if not loan.returned_at %}
+                                    <form method="post" action="{% url 'library:loan-return' loan.pk %}">
+                                        {% csrf_token %}
+                                        <button class="button button-small button-primary" type="submit">{% trans "Mark returned" %}</button>
+                                    </form>
+                                {% else %}
+                                    <span class="book-author">{{ loan.returned_at|date:"M j, Y" }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td class="empty-state" colspan="6">{% trans "No loans found for these filters." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock %}

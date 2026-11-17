@@ -1,0 +1,23 @@
+{% extends "librarymanagement/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Remove book" %}{% endblock %}
+
+{% block content %}
+    <section class="panel confirm-panel">
+        <span class="confirm-mark" aria-hidden="true">!</span>
+        <p class="eyebrow">{% trans "Catalog management" %}</p>
+        <h1>{% trans "Remove this book?" %}</h1>
+        <p>{% blocktrans with title=book.title %}You are about to remove “{{ title }}” from the catalog. This cannot be undone.{% endblocktrans %}</p>
+        {% if book.loans.exists %}
+            <p class="inline-warning">{% trans "This book has loan history and cannot be removed." %}</p>
+            <a class="button button-primary" href="{% url 'library:dashboard' %}">{% trans "Back to catalog" %}</a>
+        {% else %}
+            <form method="post" class="form-actions">
+                {% csrf_token %}
+                <button class="button button-danger" type="submit">{% trans "Remove book" %}</button>
+                <a class="button button-quiet" href="{% url 'library:dashboard' %}">{% trans "Keep book" %}</a>
+            </form>
+        {% endif %}
+    </section>
+{% endblock %}

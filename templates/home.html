@@ -17,6 +17,9 @@
                     {% if can_manage_collections %}
                         <a class="welcome-link" href="{% url 'collection-list' %}">{% trans "Manage collections" %}</a>
                     {% endif %}
+                    {% if can_manage_library %}
+                        <a class="welcome-link" href="{% url 'library:dashboard' %}">{% trans "Open the library" %}</a>
+                    {% endif %}
                     {% if request.user.is_superuser %}
                         <a class="button" href="{% url 'admin:auth_user_changelist' %}">{% trans "Manage users" %}</a>
                     {% endif %}
@@ -44,7 +47,7 @@
                     <h2 id="quick-actions-title">{% trans "Quick actions" %}</h2>
                 </div>
             </div>
-            {% if can_manage_students or can_manage_collections or can_manage_store_supplies %}
+            {% if can_manage_students or can_manage_collections or can_manage_store_supplies or can_manage_library %}
                 <div class="quick-actions">
                     {% if can_manage_students %}
                         <article class="quick-card card">
@@ -74,6 +77,14 @@
                             <h3>{% trans "Store supplies" %}</h3>
                             <p>{% trans "Record tools and other supplies received by the school store." %}</p>
                             <a href="{% url 'supply-list' %}">{% trans "Open store records" %} &rarr;</a>
+                        </article>
+                    {% endif %}
+                    {% if can_manage_library %}
+                        <article class="quick-card card">
+                            <span class="quick-card-mark" aria-hidden="true">05</span>
+                            <h3>{% trans "Library management" %}</h3>
+                            <p>{% trans "Organize the book catalog, issue books to students, and track returns." %}</p>
+                            <a href="{% url 'library:dashboard' %}">{% trans "Open the library" %} &rarr;</a>
                         </article>
                     {% endif %}
                 </div>

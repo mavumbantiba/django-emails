@@ -1,0 +1,33 @@
+{% extends "librarymanagement/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+    <div class="form-layout">
+        <a class="back-link" href="{% url 'library:dashboard' %}">&larr; {% trans "Back to catalog" %}</a>
+        <section class="panel form-panel">
+            <p class="eyebrow">{% trans "Catalog management" %}</p>
+            <h1>{{ page_title }}</h1>
+            <p class="form-intro">{% trans "Add clear catalog details so students and staff can find the right book." %}</p>
+            <form method="post" class="library-form">
+                {% csrf_token %}
+                {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+                <div class="form-grid">
+                    {% for field in form %}
+                        <div class="field-wrap {% if field.name == 'description' %}field-full{% endif %}">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                            {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="form-actions">
+                    <button class="button button-primary" type="submit">{% if book %}{% trans "Save changes" %}{% else %}{% trans "Add to catalog" %}{% endif %}</button>
+                    <a class="button button-quiet" href="{% url 'library:dashboard' %}">{% trans "Cancel" %}</a>
+                </div>
+            </form>
+        </section>
+    </div>
+{% endblock %}

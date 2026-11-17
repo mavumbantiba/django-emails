@@ -1,0 +1,146 @@
+{% extends "librarymanagement/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Library dashboard" %}{% endblock %}
+
+{% block content %}
+    <section class="library-hero">
+        <div>
+            <p class="eyebrow">{% trans "School library" %}</p>
+            <h1>{% trans "Books, ready to be discovered." %}</h1>
+            <p class="hero-copy">{% trans "Keep your catalog organized and every student loan accounted for." %}</p>
+        </div>
+        <div class="hero-actions">
+            <a class="button button-light" href="{% url 'library:book-create' %}">{% trans "Add a book" %}</a>
+            <a class="button button-outline" href="{% url 'library:loan-create' %}">{% trans "Issue a book" %}</a>
+        </div>
+    </section>
+
+    <section class="stats-grid" aria-label="{% trans 'Library summary' %}">
+        <article class="stat-card">
+            <span class="stat-icon" aria-hidden="true">BK</span>
+            <span class="stat-label">{% trans "Book titles" %}</span>
+            <strong>{{ total_titles }}</strong>
+        </article>
+        <article class="stat-card">
+            <span class="stat-icon stat-icon-blue" aria-hidden="true">CP</span>
+            <span class="stat-label">{% trans "Total copies" %}</span>
+            <strong>{{ total_copies }}</strong>
+        </article>
+        <article class="stat-card">
+            <span class="stat-icon stat-icon-gold" aria-hidden="true">LN</span>
+            <span class="stat-label">{% trans "Books on loan" %}</span>
+            <strong>{{ active_loans }}</strong>
+        </article>
+        <article class="stat-card">
+            <span class="stat-icon stat-icon-red" aria-hidden="true">!</span>
+            <span class="stat-label">{% trans "Overdue" %}</span>
+            <strong>{{ overdue_loans }}</strong>
+        </article>
+    </section>
+
+    <section class="panel catalog-panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">{% trans "Collection" %}</p>
+                <h2>{% trans "Book catalog" %}</h2>
+            </div>
+            <span class="result-count">{% blocktrans count count=books|length %}{{ count }} title{% plural %}{{ count }} titles{% endblocktrans %}</span>
+        </div>
+
+        <form class="catalog-filters" method="get">
+            <label class="search-field">
+                <span class="sr-only">{% trans "Search the catalog" %}</span>
+                <input type="search" name="q" value="{{ search }}" placeholder="{% trans 'Search title, author, ISBN or shelf' %}">
+            </label>
+            <label>
+                <span class="sr-only">{% trans "Category" %}</span>
+                <select name="category">
+                    <option value="">{% trans "All categories" %}</option>
+                    {% for value, label in categories %}
+                        <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                <span class="sr-only">{% trans "Availability" %}</span>
+                <select name="availability">
+                    <option value="">{% trans "Any availability" %}</option>
+                    <option value="available" {% if selected_availability == "available" %}selected{% endif %}>{% trans "Available" %}</option>
+                    <option value="unavailable" {% if selected_availability == "unavailable" %}selected{% endif %}>{% trans "All copies on loan" %}</option>
+                </select>
+            </label>
+            <button class="button button-primary" type="submit">{% trans "Search" %}</button>
+            {% if search or selected_category or selected_availability %}
+                <a class="clear-link" href="{% url 'library:dashboard' %}">{% trans "Clear" %}</a>
+            {% endif %}
+        </form>
+
+        <div class="table-scroll">
+            <table class="library-table">
+                <thead>
+                    <tr>
+                        <th scope="col">{% trans "Book" %}</th>
+                        <th scope="col">{% trans "Category" %}</th>
+                        <th scope="col">{% trans "Shelf" %}</th>
+                        <th scope="col">{% trans "Availability" %}</th>
+                        <th scope="col"><span class="sr-only">{% trans "Actions" %}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                        <tr>
+                            <td>
+                                <span class="book-title">{{ book.title }}</span>
+                                <span class="book-author">{{ book.author }}{% if book.publication_year %} · {{ book.publication_year }}{% endif %}</span>
+                            </td>
+                            <td><span class="category-pill">{{ book.get_category_display }}</span></td>
+                            <td>{{ book.shelf_location|default:"—" }}</td>
+                            <td>
+                                <span class="availability {% if book.available_copies %}available{% else %}unavailable{% endif %}">
+                                    {{ book.available_copies }} / {{ book.total_copies }} {% trans "available" %}
+                                </span>
+                            </td>
+                            <td class="row-actions">
+                                <a href="{% url 'library:book-edit' book.pk %}">{% trans "Edit" %}</a>
+                                <a href="{% url 'library:book-delete' book.pk %}">{% trans "Remove" %}</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td class="empty-state" colspan="5">{% trans "No books match your search. Add a title to start your library catalog." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel recent-panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">{% trans "Circulation" %}</p>
+                <h2>{% trans "Recent activity" %}</h2>
+            </div>
+            <a class="text-link" href="{% url 'library:loan-list' %}">{% trans "View all loans" %} &rarr;</a>
+        </div>
+        <div class="recent-list">
+            {% for loan in recent_loans %}
+                <div class="recent-item">
+                    <span class="recent-avatar" aria-hidden="true">{{ loan.student.first_name|slice:":1" }}{{ loan.student.last_name|slice:":1" }}</span>
+                    <div class="recent-copy">
+                        <strong>{{ loan.student.first_name }} {{ loan.student.last_name }}</strong>
+                        <span>{{ loan.book.title }} · {{ loan.issued_at|date:"M j, Y" }}</span>
+                    </div>
+                    {% if loan.returned_at %}
+                        <span class="status-pill returned">{% trans "Returned" %}</span>
+                    {% elif loan.is_overdue %}
+                        <span class="status-pill overdue">{% trans "Overdue" %}</span>
+                    {% else %}
+                        <span class="status-pill active">{% trans "On loan" %}</span>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p class="empty-state">{% trans "No circulation activity yet." %}</p>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

@@ -1098,6 +1098,9 @@
                     {% if can_manage_store_supplies %}
                         <a class="{% if 'supply-' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'supply-list' %}">{% trans "Store supplies" %}</a>
                     {% endif %}
+                    {% if can_manage_library %}
+                        <a class="{% if request.resolver_match.namespace == 'library' %}active{% endif %}" href="{% url 'library:dashboard' %}">{% trans "Library" %}</a>
+                    {% endif %}
                 {% endif %}
             </nav>
             <div class="header-actions">

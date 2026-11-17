@@ -1,0 +1,38 @@
+{% load i18n static %}
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% trans "Library" %}{% endblock %} | Kafunjo Secondary School</title>
+    <link rel="stylesheet" href="{% static 'librarymanagement/library.css' %}">
+</head>
+<body>
+    <header class="library-header">
+        <div class="library-header-inner">
+            <a class="library-brand" href="{% url 'library:dashboard' %}">
+                <span class="library-mark" aria-hidden="true">L</span>
+                <span>
+                    <strong>Kafunjo Library</strong>
+                    <small>{% trans "Library management" %}</small>
+                </span>
+            </a>
+            <nav class="library-nav" aria-label="{% trans 'Library navigation' %}">
+                <a href="{% url 'library:dashboard' %}">{% trans "Catalog" %}</a>
+                <a href="{% url 'library:loan-list' %}">{% trans "Loans" %}</a>
+            </nav>
+            <a class="profile-link" href="{% url 'profile' %}">{% trans "School portal" %}</a>
+        </div>
+    </header>
+    <main class="library-main">
+        {% if messages %}
+            <div class="library-messages" role="status" aria-live="polite">
+                {% for message in messages %}
+                    <p class="library-message {{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

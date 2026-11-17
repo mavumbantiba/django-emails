@@ -448,6 +448,9 @@
                 {% if can_manage_collections %}
                     <a href="/collections/">{% trans "Collections" %}</a>
                 {% endif %}
+                {% if can_manage_library %}
+                    <a href="{% url 'library:dashboard' %}">{% trans "Library" %}</a>
+                {% endif %}
             </nav>
             <div class="header-actions">
                 <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
