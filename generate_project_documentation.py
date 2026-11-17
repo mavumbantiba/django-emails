@@ -87,7 +87,7 @@ styles.add(ParagraphStyle(
 
 
 def safe(value):
-    return escape(str(value)).replace("\n", "<br/>")
+    return escape(str(value)).replace("\r\n", "<br/>")
 
 
 class GuideDocument(BaseDocTemplate):
@@ -163,7 +163,7 @@ def note(text):
 
 def code(label, text):
     story.append(Paragraph(safe(label), styles["CodeLabelGuide"]))
-    story.append(Preformatted(text.strip("\n"), styles["CodeGuide"], maxLineLength=96))
+    story.append(Preformatted(text.strip("\r\n"), styles["CodeGuide"], maxLineLength=96))
 
 
 def file(path, description):
@@ -228,8 +228,8 @@ paragraph(
 )
 code(
     "High-level request path",
-    "Browser -> KAfunjoSecondarySchool1/urls.py -> app urls.py\n"
-    "-> middleware and authorization -> view -> form/model/query\n"
+    "Browser -> KAfunjoSecondarySchool1/urls.py -> app urls.py\r\n"
+    "-> middleware and authorization -> view -> form/model/query\r\n"
     "-> template + messages -> HTTP response",
 )
 paragraph(
@@ -503,12 +503,12 @@ paragraph(
 )
 code(
     "Common Windows PowerShell commands",
-    "python manage.py check\n"
-    "python manage.py makemigrations --check --dry-run\n"
-    "python manage.py migrate\n"
-    "python manage.py test\n"
-    "python manage.py test ContributionSystem.tests\n"
-    "python manage.py test LibraryManagement.tests\n"
+    "python manage.py check\r\n"
+    "python manage.py makemigrations --check --dry-run\r\n"
+    "python manage.py migrate\r\n"
+    "python manage.py test\r\n"
+    "python manage.py test ContributionSystem.tests\r\n"
+    "python manage.py test LibraryManagement.tests\r\n"
     "python manage.py runserver",
 )
 paragraph(
@@ -528,11 +528,11 @@ paragraph(
 subsection("A reliable feature-change loop")
 code(
     "Model-backed feature workflow",
-    "1. Update model and relationship/constraint rules.\n"
-    "2. Generate and review migrations.\n"
-    "3. Update form validation, views, and admin display.\n"
-    "4. Update the directly related template and translations.\n"
-    "5. Add focused success and failure tests.\n"
+    "1. Update model and relationship/constraint rules.\r\n"
+    "2. Generate and review migrations.\r\n"
+    "3. Update form validation, views, and admin display.\r\n"
+    "4. Update the directly related template and translations.\r\n"
+    "5. Add focused success and failure tests.\r\n"
     "6. Run targeted tests, system checks, and broader tests.",
 )
 
