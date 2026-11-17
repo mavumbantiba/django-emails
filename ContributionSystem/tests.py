@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 from allauth.account.internal.flows.login import AUTHENTICATION_METHODS_SESSION_KEY
 from allauth.mfa.models import Authenticator
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser, Group
 from django.core import mail
@@ -1330,6 +1331,54 @@ class ContentSecurityPolicyTests(TestCase):
                 response.headers["Content-Security-Policy"],
             )
             self.assert_script_tags_use_nonce(response)
+
+    @override_settings(
+        UMAMI_SCRIPT_URL="https://analytics.example/script.js",
+        UMAMI_WEBSITE_ID="umami-test-site",
+        SECURE_CSP={
+            **settings.SECURE_CSP,
+            "script-src": settings.SECURE_CSP["script-src"]
+            + ["https://analytics.example"],
+            "connect-src": settings.SECURE_CSP["connect-src"]
+            + ["https://analytics.example"],
+        },
+    )
+    def test_umami_uses_nonce_and_tracks_only_named_routes(self):
+        for path, page_name in (
+            (reverse("home"), "home"),
+            (reverse("account_login"), "account_login"),
+        ):
+            response = self.client.get(f"{path}?q=private-record")
+            parser = ScriptNonceParser()
+            parser.feed(response.content.decode())
+            tracker = next(
+                attrs
+                for attrs in parser.script_attributes
+                if "data-umami-tracker" in attrs
+            )
+            nonce = response.wsgi_request.csp_nonce
+            policy = response.headers["Content-Security-Policy"]
+
+            self.assertEqual(tracker.get("src"), "https://analytics.example/script.js")
+            self.assertEqual(tracker.get("data-website-id"), "umami-test-site")
+            self.assertEqual(tracker.get("data-page-name"), page_name)
+            self.assertEqual(tracker.get("data-auto-track"), "false")
+            self.assertEqual(tracker.get("nonce"), nonce)
+            self.assertNotIn("private-record", str(tracker))
+            self.assert_script_tags_use_nonce(response)
+            self.assertIn("connect-src 'self' https://analytics.example", policy)
+            self.assertIn(
+                f"script-src 'nonce-{nonce}' 'strict-dynamic' 'self' "
+                "https://analytics.example",
+                policy,
+            )
+
+    @override_settings(UMAMI_SCRIPT_URL="", UMAMI_WEBSITE_ID="")
+    def test_umami_is_not_loaded_without_configuration(self):
+        response = self.client.get(reverse("home"))
+
+        self.assertNotContains(response, "data-umami-tracker")
+        self.assertNotContains(response, "umami-pageview.js")
 
     def test_allauth_account_and_mfa_scripts_use_response_nonces(self):
         user = get_user_model().objects.create_user(

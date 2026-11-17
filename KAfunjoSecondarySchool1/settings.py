@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 from datetime import timedelta
 import os
 from pathlib import Path
+from urllib.parse import urlsplit
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,8 @@ if ENV_FILE.exists():
             'GITHUB_CLIENT_SECRET',
             'AMAZON_CLIENT_ID',
             'AMAZON_CLIENT_SECRET',
+            'UMAMI_SCRIPT_URL',
+            'UMAMI_WEBSITE_ID',
         }:
             os.environ.setdefault(key, value.strip().strip('"').strip("'"))
 
@@ -51,6 +54,29 @@ SECRET_KEY = 'django-insecure-*rqnp=3clzo)j@(hy+rav3*@v%ycjwu*dk&s5_l01twf6jx102
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
+
+UMAMI_SCRIPT_URL = os.environ.get('UMAMI_SCRIPT_URL', '').strip()
+UMAMI_WEBSITE_ID = os.environ.get('UMAMI_WEBSITE_ID', '').strip()
+UMAMI_ORIGIN = ''
+if bool(UMAMI_SCRIPT_URL) != bool(UMAMI_WEBSITE_ID):
+    raise ValueError(
+        'Set both UMAMI_SCRIPT_URL and UMAMI_WEBSITE_ID to enable Umami.'
+    )
+if UMAMI_SCRIPT_URL:
+    umami_url = urlsplit(UMAMI_SCRIPT_URL)
+    if (
+        umami_url.scheme != 'https'
+        or not umami_url.hostname
+        or umami_url.username
+        or umami_url.password
+        or umami_url.query
+        or umami_url.fragment
+    ):
+        raise ValueError(
+            'UMAMI_SCRIPT_URL must be an HTTPS script URL without credentials, '
+            'query, or fragment.'
+        )
+    UMAMI_ORIGIN = f'{umami_url.scheme}://{umami_url.netloc}'
 
 
 # Application definition
@@ -103,6 +129,9 @@ SECURE_CSP = {
     'script-src': ["'nonce-{nonce}'", "'strict-dynamic'", "'self'"],
     'style-src': ["'self'", "'nonce-{nonce}'"],
 }
+if UMAMI_ORIGIN:
+    SECURE_CSP['script-src'].append(UMAMI_ORIGIN)
+    SECURE_CSP['connect-src'].append(UMAMI_ORIGIN)
 SECURE_HSTS_SECONDS = 31536000
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
@@ -211,6 +240,7 @@ TEMPLATES = [
                 'django.template.context_processors.i18n',
                 'django.contrib.messages.context_processors.messages',
                 'ContributionSystem.context_processors.school_access',
+                'ContributionSystem.context_processors.umami_tracking',
             ],
         },
     },

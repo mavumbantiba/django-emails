@@ -472,6 +472,18 @@
     </main>
     {% block extra_body %}
     {% endblock extra_body %}
+    {% if umami_script_url and umami_website_id %}
+        <script
+            src="{{ umami_script_url }}"
+            data-website-id="{{ umami_website_id }}"
+            data-auto-track="false"
+            data-umami-tracker
+            data-page-name="{{ umami_page_name }}"
+            nonce="{{ request.csp_nonce }}"
+            defer
+        ></script>
+        <script src="{% static 'js/umami-pageview.js' %}" nonce="{{ request.csp_nonce }}" defer></script>
+    {% endif %}
     <script src="{% static 'js/live-clock.js' %}" nonce="{{ request.csp_nonce }}" defer></script>
     <script src="{% static 'js/ui-feedback.js' %}" nonce="{{ request.csp_nonce }}" defer></script>
 </body>
