@@ -5,7 +5,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{% block meta_description %}Kafunjo Secondary School's online school management portal.{% endblock %}">
+    <meta name="robots" content="{% block meta_robots %}noindex, nofollow{% endblock %}">
     <title>{% block title %}Kafunjo Secondary School{% endblock %}</title>
+    <link rel="canonical" href="https://{{ public_site_domain }}{% if request.resolver_match.url_name == 'home-legacy' %}{% url 'home' %}{% else %}{{ request.path }}{% endif %}">
     <link rel="stylesheet" href="{% static 'css/user-greeting.css' %}">
     <script nonce="{{ request.csp_nonce }}">
         document.documentElement.dataset.theme = localStorage.getItem("kafunjo-theme") || "light";

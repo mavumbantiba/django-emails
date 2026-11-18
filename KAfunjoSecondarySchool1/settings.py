@@ -38,8 +38,13 @@ if ENV_FILE.exists():
             'GITHUB_CLIENT_SECRET',
             'AMAZON_CLIENT_ID',
             'AMAZON_CLIENT_SECRET',
+            'AFRICASTALKING_USERNAME',
+            'AFRICASTALKING_API_KEY',
+            'AFRICASTALKING_SENDER_ID',
+            'SMS_ENABLED',
             'UMAMI_SCRIPT_URL',
             'UMAMI_WEBSITE_ID',
+            'PUBLIC_SITE_DOMAIN',
         }:
             os.environ.setdefault(key, value.strip().strip('"').strip("'"))
 
@@ -89,7 +94,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.sitemaps',
     'django.contrib.humanize',
+    'auditlog',
+    'axes',
     'ContributionSystem',
     'LibraryManagement.apps.LibrarymanagementConfig',
     'allauth',
@@ -113,9 +121,11 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'auditlog.middleware.AuditlogMiddleware',
     'ContributionSystem.middleware.RequireTOTPEnrollmentMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
 SECURE_CSP = {
@@ -150,11 +160,27 @@ SESSION_SAVE_EVERY_REQUEST = True
 CSRF_COOKIE_SECURE = True
 
 AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+AXES_ENABLED = True
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = timedelta(minutes=30)
+AXES_USE_ATTEMPT_EXPIRATION = True
+AXES_LOCKOUT_PARAMETERS = [['username', 'ip_address']]
+AXES_USERNAME_CALLABLE = 'ContributionSystem.security.axes_login_identifier'
+AXES_RESET_ON_SUCCESS = True
+AXES_ENABLE_RETRY_AFTER_HEADER = True
+AXES_HTTP_RESPONSE_CODE = 429
+AXES_ENABLE_ADMIN = True
+
 SITE_ID = 1
+PUBLIC_SITE_DOMAIN = os.environ.get(
+    'PUBLIC_SITE_DOMAIN',
+    'mavumba.pythonanywhere.com',
+).strip()
 
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_ADAPTER = 'ContributionSystem.adapters.SchoolAccountAdapter'
@@ -162,8 +188,18 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_SIGNUP_REDIRECT_URL = 'profile'
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_RATE_LIMITS = {
+    'login': '20/m/ip',
+    'login_failed': '5/5m/key,10/5m/ip',
+}
 LOGIN_REDIRECT_URL = 'profile'
 LOGOUT_REDIRECT_URL = 'home'
+
+RATELIMIT_ENABLE = True
+RATELIMIT_USE_CACHE = 'default'
+RATELIMIT_FAIL_OPEN = False
+
+AUDITLOG_INCLUDE_ALL_MODELS = False
 
 SOCIALACCOUNT_PROVIDERS = {}
 for provider, env_prefix in (
@@ -327,3 +363,17 @@ DEFAULT_FROM_EMAIL = os.environ.get(
     'DEFAULT_FROM_EMAIL',
     EMAIL_HOST_USER,
 )
+
+# Africa's Talking SMS notifications
+SMS_ENABLED = os.environ.get('SMS_ENABLED', 'false').strip().lower() in {
+    '1',
+    'true',
+    'yes',
+    'on',
+}
+AFRICASTALKING_USERNAME = os.environ.get('AFRICASTALKING_USERNAME', '').strip()
+AFRICASTALKING_API_KEY = os.environ.get('AFRICASTALKING_API_KEY', '').strip()
+AFRICASTALKING_SENDER_ID = os.environ.get(
+    'AFRICASTALKING_SENDER_ID',
+    '',
+).strip()

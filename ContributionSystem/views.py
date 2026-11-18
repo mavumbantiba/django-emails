@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404, redirect, render, resolve_url
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django_ratelimit.decorators import ratelimit
 from django.views.decorators.vary import vary_on_headers
 from django.views.decorators.http import require_http_methods
 
@@ -46,6 +47,7 @@ from .notifications import (
     send_record_notification,
 )
 from .security import require_mfa_reauthentication
+from .sms import send_sms
 
 
 class SchoolLogoutView(AllauthLogoutView):
@@ -86,7 +88,18 @@ def profile_edit(request):
 
 
 @require_http_methods(["GET", "POST"])
+@ratelimit(key="ip", rate="5/h", method="POST", block=False)
 def account_recovery(request):
+    if getattr(request, "limited", False):
+        return render(
+            request,
+            "accounts/recovery.html",
+            {
+                "form": AccountRecoveryRequestForm(),
+                "rate_limited": True,
+            },
+            status=429,
+        )
     form = AccountRecoveryRequestForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         recovery_request = form.save()
@@ -220,6 +233,10 @@ def parent_create(request):
         parent = form.save(commit=False)
         parent.created_by = request.user
         parent.save()
+        send_sms(
+            parent.phone_number,
+            "Kafunjo Secondary School: your parent/guardian record was registered.",
+        )
         send_record_notification(
             request,
             recipient=parent.created_by,
@@ -343,6 +360,13 @@ def student_create(request):
         student = form.save(commit=False)
         student.registered_by = request.user
         student.save()
+        send_sms(
+            student.parent.phone_number,
+            (
+                f"Kafunjo Secondary School: {student.first_name} {student.last_name} "
+                f"(admission {student.admission_number}) was registered."
+            ),
+        )
         send_record_notification(
             request,
             recipient=student.registered_by,
@@ -449,6 +473,19 @@ def collection_create(request, collection_id=None):
             collection = form.save(commit=False)
             collection.recorded_by = request.user
             collection.save()
+            details = (
+                f"TZS {collection.amount_collected}"
+                if collection.amount_collected
+                else f"{collection.quantity_issued} item(s)"
+            )
+            send_sms(
+                collection.student.parent.phone_number,
+                (
+                    f"Kafunjo Secondary School: {collection.get_category_display()} "
+                    f"recorded for {collection.student.first_name} "
+                    f"{collection.student.last_name}: {details}."
+                ),
+            )
             send_record_notification(
                 request,
                 recipient=collection.recorded_by,
@@ -734,6 +771,17 @@ def supply_create(request, receipt_id=None):
                                 "quantity": supply.quantity_collected,
                             }
                         )
+                item_summary = ", ".join(
+                    f"{item['quantity']} x {item['item']}"
+                    for item in recorded_items
+                )
+                send_sms(
+                    student.parent.phone_number,
+                    (
+                        f"Kafunjo Secondary School: supplies recorded for "
+                        f"{student.first_name} {student.last_name}: {item_summary}."
+                    ),
+                )
                 send_record_notification(
                     request,
                     recipient=request.user,

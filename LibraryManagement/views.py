@@ -6,6 +6,8 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods, require_POST
 
+from ContributionSystem.sms import send_sms
+
 from .access import library_staff_required
 from .forms import BookForm, BookLoanForm
 from .models import Book, BookLoan
@@ -191,6 +193,14 @@ def loan_create(request):
                 loan.book = book
                 loan.issued_by = request.user
                 loan.save()
+                send_sms(
+                    loan.student.parent.phone_number,
+                    (
+                        f"Kafunjo Secondary School library: "
+                        f"{loan.student.first_name} {loan.student.last_name} borrowed "
+                        f"{loan.book.title}. Return by {loan.due_date:%Y-%m-%d}."
+                    ),
+                )
                 messages.success(
                     request,
                     _("“%(title)s” was issued successfully.") % {

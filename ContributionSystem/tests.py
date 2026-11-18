@@ -5,10 +5,13 @@ from unittest.mock import patch
 
 from allauth.account.internal.flows.login import AUTHENTICATION_METHODS_SESSION_KEY
 from allauth.mfa.models import Authenticator
+from auditlog.models import LogEntry
+from axes.models import AccessAttempt
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser, Group
 from django.core import mail
+from django.core.cache import cache
 from django.template.loader import render_to_string
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
@@ -28,6 +31,7 @@ from .models import (
     StudentCollection,
     StoreSupplyReceipt,
 )
+from .sms import normalize_phone_number
 
 
 def login_with_totp(client, user, recently_authenticated=True, roles=None):
@@ -49,6 +53,22 @@ def login_with_totp(client, user, recently_authenticated=True, roles=None):
             {"method": "mfa", "type": "totp", "at": time.time()}
         ]
         session.save()
+
+
+class SmsNotificationTests(TestCase):
+    def test_normalizes_tanzanian_phone_numbers(self):
+        self.assertEqual(normalize_phone_number("0712345678"), "+255712345678")
+        self.assertEqual(normalize_phone_number("255712345678"), "+255712345678")
+        self.assertEqual(normalize_phone_number("+255712345678"), "+255712345678")
+        self.assertEqual(normalize_phone_number("00255712345678"), "+255712345678")
+
+    @override_settings(SMS_ENABLED=False)
+    @patch("ContributionSystem.sms.urlopen")
+    def test_disabled_sms_does_not_make_http_request(self, urlopen):
+        from .sms import send_sms
+
+        self.assertFalse(send_sms("0712345678", "Test message"))
+        urlopen.assert_not_called()
 
 
 class ScriptNonceParser(HTMLParser):
@@ -1476,6 +1496,29 @@ class AdminBrandingTests(TestCase):
 
 @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
 class AccountRecoveryTests(TestCase):
+    def test_recovery_requests_are_rate_limited_per_ip(self):
+        cache.clear()
+
+        for request_number in range(5):
+            response = self.client.post(
+                reverse("account-recovery"),
+                {"email": f"request-{request_number}@example.test"},
+            )
+            self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            reverse("account-recovery"),
+            {"email": "blocked@example.test"},
+        )
+
+        self.assertEqual(response.status_code, 429)
+        self.assertContains(
+            response,
+            "Too many recovery requests were submitted",
+            status_code=429,
+        )
+        self.assertEqual(AccountRecoveryRequest.objects.count(), 5)
+
     def test_recovery_request_is_submitted_without_account_lookup(self):
         admin = get_user_model().objects.create_user(
             username="recovery-admin",
@@ -1536,6 +1579,68 @@ class AccountRecoveryTests(TestCase):
         self.assertContains(
             self.client.get(reverse("home")),
             reverse("account-recovery"),
+        )
+
+
+class SecurityIntegrationTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username="audit-test-user",
+            password="test-password",
+        )
+        login_with_totp(self.client, self.user)
+
+    def test_parent_audit_entries_capture_actor_without_exposing_pii(self):
+        response = self.client.post(
+            reverse("parent-create"),
+            {
+                "full_name": "Amina Sensitive",
+                "phone_number": "0712345678",
+                "email": "amina.private@example.test",
+            },
+        )
+
+        self.assertRedirects(response, reverse("parent-list"))
+        parent = Parent.objects.get()
+        entry = LogEntry.objects.get_for_object(parent).get(
+            action=LogEntry.Action.CREATE,
+        )
+
+        self.assertEqual(entry.actor, self.user)
+        self.assertNotIn("Amina Sensitive", entry.object_repr)
+        self.assertNotIn("0712345678", str(entry.changes))
+        self.assertNotIn("amina.private@example.test", str(entry.changes))
+
+    def test_axes_blocks_valid_login_after_repeated_failed_attempts(self):
+        AccessAttempt.objects.all().delete()
+        user = get_user_model().objects.create_user(
+            username="axes-user",
+            email="axes-user@example.test",
+            password="correct-password",
+        )
+        login_url = reverse("account_login")
+
+        with override_settings(
+            AXES_FAILURE_LIMIT=2,
+            ACCOUNT_RATE_LIMITS={
+                "login": "100/m/ip",
+                "login_failed": "100/m/key,100/m/ip",
+            },
+        ):
+            for _ in range(2):
+                self.client.post(
+                    login_url,
+                    {"login": user.email, "password": "incorrect-password"},
+                )
+
+            self.client.post(
+                login_url,
+                {"login": user.email, "password": "correct-password"},
+            )
+
+        self.assertNotIn("_auth_user_id", self.client.session)
+        self.assertTrue(
+            AccessAttempt.objects.filter(username=user.email).exists(),
         )
 
 

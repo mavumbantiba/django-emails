@@ -24,6 +24,7 @@ def umami_tracking(request):
     return {
         "umami_script_url": settings.UMAMI_SCRIPT_URL,
         "umami_website_id": settings.UMAMI_WEBSITE_ID,
+        "public_site_domain": settings.PUBLIC_SITE_DOMAIN,
         "umami_page_name": (
             match.url_name if match and match.url_name else "page"
         ),

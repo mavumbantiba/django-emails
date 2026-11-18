@@ -17,7 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from ContributionSystem.seo import robots_txt, sitemap_xml
+
 urlpatterns = [
+    path('robots.txt', robots_txt, name='robots-txt'),
+    path('sitemap.xml', sitemap_xml, name='sitemap'),
     path('admin/', admin.site.urls),
     path('library/', include('LibraryManagement.urls')),
     path('', include('ContributionSystem.urls')),

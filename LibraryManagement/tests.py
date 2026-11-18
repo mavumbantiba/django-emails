@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from allauth.mfa.models import Authenticator
+from auditlog.models import LogEntry
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils import timezone
@@ -84,6 +85,12 @@ class LibraryManagementTests(TestCase):
         self.assertEqual(self.book.available_copies, 0)
         self.assertEqual(loan.issued_by, self.user)
         self.assertEqual(loan.book_number, "01/100")
+        self.assertEqual(
+            LogEntry.objects.get_for_object(loan).get(
+                action=LogEntry.Action.CREATE,
+            ).actor,
+            self.user,
+        )
 
         return_response = self.client.post(
             reverse("library:loan-return", args=[loan.pk]),
