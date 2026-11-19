@@ -1,13 +1,25 @@
 .site-footer {
     width: 100%;
     margin-top: auto;
-    padding: 18px 20px;
-    border-top: 1px solid rgb(128 128 128 / 22%);
+    padding: 18px 16px;
     color: inherit;
     font-size: 12px;
     text-align: center;
 }
 
+.site-footer-inner {
+    width: min(1120px, 100%);
+    margin: 0 auto;
+    padding: 12px 18px;
+    border: 1px solid rgb(128 128 128 / 22%);
+    border-radius: 12px;
+    background: rgb(128 128 128 / 7%);
+}
+
 .site-footer p {
     margin: 0;
+}
+
+.site-footer strong {
+    font-weight: 750;
 }

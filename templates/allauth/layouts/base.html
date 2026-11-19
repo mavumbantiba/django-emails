@@ -281,14 +281,21 @@
         }
 
         .auth-card button {
+            display: inline-flex;
             min-height: 44px;
             padding: 0 16px;
+            align-items: center;
+            justify-content: center;
             border: 0;
             border-radius: 8px;
             background: var(--action-blue);
             color: #fff;
             cursor: pointer;
             font: 700 14px "Segoe UI", Arial, sans-serif;
+            line-height: 1.35;
+            text-align: center;
+            vertical-align: middle;
+            white-space: normal;
         }
 
         .auth-card button:hover,
@@ -323,13 +330,16 @@
         }
 
         .auth-card button[type="submit"] {
-            width: 100%;
+            width: auto;
+            max-width: 100%;
+            margin: 4px 8px 4px 0;
         }
 
         .auth-card button[id],
         .auth-card button[form] {
+            display: flex;
             width: 100%;
-            margin-top: 8px;
+            margin: 8px 0 0;
             background: var(--action-blue);
             color: #fff;
         }
