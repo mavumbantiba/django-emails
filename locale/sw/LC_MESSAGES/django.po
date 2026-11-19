@@ -796,3 +796,371 @@ msgstr "Saa ya sasa nchini Tanzania"
 
 msgid "Your account is signed in, but no school role is assigned. Contact a school administrator to request data access."
 msgstr "Akaunti yako imeingia, lakini haijapangiwa jukumu la shule. Wasiliana na msimamizi wa shule kuomba ruhusa ya kufikia taarifa."
+
+msgid "A password reset does not remove MFA. Use a saved recovery code if you cannot use your authenticator."
+msgstr "Kuweka upya nenosiri hakuondoi MFA. Tumia msimbo wa kurejesha akaunti uliohifadhi ikiwa huwezi kutumia programu yako ya uthibitishaji."
+
+msgid "Account access"
+msgstr "Ufikiaji wa akaunti"
+
+msgid "Account recovery"
+msgstr "Urejeshaji wa akaunti"
+
+msgid "Account security · Delete confirmation"
+msgstr "Usalama wa akaunti · Uthibitisho wa kufuta"
+
+msgid "Active loans"
+msgstr "Mikopo inayoendelea"
+
+msgid "Add Email"
+msgstr "Ongeza barua pepe"
+
+msgid "Add Email Address"
+msgstr "Ongeza anwani ya barua pepe"
+
+msgid "Add a book"
+msgstr "Ongeza kitabu"
+
+msgid "Add clear catalog details so students and staff can find the right book."
+msgstr "Weka maelezo wazi ya kitabu ili wanafunzi na wafanyakazi waweze kukipata kwa urahisi."
+
+msgid "Add to catalog"
+msgstr "Ongeza kwenye orodha ya vitabu"
+
+msgid "All categories"
+msgstr "Kategoria zote"
+
+msgid "All copies on loan"
+msgstr "Nakala zote zimekopwa"
+
+msgid "All loans"
+msgstr "Mikopo yote"
+
+msgid "Any availability"
+msgstr "Upatikanaji wowote"
+
+msgid "Availability"
+msgstr "Upatikanaji"
+
+msgid "Available"
+msgstr "Kinapatikana"
+
+msgid "Back to catalog"
+msgstr "Rudi kwenye orodha ya vitabu"
+
+msgid "Back to loans"
+msgstr "Rudi kwenye mikopo"
+
+msgid "Book"
+msgstr "Kitabu"
+
+msgid "Book catalog"
+msgstr "Orodha ya vitabu"
+
+msgid "Book loans"
+msgstr "Mikopo ya vitabu"
+
+msgid "Book titles"
+msgstr "Majina ya vitabu"
+
+msgid "Books on loan"
+msgstr "Vitabu vilivyokopwa"
+
+msgid "Books, ready to be discovered."
+msgstr "Vitabu viko tayari kugunduliwa."
+
+msgid "Catalog"
+msgstr "Orodha ya vitabu"
+
+msgid "Catalog management"
+msgstr "Usimamizi wa orodha ya vitabu"
+
+msgid "Check and return"
+msgstr "Hakiki na urejeshe"
+
+msgid "Circulation"
+msgstr "Huduma ya mikopo"
+
+msgid "Circulation desk"
+msgstr "Dawati la mikopo"
+
+msgid "Clear"
+msgstr "Futa kichujio"
+
+msgid "Collection"
+msgstr "Mkusanyiko"
+
+msgid "Confirm issue"
+msgstr "Thibitisha kukopesha"
+
+msgid "Copy"
+msgstr "Nakala"
+
+msgid "Copy number"
+msgstr "Namba ya nakala"
+
+msgid "Delete account"
+msgstr "Futa akaunti"
+
+msgid "Delete my account permanently"
+msgstr "Futa akaunti yangu kabisa"
+
+msgid "Delete your account?"
+msgstr "Futa akaunti yako?"
+
+msgid "Do you really want to remove the selected email address?"
+msgstr "Je, kweli unataka kuondoa anwani ya barua pepe iliyochaguliwa?"
+
+msgid "Download codes"
+msgstr "Pakua misimbo"
+
+msgid "Due date"
+msgstr "Tarehe ya mwisho"
+
+msgid "Edit student record"
+msgstr "Hariri kumbukumbu ya mwanafunzi"
+
+msgid "Email Addresses"
+msgstr "Anwani za barua pepe"
+
+msgid "Enter the email address associated with the account. An administrator will verify your identity before changing account credentials or MFA."
+msgstr "Weka anwani ya barua pepe inayohusishwa na akaunti. Msimamizi atathibitisha utambulisho wako kabla ya kubadilisha taarifa za kuingia au MFA."
+
+msgid "Enter the returned book number"
+msgstr "Weka namba ya kitabu kilichorejeshwa"
+
+msgid "Filter"
+msgstr "Chuja"
+
+msgid "Generate new codes"
+msgstr "Tengeneza misimbo mipya"
+
+msgid "I have saved my recovery codes"
+msgstr "Nimehifadhi misimbo yangu ya kurejesha akaunti"
+
+msgid "If you can access your verified email, reset your password or use a saved MFA recovery code at sign-in. If you have lost access to every sign-in method, submit a request for administrator review."
+msgstr "Ikiwa unaweza kufikia barua pepe yako iliyothibitishwa, weka upya nenosiri lako au tumia msimbo wa kurejesha MFA uliohifadhi wakati wa kuingia. Ikiwa umepoteza ufikiaji wa njia zote za kuingia, tuma ombi likaguliwe na msimamizi."
+
+msgid "If you can no longer access the registered email, contact the school office in person and complete its identity-verification process. Do not send your password or MFA codes."
+msgstr "Ikiwa huwezi tena kufikia barua pepe iliyosajiliwa, wasiliana na ofisi ya shule ana kwa ana na ukamilishe utaratibu wa kuthibitisha utambulisho. Usitume nenosiri lako au misimbo ya MFA."
+
+msgid "If you cannot access the email address on the account, contact the school office in person and follow its identity-verification process."
+msgstr "Ikiwa huwezi kufikia anwani ya barua pepe iliyo kwenye akaunti, wasiliana na ofisi ya shule ana kwa ana na ufuate utaratibu wake wa kuthibitisha utambulisho."
+
+msgid "Issue a book"
+msgstr "Kopesha kitabu"
+
+msgid "Issued"
+msgstr "Kilichokopeshwa"
+
+msgid "Loan status"
+msgstr "Hali ya mkopo"
+
+msgid "Keep book"
+msgstr "Hifadhi kitabu"
+
+msgid "Keep your catalog organized and every student loan accounted for."
+msgstr "Panga orodha ya vitabu na ufuatilie kila mkopo wa mwanafunzi."
+
+msgid "Library"
+msgstr "Maktaba"
+
+msgid "Library dashboard"
+msgstr "Dashibodi ya maktaba"
+
+msgid "Library management"
+msgstr "Usimamizi wa maktaba"
+
+msgid "Library navigation"
+msgstr "Menyu ya maktaba"
+
+msgid "Library summary"
+msgstr "Muhtasari wa maktaba"
+
+msgid "Loans"
+msgstr "Mikopo"
+
+msgid "Lost access to your password and MFA?"
+msgstr "Umepoteza ufikiaji wa nenosiri lako na MFA?"
+
+msgid "Make Primary"
+msgstr "Weka kuwa anwani kuu"
+
+msgid "Manage collections"
+msgstr "Simamia michango"
+
+msgid "Manage the collection categories assigned to your role."
+msgstr "Simamia kategoria za michango ulizopangiwa kulingana na jukumu lako."
+
+msgid "Manage users"
+msgstr "Simamia watumiaji"
+
+msgid "Mark returned"
+msgstr "Weka alama kuwa kimerudishwa"
+
+msgid "No books match your search. Add a title to start your library catalog."
+msgstr "Hakuna kitabu kinacholingana na utafutaji wako. Ongeza kitabu ili kuanza orodha ya maktaba."
+
+msgid "No circulation activity yet."
+msgstr "Bado hakuna shughuli za mikopo."
+
+msgid "No loans found for these filters."
+msgstr "Hakuna mikopo iliyopatikana kwa vichujio hivi."
+
+msgid "On loan"
+msgstr "Kimekopwa"
+
+msgid "Open the library"
+msgstr "Fungua maktaba"
+
+msgid "Organize the book catalog, issue books to students, and track returns."
+msgstr "Panga orodha ya vitabu, kopesha wanafunzi vitabu na ufuatilie marejesho."
+
+msgid "Overdue"
+msgstr "Muda wake umepita"
+
+msgid "Permanently remove your login account after confirming with MFA."
+msgstr "Ondoa kabisa akaunti yako ya kuingia baada ya kuthibitisha kwa MFA."
+
+msgid "Primary"
+msgstr "Anwani kuu"
+
+msgid "Recent activity"
+msgstr "Shughuli za hivi karibuni"
+
+msgid "Recover account access"
+msgstr "Rejesha ufikiaji wa akaunti"
+
+msgid "Recovery Codes"
+msgstr "Misimbo ya kurejesha akaunti"
+
+msgid "Recovery request received"
+msgstr "Ombi la kurejesha akaunti limepokelewa"
+
+msgid "Re-send Verification"
+msgstr "Tuma tena uthibitisho"
+
+msgid "Remove"
+msgstr "Ondoa"
+
+msgid "Remove book"
+msgstr "Ondoa kitabu"
+
+msgid "Remove this book?"
+msgstr "Ondoa kitabu hiki?"
+
+msgid "Request administrator review"
+msgstr "Omba ukaguzi wa msimamizi"
+
+msgid "Request received"
+msgstr "Ombi limepokelewa"
+
+msgid "Reset your password by email"
+msgstr "Weka upya nenosiri lako kwa barua pepe"
+
+msgid "Return to sign in"
+msgstr "Rudi kwenye ukurasa wa kuingia"
+
+msgid "Returned"
+msgstr "Kimerudishwa"
+
+msgid "Review account deletion"
+msgstr "Kagua ufutaji wa akaunti"
+
+msgid "School Portal"
+msgstr "Tovuti ya shule"
+
+msgid "School library"
+msgstr "Maktaba ya shule"
+
+msgid "School portal"
+msgstr "Tovuti ya shule"
+
+msgid "Search and manage the collection categories assigned to your role."
+msgstr "Tafuta na simamia kategoria za michango zilizokabidhiwa kwa jukumu lako."
+
+msgid "Search loans"
+msgstr "Tafuta mikopo"
+
+msgid "Search student, admission number, book or copy number"
+msgstr "Tafuta mwanafunzi, namba ya udahili, kitabu au namba ya nakala"
+
+msgid "Search student, category, or notes"
+msgstr "Tafuta mwanafunzi, kategoria au maelezo"
+
+msgid "Search the catalog"
+msgstr "Tafuta kwenye orodha ya vitabu"
+
+msgid "Search title, author, ISBN or shelf"
+msgstr "Tafuta jina la kitabu, mwandishi, ISBN au rafu"
+
+msgid "Select an available title and the student borrowing it, then enter the copy number printed on the book. The standard loan period is two weeks."
+msgstr "Chagua kitabu kinachopatikana na mwanafunzi anayekikopa, kisha weka namba ya nakala iliyoandikwa kwenye kitabu. Kipindi cha kawaida cha mkopo ni wiki mbili."
+
+msgid "Send me a sign-in code"
+msgstr "Nitumie msimbo wa kuingia"
+
+msgid "Shelf"
+msgstr "Rafu"
+
+msgid "Sign In"
+msgstr "Ingia"
+
+msgid "Sign in with a passkey"
+msgstr "Ingia kwa kutumia ufunguo wa siri (passkey)"
+
+msgid "Submit recovery request"
+msgstr "Tuma ombi la kurejesha akaunti"
+
+msgid "The following email addresses are associated with your account:"
+msgstr "Anwani zifuatazo za barua pepe zimeunganishwa na akaunti yako:"
+
+msgid "This book has loan history and cannot be removed."
+msgstr "Kitabu hiki kina historia ya mikopo na hakiwezi kuondolewa."
+
+msgid "This functionality requires JavaScript."
+msgstr "Utendaji huu unahitaji JavaScript."
+
+msgid "Too many recovery requests were submitted. Please wait before trying again."
+msgstr "Maombi mengi ya kurejesha akaunti yametumwa. Tafadhali subiri kabla ya kujaribu tena."
+
+msgid "Total copies"
+msgstr "Jumla ya nakala"
+
+msgid "Track due dates, find overdue books, and record returns."
+msgstr "Fuatilia tarehe za mwisho, tafuta vitabu vilivyochelewa kurejeshwa na rekodi marejesho."
+
+msgid "Try self-service recovery first"
+msgstr "Jaribu kwanza kurejesha akaunti mwenyewe"
+
+msgid "Two-factor authentication"
+msgstr "Uthibitishaji wa hatua mbili"
+
+msgid "Unused codes"
+msgstr "Misimbo ambayo haijatumika"
+
+msgid "Unverified"
+msgstr "Haijathibitishwa"
+
+msgid "View all loans"
+msgstr "Tazama mikopo yote"
+
+msgid "You must reauthenticate with MFA before this deletion can be confirmed."
+msgstr "Lazima uthibitishe tena utambulisho wako kwa MFA kabla ya kuthibitisha ufutaji huu."
+
+msgid "Your login account and security methods will be permanently removed. School records may be retained and detached from your account."
+msgstr "Akaunti yako ya kuingia na njia za usalama zitaondolewa kabisa. Kumbukumbu za shule zinaweza kuhifadhiwa na kutenganishwa na akaunti yako."
+
+msgid "Your request has been submitted for administrator review. For your security, account changes will only be made after your identity is verified."
+msgstr "Ombi lako limewasilishwa kwa ukaguzi wa msimamizi. Kwa usalama wako, mabadiliko ya akaunti yatafanywa tu baada ya utambulisho wako kuthibitishwa."
+
+msgid "available"
+msgstr "inapatikana"
+
+msgid "%(count)s title"
+msgid_plural "%(count)s titles"
+msgstr[0] "%(count)s jina la kitabu"
+msgstr[1] "%(count)s majina ya vitabu"
+
+msgid "You are about to remove “%(title)s” from the catalog. This cannot be undone."
+msgstr "Unakaribia kuondoa “%(title)s” kwenye orodha ya vitabu. Kitendo hiki hakiwezi kutenduliwa."
