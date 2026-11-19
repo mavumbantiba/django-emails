@@ -9,6 +9,7 @@
     <meta name="robots" content="{% block meta_robots %}noindex, nofollow{% endblock %}">
     <title>{% block title %}Kafunjo Secondary School{% endblock %}</title>
     <link rel="canonical" href="https://{{ public_site_domain }}{% if request.resolver_match.url_name == 'home-legacy' %}{% url 'home' %}{% else %}{{ request.path }}{% endif %}">
+    <link rel="stylesheet" href="{% static 'css/site-footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/user-greeting.css' %}">
     <script nonce="{{ request.csp_nonce }}">
         document.documentElement.dataset.theme = localStorage.getItem("kafunjo-theme") || "light";
@@ -60,6 +61,8 @@
         }
 
         body {
+            display: flex;
+            flex-direction: column;
             min-height: 100vh;
             margin: 0;
             background: var(--paper);
@@ -349,6 +352,7 @@
         }
 
         .page-container {
+            flex: 1 0 auto;
             width: min(1120px, calc(100% - 40px));
             margin: 0 auto;
             padding: 42px 0 64px;
@@ -1138,6 +1142,7 @@
         {% endif %}
         {% block content %}{% endblock %}
     </main>
+    {% include "partials/site_footer.html" %}
     <script src="{% static 'vendor/htmx.min.js' %}" nonce="{{ request.csp_nonce }}"></script>
     <script nonce="{{ request.csp_nonce }}">
         htmx.config.inlineStyleNonce = "{{ request.csp_nonce|escapejs }}";

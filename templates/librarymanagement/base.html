@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title>{% block title %}{% trans "Library" %}{% endblock %} | Kafunjo Secondary School</title>
+    <link rel="stylesheet" href="{% static 'css/site-footer.css' %}">
     <script nonce="{{ request.csp_nonce }}">
         document.documentElement.dataset.theme = localStorage.getItem("kafunjo-theme") || "light";
     </script>
@@ -41,6 +42,7 @@
         {% endif %}
         {% block content %}{% endblock %}
     </main>
+    {% include "partials/site_footer.html" %}
     <script src="{% static 'js/ui-feedback.js' %}" nonce="{{ request.csp_nonce }}" defer></script>
 </body>
 </html>

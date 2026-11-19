@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title>{% block head_title %}Kafunjo Secondary School{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/site-footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/user-greeting.css' %}">
     <script nonce="{{ request.csp_nonce }}">
         document.documentElement.dataset.theme = localStorage.getItem("kafunjo-theme") || "light";
@@ -43,6 +44,8 @@
         }
 
         body {
+            display: flex;
+            flex-direction: column;
             min-height: 100vh;
             margin: 0;
             background: var(--page);
@@ -213,6 +216,7 @@
         }
 
         .auth-main {
+            flex: 1 0 auto;
             width: min(560px, calc(100% - 32px));
             margin: 0 auto;
             padding: 44px 0 64px;
@@ -505,6 +509,7 @@
             </section>
         {% endblock body %}
     </main>
+    {% include "partials/site_footer.html" %}
     {% block extra_body %}
     {% endblock extra_body %}
     {% if umami_script_url and umami_website_id %}

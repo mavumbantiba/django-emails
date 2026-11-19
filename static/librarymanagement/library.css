@@ -29,6 +29,8 @@
 }
 
 body {
+    display: flex;
+    flex-direction: column;
     min-width: 320px;
     min-height: 100vh;
     margin: 0;
@@ -135,6 +137,7 @@ a {
 }
 
 .library-main {
+    flex: 1 0 auto;
     width: min(1180px, calc(100% - 40px));
     margin: 0 auto;
     padding: 34px 0 60px;
